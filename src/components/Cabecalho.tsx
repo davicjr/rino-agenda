@@ -1,4 +1,4 @@
-// Marca no topo: escudo, nome da equipe e o lema. O escudo cai no lugar ao abrir o app.
+// Marca no topo: escudo, nome da equipe, ações (calendário) e o cadeado do painel. O escudo cai no lugar ao abrir o app.
 import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -6,7 +6,9 @@ import { Lock } from 'lucide-react'
 import { Link } from 'react-router'
 import { reduzirMovimento } from '@/lib/impacto'
 
-export function Cabecalho() {
+import type { ReactNode } from 'react'
+
+export function Cabecalho({ acoes }: { acoes?: ReactNode }) {
   const ref = useRef<HTMLElement>(null)
   useGSAP(
     () => {
@@ -26,6 +28,7 @@ export function Cabecalho() {
           Muay Thai · Agenda
         </p>
       </div>
+      {acoes}
       <Link to="/admin" aria-label="Painel do professor" className="-mr-2 grid size-11 shrink-0 place-items-center text-carvao-8 active:text-carvao-12">
         <Lock className="size-5" />
       </Link>

@@ -2,6 +2,7 @@
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { Cabecalho } from '@/components/Cabecalho'
+import { BotaoCalendario } from '@/components/BotaoCalendario'
 import { SemanaDias } from '@/components/SemanaDias'
 import { GavetaAgendar } from '@/components/GavetaAgendar'
 import { GavetaRetirar } from '@/components/GavetaRetirar'
@@ -64,7 +65,18 @@ export function Agenda() {
   return (
     <main className="relative mx-auto min-h-dvh max-w-lg overflow-x-clip pb-16">
       <Textura className="top-[5.5rem] -right-28 h-52 w-[26rem] opacity-70" />
-      <Cabecalho />
+      <Cabecalho
+        acoes={
+          inicio.data && data && (
+            <BotaoCalendario
+              valor={data}
+              min={somarDias(inicio.data.agora.data, -28)}
+              max={somarDias(inicio.data.agora.data, inicio.data.janelaDias)}
+              onEscolher={setEscolhido}
+            />
+          )
+        }
+      />
       {inicio.data && data && (
         <>
           <TituloDia data={data} hoje={inicio.data.agora.data} direcao={direcao} />
@@ -75,7 +87,7 @@ export function Agenda() {
               onSelecionar={setEscolhido}
               diasComAula={diasComAula}
               bloqueados={bloqueados}
-              min={inicio.data.agora.data}
+              min={somarDias(inicio.data.agora.data, -28)}
               max={somarDias(inicio.data.agora.data, inicio.data.janelaDias)}
             />
           </div>

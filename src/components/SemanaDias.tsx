@@ -19,6 +19,7 @@ type Props = {
 }
 
 const dentro = (d: string, min?: string, max?: string) => (!min || d >= min) && (!max || d <= max)
+const INICIAIS = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
 
 export function SemanaDias({ hoje, selecionado, onSelecionar, diasComAula, bloqueados, min, max }: Props) {
   const domingo = somarDias(selecionado, -diaSemana(selecionado))
@@ -75,8 +76,11 @@ export function SemanaDias({ hoje, selecionado, onSelecionar, diasComAula, bloqu
           <ChevronRight className="size-6" />
         </button>
       </div>
+      <div aria-hidden className="font-cond mb-1 grid grid-cols-7 gap-1 text-center text-xs font-bold text-carvao-9">
+        {INICIAIS.map((l, i) => <span key={i}>{l}</span>)}
+      </div>
       <div ref={grade} className="relative grid grid-cols-7 gap-1">
-        <span ref={indicador} aria-hidden className="paralelo pointer-events-none absolute top-0 left-0 h-16 bg-ouro-9 opacity-0" />
+        <span ref={indicador} aria-hidden className="paralelo pointer-events-none absolute top-0 left-0 h-12 bg-ouro-9 opacity-0" />
         {dias.map((d) => {
           const bloq = bloqueados?.has(d) ?? false
           const tem = diasComAula.has(diaSemana(d)) && !bloq
@@ -90,13 +94,13 @@ export function SemanaDias({ hoje, selecionado, onSelecionar, diasComAula, bloqu
               aria-pressed={sel}
               aria-label={`${nomeDiaCurto(d)} ${diaDoMes(d)}${d === hoje ? ', hoje' : ''}${bloq ? ', sem aula' : !tem ? ', folga' : ''}`}
               className={cn(
-                'paralelo relative flex h-16 flex-col items-center justify-center transition-colors duration-300 disabled:opacity-30',
+                'paralelo relative flex h-12 flex-col items-center justify-center transition-colors duration-300 disabled:opacity-30',
+                d < hoje && !sel && 'opacity-60',
                 sel ? 'bg-transparent text-preto' : bloq ? 'bg-alerta-3 text-alerta-11 active:bg-alerta-4' : tem ? 'bg-carvao-3 text-carvao-12 active:bg-carvao-4' : 'bg-carvao-2 text-carvao-8',
               )}
             >
-              <span className="font-cond text-[11px] font-bold tracking-widest">{nomeDiaCurto(d)}</span>
               <span className={cn('numero font-display text-xl leading-tight', !tem && !bloq && !sel && 'line-through decoration-2')}>{diaDoMes(d)}</span>
-              {d === hoje && <span className={cn('absolute bottom-1.5 size-1 rounded-full', sel ? 'bg-preto' : 'bg-ouro-9')} />}
+              {d === hoje && <span className={cn('absolute bottom-1 size-1 rounded-full', sel ? 'bg-preto' : 'bg-ouro-9')} />}
             </button>
           )
         })}
