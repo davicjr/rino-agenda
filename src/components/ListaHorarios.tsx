@@ -10,13 +10,12 @@ type Props = {
   data: string
   direcao: number
   horarios: Horario[]
-  meuId: number | null
   pulsos: Record<number, number>
   onAgendar: (h: Horario) => void
   onTocarNome: (a: Agendado, h: Horario) => void
 }
 
-export function ListaHorarios({ data, direcao, horarios, meuId, pulsos, onAgendar, onTocarNome }: Props) {
+export function ListaHorarios({ data, direcao, horarios, pulsos, onAgendar, onTocarNome }: Props) {
   const raiz = useRef<HTMLDivElement>(null)
   const chave = `${data}:${horarios.map((h) => h.id).join(',')}`
   useGSAP(
@@ -34,7 +33,7 @@ export function ListaHorarios({ data, direcao, horarios, meuId, pulsos, onAgenda
     <div ref={raiz} className="space-y-3">
       {horarios.map((h) => (
         <div key={h.id} className="card-horario">
-          <CardHorario horario={h} meuId={meuId} pulso={pulsos[h.id] ?? 0} onAgendar={onAgendar} onTocarNome={onTocarNome} />
+          <CardHorario horario={h} pulso={pulsos[h.id] ?? 0} onAgendar={onAgendar} onTocarNome={onTocarNome} />
         </div>
       ))}
     </div>

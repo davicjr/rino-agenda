@@ -52,7 +52,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, enviando, o
             <button onClick={() => setEscolhido(eu)} className="corte-sm mb-3 flex items-center gap-3 bg-ouro-3 p-3 text-left active:bg-ouro-4">
               <span className="font-cond grid size-10 place-items-center rounded-full bg-ouro-9 font-bold text-preto">{iniciais(exibir(eu))}</span>
               <span>
-                <span className="block text-xs font-semibold tracking-widest text-ouro-11 uppercase">Sou eu de novo</span>
+                <span className="block text-xs font-semibold tracking-widest text-ouro-11 uppercase">Usado por último neste celular</span>
                 <span className="text-lg font-semibold">{exibir(eu)}</span>
               </span>
             </button>

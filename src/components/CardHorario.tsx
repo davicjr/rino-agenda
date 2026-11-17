@@ -14,16 +14,14 @@ import { MedidorVagas } from './MedidorVagas'
 
 type Props = {
   horario: Horario
-  meuId: number | null
   pulso: number
   onAgendar: (h: Horario) => void
   onTocarNome: (a: Agendado, h: Horario) => void
 }
 
-export function CardHorario({ horario: h, meuId, pulso, onAgendar, onTocarNome }: Props) {
+export function CardHorario({ horario: h, pulso, onAgendar, onTocarNome }: Props) {
   const raiz = useRef<HTMLElement>(null)
   const lotado = h.agendados.length >= h.vagas
-  const estou = meuId !== null && h.agendados.some((a) => a.aluno_id === meuId)
 
   // Impacto da confirmação: o card treme, pisca e o novo nome entra.
   useGSAP(
@@ -56,7 +54,7 @@ export function CardHorario({ horario: h, meuId, pulso, onAgendar, onTocarNome }
         </div>
       </div>
 
-      {n > 0 && <ListaNomes agendados={h.agendados} meuId={meuId} pulso={pulso} podeRetirar onTocar={(a) => onTocarNome(a, h)} />}
+      {n > 0 && <ListaNomes agendados={h.agendados} pulso={pulso} podeRetirar onTocar={(a) => onTocarNome(a, h)} />}
 
       <div className="relative mt-3 flex items-center justify-between gap-3">
         <p className="font-cond text-[0.95rem] font-semibold text-carvao-10">
@@ -67,7 +65,7 @@ export function CardHorario({ horario: h, meuId, pulso, onAgendar, onTocarNome }
             onClick={() => onAgendar(h)}
             className="paralelo font-display h-11 shrink-0 bg-ouro-9 px-6 text-base tracking-wider text-preto uppercase transition-transform duration-100 active:scale-[0.97] active:bg-ouro-10"
           >
-            {estou ? '+ Outro' : 'Agendar'}
+            Agendar
           </button>
         )}
       </div>

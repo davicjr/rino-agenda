@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { diaDoMes, mesCurto, nomeDia } from '@/lib/datas'
+import { nomeDia } from '@/lib/datas'
 import { reduzirMovimento } from '@/lib/impacto'
 
 export function TituloDia({ data, hoje, direcao }: { data: string; hoje: string; direcao: number }) {
@@ -20,12 +20,9 @@ export function TituloDia({ data, hoje, direcao }: { data: string; hoje: string;
     { dependencies: [data], scope: ref },
   )
   return (
-    <h1 ref={ref} className="relative z-10 mt-6 flex items-baseline gap-3 px-5 uppercase">
+    <h1 ref={ref} className="relative z-10 mt-6 px-5 uppercase">
       <span className="linha font-display block origin-bottom-left -skew-x-6 text-[clamp(2.75rem,13vw,4.5rem)] leading-[0.9]">
         {data === hoje ? 'Hoje' : nomeDia(data)}
-      </span>
-      <span className="linha font-cond block text-[clamp(1.1rem,5vw,1.5rem)] font-bold tracking-wider text-ouro-9">
-        {diaDoMes(data)} {mesCurto(data)}
       </span>
     </h1>
   )

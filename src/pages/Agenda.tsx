@@ -2,16 +2,15 @@
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { Cabecalho } from '@/components/Cabecalho'
-import { FaixaDias } from '@/components/FaixaDias'
+import { SemanaDias } from '@/components/SemanaDias'
 import { GavetaAgendar } from '@/components/GavetaAgendar'
-import { GavetaCalendario } from '@/components/GavetaCalendario'
 import { GavetaRetirar } from '@/components/GavetaRetirar'
 import { Textura } from '@/components/Textura'
 import { TituloDia } from '@/components/TituloDia'
 import { useAgendar, useDia, useInicio, useRetirar } from '@/hooks/useAgenda'
 import { useMeuAluno } from '@/hooks/useMeuAluno'
 import type { Agendado, Aluno, Horario } from '@/lib/api'
-import { horaCurta } from '@/lib/datas'
+import { horaCurta, somarDias } from '@/lib/datas'
 import { vibrar } from '@/lib/impacto'
 import { primeiroDia } from '@/lib/primeiroDia'
 import { EstadoDia } from '@/components/EstadoDia'
@@ -30,7 +29,6 @@ export function Agenda() {
   const [meuId, lembrar] = useMeuAluno()
   const [agendarEm, setAgendarEm] = useState<Horario | null>(null)
   const [retirar, setRetirar] = useState<{ agendado: Agendado; horario: Horario } | null>(null)
-  const [calendario, setCalendario] = useState(false)
   const [pulsos, setPulsos] = useState<Record<number, number>>({})
   const agendar = useAgendar(data ?? '')
   const tirar = useRetirar(data ?? '')
@@ -71,15 +69,15 @@ export function Agenda() {
         <>
           <TituloDia data={data} hoje={inicio.data.agora.data} direcao={direcao} />
           <div className="mt-5">
-          <FaixaDias
-            hoje={inicio.data.agora.data}
-            dias={15}
-            diasComAula={diasComAula}
-            bloqueados={bloqueados}
-            selecionado={data}
-            onSelecionar={setEscolhido}
-            onCalendario={() => setCalendario(true)}
-          />
+            <SemanaDias
+              hoje={inicio.data.agora.data}
+              selecionado={data}
+              onSelecionar={setEscolhido}
+              diasComAula={diasComAula}
+              bloqueados={bloqueados}
+              min={inicio.data.agora.data}
+              max={somarDias(inicio.data.agora.data, inicio.data.janelaDias)}
+            />
           </div>
         </>
       )}
@@ -90,7 +88,6 @@ export function Agenda() {
             data={dia.data.data}
             direcao={direcao}
             horarios={dia.data.horarios}
-            meuId={meuId}
             pulsos={pulsos}
             onAgendar={setAgendarEm}
             onTocarNome={(agendado, horario) => setRetirar({ agendado, horario })}
@@ -114,17 +111,6 @@ export function Agenda() {
         />
       )}
       <GavetaRetirar alvo={retirar} enviando={tirar.isPending} onFechar={() => setRetirar(null)} onConfirmar={confirmarRetirada} />
-      {inicio.data && data && (
-        <GavetaCalendario
-          aberta={calendario}
-          hoje={inicio.data.agora.data}
-          janela={inicio.data.janelaDias}
-          diasComAula={diasComAula}
-          selecionado={data}
-          onFechar={() => setCalendario(false)}
-          onEscolher={(d) => { setEscolhido(d); setCalendario(false) }}
-        />
-      )}
     </main>
   )
 }

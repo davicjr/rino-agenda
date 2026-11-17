@@ -2,13 +2,12 @@
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Lock, LockOpen } from 'lucide-react'
-import { FaixaDias } from '@/components/FaixaDias'
-import { GavetaCalendario } from '@/components/GavetaCalendario'
+import { SemanaDias } from '@/components/SemanaDias'
 import { useAcao } from '@/hooks/useAdmin'
 import { useInicio } from '@/hooks/useAgenda'
 import { api } from '@/lib/api'
 import { admin } from '@/lib/apiAdmin'
-import { diaDoMes, horaCurta, mesCurto, nomeDia, somarDias } from '@/lib/datas'
+import { horaCurta, nomeDia } from '@/lib/datas'
 import { Rotulo } from '@/ui/Rotulo'
 import { SeletorProfessor } from '@/ui/SeletorProfessor'
 import { GavetaBloqueio } from './gavetas/GavetaBloqueio'
@@ -20,7 +19,6 @@ export function AbaAgenda() {
   const [escolhido, setData] = useState<string | null>(null)
   const data = escolhido ?? hoje ?? null
   const [aberta, setAberta] = useState<number | null>(null)
-  const [calendario, setCalendario] = useState(false)
   const [bloquearEm, setBloquearEm] = useState<{ gradeId: number | null; titulo: string } | null>(null)
   const diasComAula = useMemo(() => new Set(inicio.data?.grade.map((g) => g.dia_semana)), [inicio.data])
 
@@ -40,12 +38,12 @@ export function AbaAgenda() {
   return (
     <div className="space-y-5">
       <div className="-mx-5">
-        <FaixaDias hoje={hoje} desde={somarDias(hoje, -7)} dias={29} diasComAula={diasComAula} bloqueados={diasBloqueados} selecionado={data} onSelecionar={(d) => { setData(d); setAberta(null) }} onCalendario={() => setCalendario(true)} />
+        <SemanaDias hoje={hoje} selecionado={data} onSelecionar={(d) => { setData(d); setAberta(null) }} diasComAula={diasComAula} bloqueados={diasBloqueados} />
       </div>
 
       <div className="flex items-end justify-between gap-3">
         <h2 className="font-display -skew-x-6 text-3xl leading-none uppercase">
-          {nomeDia(data)} <span className="text-ouro-9">{diaDoMes(data)} {mesCurto(data)}</span>
+          {data === hoje ? 'Hoje' : nomeDia(data)}
         </h2>
         {bDia ? (
           <button onClick={() => desbloquear.mutate(bDia.id)} className="flex h-11 items-center gap-1.5 text-sm font-semibold text-alerta-11"><LockOpen className="size-4" /> Liberar dia</button>
@@ -91,16 +89,6 @@ export function AbaAgenda() {
         enviando={bloquear.isPending}
         onFechar={() => setBloquearEm(null)}
         onConfirmar={(motivo) => bloquearEm && bloquear.mutate({ gradeId: bloquearEm.gradeId, motivo }, { onSuccess: () => setBloquearEm(null) })}
-      />
-      <GavetaCalendario
-        aberta={calendario}
-        hoje={hoje}
-        desde={somarDias(hoje, -60)}
-        janela={120}
-        diasComAula={new Set([0, 1, 2, 3, 4, 5, 6])}
-        selecionado={data}
-        onFechar={() => setCalendario(false)}
-        onEscolher={(d) => { setData(d); setCalendario(false); setAberta(null) }}
       />
     </div>
   )
