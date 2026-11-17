@@ -6,7 +6,8 @@ import { useGSAP } from '@gsap/react'
 import { Lock } from 'lucide-react'
 import type { Agendado, Horario } from '@/lib/api'
 import { cn } from '@/lib/cn'
-import { horaCurta, iniciais } from '@/lib/datas'
+import { horaCurta } from '@/lib/datas'
+import { Avatar } from '@/ui/Avatar'
 import { reduzirMovimento } from '@/lib/impacto'
 import { Carimbo } from './Carimbo'
 import { ListaAlunos } from './ListaAlunos'
@@ -46,12 +47,12 @@ export function CardAula({ horario: h, pulso, onAgendar, onTocarNome }: Props) {
       <div className="relative shrink-0 p-4">
         {(lotado && aberto) || !aberto ? (
           <div className="mb-4">
-            {lotado && aberto ? <Carimbo /> : <span className="font-cond rounded-full bg-carvao-4 px-3 py-1 text-xs font-bold tracking-widest text-carvao-10 uppercase">Encerrado</span>}
+            {lotado && aberto ? <Carimbo /> : <span className="paralelo font-cond inline-block bg-carvao-4 px-4 py-1.5 text-xs font-bold tracking-widest text-carvao-10 uppercase">Encerrado</span>}
           </div>
         ) : null}
         {h.professor && (
           <p className="flex items-center gap-2.5">
-            <span className="font-cond grid size-8 place-items-center rounded-full bg-ouro-9 text-xs font-bold text-preto">{iniciais(h.professor.nome)}</span>
+            <Avatar nome={h.professor.nome} tipo="professor" id={h.professor.id} foto={h.professor.foto} destaque className="size-8 text-xs" />
             <span className="font-cond text-sm font-bold tracking-wider text-carvao-9 uppercase">Prof.</span>
             <span className="font-semibold">{h.professor.nome}</span>
           </p>

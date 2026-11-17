@@ -34,12 +34,15 @@ function Painel() {
     <div className="mx-auto min-h-dvh max-w-lg pb-20">
       <div className="sticky top-0 z-30 bg-carvao-1/95 px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-3 backdrop-blur">
         <header className="flex h-12 items-center gap-3">
-          <img src="/escudo.webp" alt="" className="h-10 w-auto" />
-          <h1 className="font-display flex-1 text-xl tracking-wide uppercase">Painel</h1>
+          <img src="/escudo.webp" alt="" className="h-12 w-auto" />
+          <div className="flex-1 leading-none">
+            <h1 className="font-display text-[1.5rem] tracking-wide uppercase">Painel</h1>
+            <p className="font-cond mt-1 text-sm font-semibold tracking-[0.18em] text-carvao-11 uppercase">Rino Fight Team</p>
+          </div>
           <Link to="/" aria-label="Ver agenda pública" className="grid size-11 place-items-center text-carvao-11"><Eye className="size-5" /></Link>
           <button onClick={() => sair.mutate()} aria-label="Sair" className="grid size-11 place-items-center text-carvao-11"><LogOut className="size-5" /></button>
         </header>
-        <nav role="tablist" className="mt-2 grid grid-cols-4 gap-1 rounded-[var(--radius-lg)] bg-carvao-2 p-1">
+        <nav role="tablist" className="mt-3 grid grid-cols-4 gap-1.5">
           {ABAS.map(({ id, rotulo, Icone }) => (
             <button
               key={id}
@@ -47,8 +50,8 @@ function Painel() {
               aria-selected={aba === id}
               onClick={() => setAba(id)}
               className={cn(
-                'flex h-14 flex-col items-center justify-center gap-0.5 rounded-[var(--radius)] transition-colors duration-200',
-                aba === id ? 'bg-ouro-9 text-preto' : 'text-carvao-10 active:bg-carvao-3',
+                'paralelo flex h-14 flex-col items-center justify-center gap-0.5 transition-colors duration-200',
+                aba === id ? 'bg-ouro-9 text-preto' : 'bg-carvao-3 text-carvao-10 active:bg-carvao-4',
               )}
             >
               <Icone className="size-5" />

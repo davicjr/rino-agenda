@@ -5,6 +5,7 @@ import { Botao } from '@/ui/Botao'
 import { Entrada } from '@/ui/Campo'
 import { Contador } from '@/ui/Contador'
 import { Gaveta } from '@/ui/Gaveta'
+import { Interruptor } from '@/ui/Interruptor'
 import { Rotulo } from '@/ui/Rotulo'
 import { SeletorProfessor } from '@/ui/SeletorProfessor'
 
@@ -38,10 +39,7 @@ function Formulario({ alvo, enviando, onSalvar, onApagar }: { alvo: Rascunho; en
         <SeletorProfessor id="prof-padrao" valor={g.professor_id} nenhum="Nenhum" onMudar={(professor_id) => setG({ ...g, professor_id })} className="h-12 w-full" />
       </div>
       {g.id && (
-        <label className="flex h-12 items-center justify-between rounded-[var(--radius)] bg-carvao-3 px-4">
-          <span className="font-semibold">Ativo (aparece na agenda)</span>
-          <input type="checkbox" checked={g.ativo === 1} onChange={(e) => setG({ ...g, ativo: e.target.checked ? 1 : 0 })} className="size-5 accent-[var(--color-ouro-9)]" />
-        </label>
+        <Interruptor rotulo="Ativo (aparece na agenda)" ligado={g.ativo === 1} onMudar={(v) => setG({ ...g, ativo: v ? 1 : 0 })} />
       )}
       <div className="space-y-2">
         <Botao disabled={enviando}>Salvar</Botao>

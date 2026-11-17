@@ -6,7 +6,9 @@ import { Botao } from '@/ui/Botao'
 import { Entrada } from '@/ui/Campo'
 import { Chips } from '@/ui/Chips'
 import { Gaveta } from '@/ui/Gaveta'
+import { Interruptor } from '@/ui/Interruptor'
 import { Rotulo } from '@/ui/Rotulo'
+import { EditorFoto } from './EditorFoto'
 
 type Props = { aluno: AlunoAdmin | null; onFechar: () => void; onSalvar: (a: AlunoAdmin) => void; onApagar: (a: AlunoAdmin) => void }
 
@@ -22,6 +24,7 @@ function Formulario({ aluno, onSalvar, onApagar }: { aluno: AlunoAdmin; onSalvar
   const [a, setA] = useState(aluno)
   return (
     <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); onSalvar(a) }}>
+      <EditorFoto tipo="aluno" id={a.id} nome={a.nome} foto={a.foto} onMudou={(foto) => setA({ ...a, foto })} />
       <div>
         <Rotulo htmlFor="nome">Nome</Rotulo>
         <Entrada id="nome" value={a.nome} onChange={(e) => setA({ ...a, nome: e.target.value })} className="w-full" />
@@ -34,10 +37,7 @@ function Formulario({ aluno, onSalvar, onApagar }: { aluno: AlunoAdmin; onSalvar
         <Rotulo>Plano</Rotulo>
         <Chips rotulo="Plano" opcoes={PLANOS.map((p) => ({ valor: p.valor, rotulo: p.rotulo }))} valor={a.plano} onMudar={(plano) => setA({ ...a, plano })} />
       </div>
-      <label className="flex h-12 items-center justify-between rounded-[var(--radius)] bg-carvao-3 px-4">
-        <span className="font-semibold">Ativo (aparece para agendar)</span>
-        <input type="checkbox" checked={a.ativo === 1} onChange={(e) => setA({ ...a, ativo: e.target.checked ? 1 : 0 })} className="size-5 accent-[var(--color-ouro-9)]" />
-      </label>
+      <Interruptor rotulo="Ativo (aparece para agendar)" ligado={a.ativo === 1} onMudar={(v) => setA({ ...a, ativo: v ? 1 : 0 })} />
       <div className="space-y-2">
         <Botao>Salvar</Botao>
         <Botao type="button" variante="neutro" onClick={() => onApagar(aluno)}>Apagar aluno</Botao>

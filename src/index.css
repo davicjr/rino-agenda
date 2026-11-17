@@ -46,9 +46,10 @@
   --font-cond: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   --font-sans: 'Barlow', system-ui, sans-serif;
 
-  --radius: 0.5rem;
-  --radius-sm: calc(var(--radius) * 0.5);
-  --radius-lg: calc(var(--radius) * 1.5);
+  /* Raio único e pequeno para superfícies (cards, campos, listas); ações e seleção usam o paralelogramo. */
+  --radius: 0.25rem;
+  --radius-sm: 0.125rem;
+  --radius-lg: 0.25rem;
 
   --ease-saida: cubic-bezier(0.23, 1, 0.32, 1);
   --animate-surge: surge 320ms var(--ease-saida) both;
