@@ -65,7 +65,7 @@ export function Agenda() {
   }
 
   return (
-    <main className="relative mx-auto min-h-dvh max-w-lg overflow-x-clip pb-16">
+    <main className="relative mx-auto flex h-dvh max-w-lg flex-col overflow-hidden">
       <FundoMarca />
       <Cabecalho
         acoes={
@@ -79,7 +79,7 @@ export function Agenda() {
       {inicio.data && data && (
         <>
           <TituloDia data={data} hoje={inicio.data.agora.data} direcao={direcao} />
-          <div className="mt-1">
+          <div className="mt-1 shrink-0">
             <SemanaDias
               hoje={inicio.data.agora.data}
               selecionado={data}
@@ -92,7 +92,7 @@ export function Agenda() {
           </div>
         </>
       )}
-      <section className={`relative z-10 mt-5 space-y-3 px-5 transition-opacity duration-200 ${dia.isPlaceholderData ? 'opacity-40' : ''}`}>
+      <section className={`relative z-10 mt-4 flex min-h-0 flex-1 flex-col px-5 pb-[max(env(safe-area-inset-bottom),1rem)] transition-opacity duration-200 ${dia.isPlaceholderData ? 'opacity-40' : ''}`}>
         <EstadoDia carregando={inicio.isPending || dia.isPending} erro={inicio.error ?? dia.error} dia={dia.data} />
         {dia.data && data && !dia.data.bloqueioDia && (
           <SessaoDia
@@ -105,9 +105,6 @@ export function Agenda() {
           />
         )}
       </section>
-      <footer className="font-cond mt-12 text-center text-sm tracking-[0.3em] text-carvao-8 uppercase">
-        Disciplina · Foco · Força · Evolução
-      </footer>
 
       {data && (
         <GavetaAgendar

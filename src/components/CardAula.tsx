@@ -41,27 +41,25 @@ export function CardAula({ horario: h, pulso, onAgendar, onTocarNome }: Props) {
   }
 
   return (
-    <article ref={raiz} className="corte relative overflow-hidden bg-carvao-2" aria-label={`Treino das ${h.hora}`}>
+    <article ref={raiz} className="corte relative flex min-h-0 flex-1 flex-col overflow-hidden bg-carvao-2" aria-label={`Treino das ${h.hora}`}>
       <span className="flash pointer-events-none absolute inset-0 bg-ouro-9 opacity-0" />
-      <div className="relative p-5">
+      <div className="relative shrink-0 p-4">
         {(lotado && aberto) || !aberto ? (
           <div className="mb-4">
             {lotado && aberto ? <Carimbo /> : <span className="font-cond rounded-full bg-carvao-4 px-3 py-1 text-xs font-bold tracking-widest text-carvao-10 uppercase">Encerrado</span>}
           </div>
         ) : null}
         {h.professor && (
-          <div className="flex items-center gap-3">
-            <span className="font-cond grid size-10 place-items-center rounded-full bg-ouro-9 text-sm font-bold text-preto">{iniciais(h.professor.nome)}</span>
-            <div className="leading-tight">
-              <p className="font-cond text-xs font-bold tracking-widest text-carvao-9 uppercase">Professor</p>
-              <p className="text-base font-semibold">{h.professor.nome}</p>
-            </div>
-          </div>
+          <p className="flex items-center gap-2.5">
+            <span className="font-cond grid size-8 place-items-center rounded-full bg-ouro-9 text-xs font-bold text-preto">{iniciais(h.professor.nome)}</span>
+            <span className="font-cond text-sm font-bold tracking-wider text-carvao-9 uppercase">Prof.</span>
+            <span className="font-semibold">{h.professor.nome}</span>
+          </p>
         )}
-        {aberto && <div className={h.professor ? 'mt-5' : ''}><MedidorVagas ocupadas={n} vagas={h.vagas} /></div>}
+        {aberto && <div className={h.professor ? 'mt-3' : ''}><MedidorVagas ocupadas={n} vagas={h.vagas} /></div>}
       </div>
 
-      <div className="relative border-t border-carvao-4 px-5 pt-4 pb-2">
+      <div className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain border-t border-carvao-4 px-4 pt-3 pb-3 [mask-image:linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)]">
         <p className="font-cond mb-1 text-xs font-bold tracking-[0.16em] text-carvao-9 uppercase">
           {aberto ? `Confirmados · ${n}` : `Treinaram · ${n}`}
         </p>
@@ -73,12 +71,12 @@ export function CardAula({ horario: h, pulso, onAgendar, onTocarNome }: Props) {
       </div>
 
       {aberto && (
-        <div className="relative p-5 pt-3">
+        <div className="relative shrink-0 p-4 pt-3">
           <button
             onClick={() => onAgendar(h)}
             disabled={lotado}
             className={cn(
-              'paralelo font-display h-14 w-full text-xl tracking-wider uppercase transition-transform duration-100 active:scale-[0.98]',
+              'paralelo font-display h-13 w-full text-xl tracking-wider uppercase transition-transform duration-100 active:scale-[0.98]',
               lotado ? 'bg-carvao-4 text-carvao-9' : 'bg-ouro-9 text-preto active:bg-ouro-10',
             )}
           >

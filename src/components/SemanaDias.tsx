@@ -67,8 +67,8 @@ export function SemanaDias({ hoje, selecionado, onSelecionar, diasComAula, bloqu
     : `${diaDoMes(domingo)} ${mesCurto(domingo)} – ${diaDoMes(sabado)} ${mesCurto(sabado)}`
 
   return (
-    <nav ref={raiz} aria-label="Escolher dia" className="relative z-10 px-5">
-      <div className="mb-2 flex items-center justify-between">
+    <nav ref={raiz} aria-label="Escolher dia" className="relative z-10 shrink-0 px-5">
+      <div className="mb-1 flex items-center justify-between">
         <button onClick={() => mover(-1)} disabled={!podeVoltar} aria-label="Semana anterior" className="-ml-2.5 grid size-11 place-items-center text-carvao-12 disabled:text-carvao-6">
           <ChevronLeft className="size-6" />
         </button>
@@ -81,7 +81,7 @@ export function SemanaDias({ hoje, selecionado, onSelecionar, diasComAula, bloqu
         {INICIAIS.map((l, i) => <span key={i}>{l}</span>)}
       </div>
       <div ref={grade} className="relative grid grid-cols-7 gap-1">
-        <span ref={indicador} aria-hidden className="paralelo pointer-events-none absolute top-0 left-0 h-12 bg-ouro-9 opacity-0" />
+        <span ref={indicador} aria-hidden className="paralelo pointer-events-none absolute top-0 left-0 h-11 bg-ouro-9 opacity-0" />
         {dias.map((d) => {
           const bloq = bloqueados?.has(d) ?? false
           const tem = diasComAula.has(diaSemana(d)) && !bloq
@@ -94,7 +94,7 @@ export function SemanaDias({ hoje, selecionado, onSelecionar, diasComAula, bloqu
               onClick={() => onSelecionar(d)}
               aria-pressed={sel}
               aria-label={`${nomeDiaCurto(d)} ${diaDoMes(d)}${d === hoje ? ', hoje' : ''}${bloq ? ', sem aula' : !tem ? ', folga' : ''}`}
-              className={cn(estiloDia({ sel, bloq, tem, passado: d < hoje }), 'h-12', sel && 'bg-transparent')}
+              className={cn(estiloDia({ sel, bloq, tem, passado: d < hoje }), 'h-11', sel && 'bg-transparent')}
             >
               <span className={cn('numero text-xl', estiloNumero({ sel, bloq, tem, passado: false }))}>{diaDoMes(d)}</span>
               {d === hoje && <span className={cn('absolute bottom-1 size-1 rounded-full', sel ? 'bg-preto' : 'bg-ouro-9')} />}

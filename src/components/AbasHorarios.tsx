@@ -24,7 +24,7 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
     { dependencies: [selecionado, horarios.length], scope: raiz },
   )
   return (
-    <div ref={raiz} role="tablist" aria-label="Horários do dia" className="relative flex border-b border-carvao-4">
+    <div ref={raiz} role="tablist" aria-label="Horários do dia" className="relative flex shrink-0 border-b border-carvao-4">
       {horarios.map((h) => {
         const sel = h.id === selecionado
         const n = h.agendados.length
@@ -38,7 +38,7 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
             aria-selected={sel}
             onClick={() => onSelecionar(h.id)}
             className={cn(
-              'flex h-14 flex-1 flex-col items-center justify-center transition-colors duration-200',
+              'flex h-12 flex-1 flex-col items-center justify-center transition-colors duration-200',
               sel ? 'text-carvao-12' : h.bloqueio ? 'text-alerta-11' : !h.aberto ? 'text-carvao-8' : 'text-carvao-10',
             )}
           >
