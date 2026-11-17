@@ -5,5 +5,5 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "rino-agenda"
-database_id = "local-ainda-nao-criado"
+database_id = "aed757dd-2e47-459a-9688-9ce6026cbb7c"
 migrations_dir = "migrations"
