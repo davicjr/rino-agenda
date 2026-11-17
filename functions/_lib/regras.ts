@@ -60,6 +60,7 @@ export type PedidoAgendamento = {
   ocupados: number
   vagas: number
   jaAgendado: boolean
+  jaTemNoDia: boolean
   agendadosNaSemana: number
 }
 
@@ -72,6 +73,7 @@ export function motivoRecusa(p: PedidoAgendamento, agora: Agora): string | null 
   if (p.data > somarDias(agora.data, JANELA_DIAS)) return `Só dá para agendar até ${JANELA_DIAS} dias à frente.`
   if (p.bloqueado) return 'Não tem aula nesse horário.'
   if (p.jaAgendado) return 'Você já está nesse horário.'
+  if (p.jaTemNoDia) return 'Você já tem treino marcado nesse dia. É um por dia.'
   if (p.ocupados >= p.vagas) return 'Horário lotado.'
   const limite = LIMITE_SEMANAL[p.plano]
   if (p.agendadosNaSemana >= limite) return `Seu plano é ${p.plano} por semana e você já usou ${limite} nesta semana.`

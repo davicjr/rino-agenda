@@ -6,7 +6,7 @@ const agora = { data: '2026-11-17', minutos: 10 * 60 }
 
 const base: PedidoAgendamento = {
   data: '2026-11-18', hora: '18:00', diaSemanaGrade: 3, gradeAtiva: true, alunoAtivo: true,
-  plano: 'livre', bloqueado: false, ocupados: 0, vagas: 15, jaAgendado: false, agendadosNaSemana: 0,
+  plano: 'livre', bloqueado: false, ocupados: 0, vagas: 15, jaAgendado: false, jaTemNoDia: false, agendadosNaSemana: 0,
 }
 
 describe('motivoRecusa', () => {
@@ -20,6 +20,12 @@ describe('motivoRecusa', () => {
     expect(motivoRecusa({ ...base, data: '2026-11-16', diaSemanaGrade: 1 }, agora)).toBe('Esse horário já passou.'))
   it('recusa bloqueio', () => expect(motivoRecusa({ ...base, bloqueado: true }, agora)).toBe('Não tem aula nesse horário.'))
   it('recusa duplicado', () => expect(motivoRecusa({ ...base, jaAgendado: true }, agora)).toBe('Você já está nesse horário.'))
+  it('recusa segundo treino no mesmo dia', () =>
+    expect(motivoRecusa({ ...base, jaTemNoDia: true }, agora)).toMatch(/um por dia/))
+  it('plano 3x aceita o terceiro dia e recusa o quarto', () => {
+    expect(motivoRecusa({ ...base, plano: '3x', agendadosNaSemana: 2 }, agora)).toBeNull()
+    expect(motivoRecusa({ ...base, plano: '3x', agendadosNaSemana: 3 }, agora)).toMatch(/3x/)
+  })
   it('recusa grade de outro dia da semana', () =>
     expect(motivoRecusa({ ...base, diaSemanaGrade: 4 }, agora)).toBe('Esse horário não existe nesse dia.'))
   it('recusa além da janela', () =>
