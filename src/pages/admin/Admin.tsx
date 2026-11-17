@@ -1,4 +1,4 @@
-// Painel do professor: abas fixas no topo (Agenda, Alunos, Grade, Professores).
+// Área administrativa: abas fixas no topo (Agenda, Alunos, Grade, Professores).
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { CalendarCheck, CalendarDays, Clock, Eye, LogOut, Shield, Users } from 'lucide-react'

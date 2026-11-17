@@ -40,15 +40,14 @@ export function Login() {
       </Link>
 
       <div className="flex flex-1 flex-col justify-center">
-        <div className="relative mx-auto grid h-52 w-full place-items-center">
-          <span aria-hidden className="faixa paralelo absolute top-1/2 left-1/2 h-16 w-[120%] -translate-x-1/2 -translate-y-1/2 -rotate-6 bg-ouro-9" />
-          <img src="/escudo.webp" alt="Rino Fight Team" className="escudo-login relative h-52 w-auto drop-shadow-[0_12px_24px_rgb(0_0_0/0.6)]" />
+        <div className="relative mx-auto grid h-40 w-full place-items-center">
+          <span aria-hidden className="faixa paralelo absolute top-1/2 left-1/2 h-12 w-[120%] -translate-x-1/2 -translate-y-1/2 -rotate-6 bg-ouro-9" />
+          <img src="/escudo.webp" alt="Rino Fight Team" className="escudo-login relative h-40 w-auto drop-shadow-[0_12px_24px_rgb(0_0_0/0.6)]" />
         </div>
 
-        <h1 className="entra font-display mt-8 -skew-x-6 text-center text-4xl leading-none uppercase">Área do professor</h1>
-        <p className="entra mt-2 text-center text-carvao-10">Grade, alunos e agenda da equipe.</p>
+        <h1 className="entra font-display mt-8 -skew-x-6 text-center text-4xl leading-none uppercase">Área administrativa</h1>
 
-        <form className="formulario mt-8" onSubmit={(e) => { e.preventDefault(); entrar.mutate() }}>
+        <form className="formulario mt-7" onSubmit={(e) => { e.preventDefault(); entrar.mutate() }}>
           <label htmlFor="senha" className="entra font-cond mb-1.5 block text-xs font-bold tracking-[0.16em] text-carvao-10 uppercase">Senha</label>
           <div className="entra flex h-14 items-center gap-3 rounded-[var(--radius)] bg-carvao-3 px-4 focus-within:ring-2 focus-within:ring-ouro-9">
             <Lock className="size-5 shrink-0 text-carvao-9" />
@@ -56,7 +55,6 @@ export function Login() {
               id="senha"
               type={ver ? 'text' : 'password'}
               autoComplete="current-password"
-              autoFocus
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               className="h-full min-w-0 flex-1 bg-transparent text-lg tracking-wide outline-none focus-visible:outline-none"
