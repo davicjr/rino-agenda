@@ -18,7 +18,7 @@ export type Horario = {
 }
 export type Dia = { data: string; bloqueioDia: string | null; professorDiaId: number | null; horarios: Horario[] }
 
-export type UsoSemana = { id: number; usados: number; limite: number }
+export type UsoSemana = { id: number; usados: number; limite: number; marcados: { data: string; hora: string }[] }
 export type Semana = { inicio: string; fim: string; alunos: UsoSemana[] }
 
 export async function chamar<T>(caminho: string, init?: RequestInit): Promise<T> {

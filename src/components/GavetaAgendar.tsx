@@ -4,7 +4,7 @@ import { Command } from 'cmdk'
 import { Search } from 'lucide-react'
 import type { Aluno, Horario, UsoSemana } from '@/lib/api'
 import { cn } from '@/lib/cn'
-import { horaCurta, nomeDia } from '@/lib/datas'
+import { horaCurta, nomeDia, nomeDiaCurto } from '@/lib/datas'
 import { Avatar } from '@/ui/Avatar'
 import { Botao } from '@/ui/Botao'
 import { Gaveta } from '@/ui/Gaveta'
@@ -86,7 +86,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
                   <Avatar nome={exibir(a)} tipo="aluno" id={a.id} foto={a.foto} className="size-9 text-sm" />
                   <span className="flex-1 truncate text-base">{exibir(a)}</span>
                   <span className="font-cond text-sm text-carvao-10 tabular-nums">
-                    {outra ? `já treina às ${horaCurta(outra)}` : cheia ? 'semana completa' : u ? `${u.usados}/${u.limite}` : ''}
+                    {outra ? `já treina às ${horaCurta(outra)}` : cheia ? 'semana completa' : u ? `${u.usados} de ${u.limite}` : ''}
                   </span>
                 </Command.Item>
               )
@@ -98,19 +98,25 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
   )
 }
 
-// Treinos da semana: os já usados em amarelo cheio e o que vai ser marcado agora contornado.
-function ProximoTreino({ usados, limite }: UsoSemana) {
+// Treinos da semana: os já marcados em amarelo cheio, o deste agendamento contornado,
+// e quais dias já estão marcados para a pessoa conferir.
+function ProximoTreino({ usados, limite, marcados }: UsoSemana) {
   return (
     <div className="mt-4 rounded-[var(--radius)] bg-carvao-3 p-4">
-      <p className="font-cond flex items-baseline justify-between text-sm font-bold tracking-wider uppercase">
-        <span className="text-carvao-10">Treinos desta semana</span>
-        <span className="font-display text-xl text-ouro-9 tabular-nums">{usados + 1}/{limite}</span>
+      <p className="font-cond flex items-baseline justify-between gap-3 text-sm font-bold tracking-wider uppercase">
+        <span className="text-carvao-10">Com este, nesta semana</span>
+        <span className="font-display text-xl text-ouro-9 tabular-nums">{usados + 1} de {limite}</span>
       </p>
       <div className="mt-2 flex gap-1">
         {Array.from({ length: limite }, (_, i) => (
           <span key={i} className={cn('h-2 flex-1 -skew-x-[20deg]', i < usados ? 'bg-ouro-9' : i === usados ? 'bg-ouro-9/35 ring-1 ring-ouro-9' : 'bg-carvao-5')} />
         ))}
       </div>
+      {marcados.length > 0 && (
+        <p className="mt-3 text-sm text-carvao-10">
+          Já marcado: <span className="text-carvao-12">{marcados.map((m) => `${nomeDiaCurto(m.data).toLowerCase()} ${horaCurta(m.hora)}`).join(', ')}</span>
+        </p>
+      )}
     </div>
   )
 }

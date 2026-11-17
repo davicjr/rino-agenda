@@ -53,7 +53,7 @@ export function Agenda() {
           vibrar([18, 40, 30])
           setPulsos((p) => ({ ...p, [h.id]: (p[h.id] ?? 0) + 1 }))
           const u = uso.get(aluno.id)
-          toast.success(`Fechado, ${(aluno.apelido || aluno.nome).split(' ')[0]}! Te vejo às ${horaCurta(h.hora)}.${u ? ` ${u.usados + 1}/${u.limite} nesta semana.` : ''}`)
+          toast.success(`Fechado, ${(aluno.apelido || aluno.nome).split(' ')[0]}! Te vejo às ${horaCurta(h.hora)}.${u ? ` ${u.usados + 1} de ${u.limite} nesta semana.` : ''}`)
         },
         onError: (e) => toast.error(e.message),
       },
@@ -77,7 +77,7 @@ export function Agenda() {
         acoes={
           <>
             {inicio.data && <IconeTopo rotulo="Abrir calendário" onClick={() => setCalendario(true)}><CalendarDays className="size-5" /></IconeTopo>}
-            <IconeTopo rotulo="Área do professor" para="/admin"><Lock className="size-5" /></IconeTopo>
+            <IconeTopo rotulo="Área administrativa" para="/admin"><Lock className="size-5" /></IconeTopo>
           </>
         }
       />
