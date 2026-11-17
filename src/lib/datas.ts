@@ -29,3 +29,12 @@ export const horaCurta = (hora: string) => (hora.endsWith(':00') ? `${Number(hor
 
 export const iniciais = (nome: string) =>
   nome.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase()
+
+const MESES_LONGOS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
+export const nomeMes = (data: string) => MESES_LONGOS[utc(data).getUTCMonth()]
+export const primeiroDoMes = (data: string) => `${data.slice(0, 8)}01`
+export function somarMeses(data: string, meses: number) {
+  const d = utc(primeiroDoMes(data))
+  d.setUTCMonth(d.getUTCMonth() + meses)
+  return d.toISOString().slice(0, 10)
+}

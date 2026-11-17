@@ -35,5 +35,5 @@ npm test
    - build: `npm run build`
    - saída: `dist`
 3. Definir a senha do painel (fica só no Cloudflare):
-   - `npx wrangler pages secret put ADMIN_SENHA --project-name rino-agenda`
+   - `npx wrangler pages secret put ADMIN_SENHA --project-name rinoft`
    - fazer um novo deploy para ela valer

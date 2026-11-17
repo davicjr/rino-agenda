@@ -1,12 +1,13 @@
 // Tela pública: escolher o dia, ver quem vai e agendar ou retirar.
 import { useMemo, useState } from 'react'
+import { CalendarDays } from 'lucide-react'
 import { toast } from 'sonner'
 import { Cabecalho } from '@/components/Cabecalho'
-import { BotaoCalendario } from '@/components/BotaoCalendario'
+import { GavetaCalendario } from '@/components/GavetaCalendario'
 import { SemanaDias } from '@/components/SemanaDias'
 import { GavetaAgendar } from '@/components/GavetaAgendar'
 import { GavetaRetirar } from '@/components/GavetaRetirar'
-import { Textura } from '@/components/Textura'
+import { FundoMarca } from '@/components/FundoMarca'
 import { TituloDia } from '@/components/TituloDia'
 import { useAgendar, useDia, useInicio, useRetirar } from '@/hooks/useAgenda'
 import { useMeuAluno } from '@/hooks/useMeuAluno'
@@ -15,7 +16,7 @@ import { horaCurta, somarDias } from '@/lib/datas'
 import { vibrar } from '@/lib/impacto'
 import { primeiroDia } from '@/lib/primeiroDia'
 import { EstadoDia } from '@/components/EstadoDia'
-import { ListaHorarios } from '@/components/ListaHorarios'
+import { SessaoDia } from '@/components/SessaoDia'
 
 export function Agenda() {
   const inicio = useInicio()
@@ -30,6 +31,7 @@ export function Agenda() {
   const [meuId, lembrar] = useMeuAluno()
   const [agendarEm, setAgendarEm] = useState<Horario | null>(null)
   const [retirar, setRetirar] = useState<{ agendado: Agendado; horario: Horario } | null>(null)
+  const [calendario, setCalendario] = useState(false)
   const [pulsos, setPulsos] = useState<Record<number, number>>({})
   const agendar = useAgendar(data ?? '')
   const tirar = useRetirar(data ?? '')
@@ -64,16 +66,13 @@ export function Agenda() {
 
   return (
     <main className="relative mx-auto min-h-dvh max-w-lg overflow-x-clip pb-16">
-      <Textura className="top-[5.5rem] -right-28 h-52 w-[26rem] opacity-70" />
+      <FundoMarca />
       <Cabecalho
         acoes={
-          inicio.data && data && (
-            <BotaoCalendario
-              valor={data}
-              min={somarDias(inicio.data.agora.data, -28)}
-              max={somarDias(inicio.data.agora.data, inicio.data.janelaDias)}
-              onEscolher={setEscolhido}
-            />
+          inicio.data && (
+            <button onClick={() => setCalendario(true)} aria-label="Abrir calendário" className="grid size-11 shrink-0 place-items-center text-carvao-11 active:text-carvao-12">
+              <CalendarDays className="size-5" />
+            </button>
           )
         }
       />
@@ -96,10 +95,10 @@ export function Agenda() {
       <section className={`relative z-10 mt-5 space-y-3 px-5 transition-opacity duration-200 ${dia.isPlaceholderData ? 'opacity-40' : ''}`}>
         <EstadoDia carregando={inicio.isPending || dia.isPending} erro={inicio.error ?? dia.error} dia={dia.data} />
         {dia.data && data && !dia.data.bloqueioDia && (
-          <ListaHorarios
-            data={dia.data.data}
-            direcao={direcao}
+          <SessaoDia
+            key={dia.data.data}
             horarios={dia.data.horarios}
+            direcaoDia={direcao}
             pulsos={pulsos}
             onAgendar={setAgendarEm}
             onTocarNome={(agendado, horario) => setRetirar({ agendado, horario })}
@@ -123,6 +122,20 @@ export function Agenda() {
         />
       )}
       <GavetaRetirar alvo={retirar} enviando={tirar.isPending} onFechar={() => setRetirar(null)} onConfirmar={confirmarRetirada} />
+      {inicio.data && data && (
+        <GavetaCalendario
+          key={calendario ? 'aberta' : 'fechada'}
+          aberta={calendario}
+          hoje={inicio.data.agora.data}
+          selecionado={data}
+          diasComAula={diasComAula}
+          bloqueados={bloqueados}
+          min={somarDias(inicio.data.agora.data, -28)}
+          max={somarDias(inicio.data.agora.data, inicio.data.janelaDias)}
+          onFechar={() => setCalendario(false)}
+          onEscolher={(d) => { setEscolhido(d); setCalendario(false) }}
+        />
+      )}
     </main>
   )
 }

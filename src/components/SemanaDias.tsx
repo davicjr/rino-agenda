@@ -6,6 +6,7 @@ import { useGSAP } from '@gsap/react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { diaDoMes, diaSemana, mesCurto, nomeDiaCurto, somarDias } from '@/lib/datas'
+import { estiloDia, estiloNumero } from '@/lib/estiloDia'
 import { reduzirMovimento } from '@/lib/impacto'
 
 type Props = {
@@ -93,13 +94,9 @@ export function SemanaDias({ hoje, selecionado, onSelecionar, diasComAula, bloqu
               onClick={() => onSelecionar(d)}
               aria-pressed={sel}
               aria-label={`${nomeDiaCurto(d)} ${diaDoMes(d)}${d === hoje ? ', hoje' : ''}${bloq ? ', sem aula' : !tem ? ', folga' : ''}`}
-              className={cn(
-                'paralelo relative flex h-12 flex-col items-center justify-center transition-colors duration-300 disabled:opacity-30',
-                d < hoje && !sel && 'opacity-60',
-                sel ? 'bg-transparent text-preto' : bloq ? 'bg-alerta-3 text-alerta-11 active:bg-alerta-4' : tem ? 'bg-carvao-3 text-carvao-12 active:bg-carvao-4' : 'bg-carvao-2 text-carvao-8',
-              )}
+              className={cn(estiloDia({ sel, bloq, tem, passado: d < hoje }), 'h-12', sel && 'bg-transparent')}
             >
-              <span className={cn('numero font-display text-xl leading-tight', !tem && !bloq && !sel && 'line-through decoration-2')}>{diaDoMes(d)}</span>
+              <span className={cn('numero text-xl', estiloNumero({ sel, bloq, tem, passado: false }))}>{diaDoMes(d)}</span>
               {d === hoje && <span className={cn('absolute bottom-1 size-1 rounded-full', sel ? 'bg-preto' : 'bg-ouro-9')} />}
             </button>
           )
