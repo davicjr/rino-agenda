@@ -1,8 +1,9 @@
 // Tela pública: escolher o dia, ver quem vai e agendar ou retirar.
 import { useMemo, useState } from 'react'
-import { CalendarDays } from 'lucide-react'
+import { CalendarDays, Lock } from 'lucide-react'
 import { toast } from 'sonner'
 import { Cabecalho } from '@/components/Cabecalho'
+import { IconeTopo } from '@/ui/IconeTopo'
 import { GavetaCalendario } from '@/components/GavetaCalendario'
 import { SemanaDias } from '@/components/SemanaDias'
 import { GavetaAgendar } from '@/components/GavetaAgendar'
@@ -71,12 +72,13 @@ export function Agenda() {
     <main className="relative mx-auto flex h-dvh max-w-lg flex-col overflow-hidden">
       <FundoMarca />
       <Cabecalho
+        titulo="Rino Fight Team"
+        subtitulo="Muay Thai · Agenda"
         acoes={
-          inicio.data && (
-            <button onClick={() => setCalendario(true)} aria-label="Abrir calendário" className="grid size-11 shrink-0 place-items-center text-carvao-11 active:text-carvao-12">
-              <CalendarDays className="size-5" />
-            </button>
-          )
+          <>
+            {inicio.data && <IconeTopo rotulo="Abrir calendário" onClick={() => setCalendario(true)}><CalendarDays className="size-5" /></IconeTopo>}
+            <IconeTopo rotulo="Área do professor" para="/admin"><Lock className="size-5" /></IconeTopo>
+          </>
         }
       />
       {inicio.data && data && (

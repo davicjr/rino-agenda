@@ -13,10 +13,9 @@ import { SeletorProfessor } from '@/ui/SeletorProfessor'
 import { GavetaBloqueio } from './gavetas/GavetaBloqueio'
 import { LinhaAula } from './LinhaAula'
 
-export function AbaAgenda() {
+export function AbaAgenda({ escolhido, setData }: { escolhido: string | null; setData: (d: string) => void }) {
   const inicio = useInicio()
   const hoje = inicio.data?.agora.data
-  const [escolhido, setData] = useState<string | null>(null)
   const data = escolhido ?? hoje ?? null
   const [aberta, setAberta] = useState<number | null>(null)
   const [bloquearEm, setBloquearEm] = useState<{ gradeId: number | null; titulo: string } | null>(null)

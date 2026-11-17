@@ -1,8 +1,13 @@
 // Painel do professor: abas fixas no topo (Agenda, Alunos, Grade, Professores).
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CalendarCheck, Clock, Eye, LogOut, Shield, Users } from 'lucide-react'
-import { Link } from 'react-router'
+import { CalendarCheck, CalendarDays, Clock, Eye, LogOut, Shield, Users } from 'lucide-react'
+import { Cabecalho } from '@/components/Cabecalho'
+import { GavetaCalendario } from '@/components/GavetaCalendario'
+import { useInicio } from '@/hooks/useAgenda'
+import { admin } from '@/lib/apiAdmin'
+import { somarDias } from '@/lib/datas'
+import { IconeTopo } from '@/ui/IconeTopo'
 import { sessao } from '@/lib/apiAdmin'
 import { cn } from '@/lib/cn'
 import { AbaAgenda } from './AbaAgenda'
@@ -28,21 +33,30 @@ export function Admin() {
 
 function Painel() {
   const [aba, setAba] = useState<Aba>('agenda')
+  const [dataAgenda, setDataAgenda] = useState<string | null>(null)
+  const [calendario, setCalendario] = useState(false)
   const qc = useQueryClient()
+  const inicio = useInicio()
+  const bloqueios = useQuery({ queryKey: ['bloqueios'], queryFn: admin.bloqueios })
+  const diasComAula = useMemo(() => new Set(inicio.data?.grade.map((g) => g.dia_semana)), [inicio.data])
+  const bloqueados = useMemo(() => new Set(bloqueios.data?.filter((b) => b.grade_id === null).map((b) => b.data)), [bloqueios.data])
   const sair = useMutation({ mutationFn: sessao.sair, onSuccess: () => qc.invalidateQueries({ queryKey: ['sessao'] }) })
+  const hoje = inicio.data?.agora.data
   return (
     <div className="mx-auto min-h-dvh max-w-lg pb-20">
-      <div className="sticky top-0 z-30 bg-carvao-1/95 px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-3 backdrop-blur">
-        <header className="flex h-12 items-center gap-3">
-          <img src="/escudo.webp" alt="" className="h-12 w-auto" />
-          <div className="flex-1 leading-none">
-            <h1 className="font-display text-[1.5rem] tracking-wide uppercase">Painel</h1>
-            <p className="font-cond mt-1 text-sm font-semibold tracking-[0.18em] text-carvao-11 uppercase">Rino Fight Team</p>
-          </div>
-          <Link to="/" aria-label="Ver agenda pública" className="grid size-11 place-items-center text-carvao-11"><Eye className="size-5" /></Link>
-          <button onClick={() => sair.mutate()} aria-label="Sair" className="grid size-11 place-items-center text-carvao-11"><LogOut className="size-5" /></button>
-        </header>
-        <nav role="tablist" className="mt-3 grid grid-cols-4 gap-1.5">
+      <div className="sticky top-0 z-30 bg-carvao-1/95 pb-3 backdrop-blur">
+        <Cabecalho
+          titulo="Admin"
+          subtitulo="Rino Fight Team"
+          acoes={
+            <>
+              {aba === 'agenda' && hoje && <IconeTopo rotulo="Abrir calendário" onClick={() => setCalendario(true)}><CalendarDays className="size-5" /></IconeTopo>}
+              <IconeTopo rotulo="Ver agenda pública" para="/"><Eye className="size-5" /></IconeTopo>
+              <IconeTopo rotulo="Sair" onClick={() => sair.mutate()}><LogOut className="size-5" /></IconeTopo>
+            </>
+          }
+        />
+        <nav role="tablist" className="mt-3 grid grid-cols-4 gap-1.5 px-5">
           {ABAS.map(({ id, rotulo, Icone }) => (
             <button
               key={id}
@@ -61,11 +75,25 @@ function Painel() {
         </nav>
       </div>
       <section key={aba} className="animate-surge px-5 pt-3">
-        {aba === 'agenda' && <AbaAgenda />}
+        {aba === 'agenda' && <AbaAgenda escolhido={dataAgenda} setData={setDataAgenda} />}
         {aba === 'alunos' && <AbaAlunos />}
         {aba === 'grade' && <AbaGrade />}
         {aba === 'professores' && <AbaProfessores />}
       </section>
+      {hoje && (
+        <GavetaCalendario
+          key={calendario ? 'aberta' : 'fechada'}
+          aberta={calendario}
+          hoje={hoje}
+          selecionado={dataAgenda ?? hoje}
+          diasComAula={diasComAula}
+          bloqueados={bloqueados}
+          min={somarDias(hoje, -365)}
+          max={somarDias(hoje, 365)}
+          onFechar={() => setCalendario(false)}
+          onEscolher={(d) => { setDataAgenda(d); setCalendario(false) }}
+        />
+      )}
     </div>
   )
 }

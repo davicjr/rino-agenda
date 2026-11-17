@@ -1,14 +1,13 @@
-// Marca no topo: escudo, nome da equipe, ações (calendário) e o cadeado do painel. O escudo cai no lugar ao abrir o app.
-import { useRef } from 'react'
+// Topo padrão da agenda e do admin: escudo, título, subtítulo e os ícones à direita.
+// O escudo cai no lugar ao abrir.
+import { useRef, type ReactNode } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { Lock } from 'lucide-react'
-import { Link } from 'react-router'
 import { reduzirMovimento } from '@/lib/impacto'
 
-import type { ReactNode } from 'react'
+type Props = { titulo: string; subtitulo: string; acoes?: ReactNode }
 
-export function Cabecalho({ acoes }: { acoes?: ReactNode }) {
+export function Cabecalho({ titulo, subtitulo, acoes }: Props) {
   const ref = useRef<HTMLElement>(null)
   useGSAP(
     () => {
@@ -21,17 +20,12 @@ export function Cabecalho({ acoes }: { acoes?: ReactNode }) {
   )
   return (
     <header ref={ref} className="relative z-10 flex shrink-0 items-center gap-3 px-5 pt-[max(env(safe-area-inset-top),0.75rem)]">
-      <img src="/escudo.webp" alt="" width={39} height={56} className="escudo h-12 w-auto shrink-0" />
+      <img src="/escudo.webp" alt="" width={33} height={48} className="escudo h-12 w-auto shrink-0" />
       <div className="marca min-w-0 flex-1 leading-none">
-        <p className="font-display text-[1.5rem] tracking-wide uppercase">Rino Fight Team</p>
-        <p className="font-cond mt-1 text-sm font-semibold tracking-[0.18em] text-carvao-11 uppercase">
-          Muay Thai · Agenda
-        </p>
+        <p className="font-display truncate text-[1.5rem] tracking-wide uppercase">{titulo}</p>
+        <p className="font-cond mt-1 truncate text-sm font-semibold tracking-[0.18em] text-carvao-11 uppercase">{subtitulo}</p>
       </div>
-      {acoes}
-      <Link to="/admin" aria-label="Painel do professor" className="-mr-2 grid size-11 shrink-0 place-items-center text-carvao-8 active:text-carvao-12">
-        <Lock className="size-5" />
-      </Link>
+      <div className="-mr-2.5 flex shrink-0 items-center">{acoes}</div>
     </header>
   )
 }
