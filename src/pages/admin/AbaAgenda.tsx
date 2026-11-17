@@ -31,6 +31,7 @@ export function AbaAgenda() {
   const escalar = useAcao((v: { gradeId: number | null; professorId: number | null }) => admin.escalar(data!, v.gradeId, v.professorId), K, 'Professor definido.')
   const bloquear = useAcao((v: { gradeId: number | null; motivo: string }) => admin.bloquear(data!, v.gradeId, v.motivo), K, 'Bloqueado.')
   const desbloquear = useAcao(admin.desbloquear, K, 'Desbloqueado.')
+  const diasBloqueados = useMemo(() => new Set(bloqueios.data?.filter((b) => b.grade_id === null).map((b) => b.data)), [bloqueios.data])
   const bloqueioDe = (gradeId: number | null) => bloqueios.data?.find((b) => b.data === data && b.grade_id === gradeId)
 
   if (!hoje || !data) return null
@@ -39,7 +40,7 @@ export function AbaAgenda() {
   return (
     <div className="space-y-5">
       <div className="-mx-5">
-        <FaixaDias hoje={hoje} desde={somarDias(hoje, -7)} dias={29} diasComAula={diasComAula} selecionado={data} onSelecionar={(d) => { setData(d); setAberta(null) }} onCalendario={() => setCalendario(true)} />
+        <FaixaDias hoje={hoje} desde={somarDias(hoje, -7)} dias={29} diasComAula={diasComAula} bloqueados={diasBloqueados} selecionado={data} onSelecionar={(d) => { setData(d); setAberta(null) }} onCalendario={() => setCalendario(true)} />
       </div>
 
       <div className="flex items-end justify-between gap-3">
@@ -47,7 +48,7 @@ export function AbaAgenda() {
           {nomeDia(data)} <span className="text-ouro-9">{diaDoMes(data)} {mesCurto(data)}</span>
         </h2>
         {bDia ? (
-          <button onClick={() => desbloquear.mutate(bDia.id)} className="flex h-11 items-center gap-1.5 text-sm font-semibold text-ouro-11"><LockOpen className="size-4" /> Liberar dia</button>
+          <button onClick={() => desbloquear.mutate(bDia.id)} className="flex h-11 items-center gap-1.5 text-sm font-semibold text-alerta-11"><LockOpen className="size-4" /> Liberar dia</button>
         ) : dia.data?.horarios.length ? (
           <button onClick={() => setBloquearEm({ gradeId: null, titulo: `${nomeDia(data)}, dia inteiro` })} className="flex h-11 items-center gap-1.5 text-sm font-semibold text-carvao-11"><Lock className="size-4" /> Bloquear dia</button>
         ) : null}
@@ -61,7 +62,11 @@ export function AbaAgenda() {
       ) : null}
 
       {dia.data && !dia.data.horarios.length && <p className="rounded-[var(--radius-lg)] bg-carvao-2 p-5 text-carvao-10">Sem aula na grade neste dia.</p>}
-      {bDia && <p className="rounded-[var(--radius-lg)] bg-ouro-2 p-4 text-ouro-12">Dia bloqueado: {bDia.motivo || 'sem aula'}</p>}
+      {bDia && (
+        <p className="flex items-center gap-2 rounded-[var(--radius-lg)] bg-alerta-3 p-4 font-semibold text-alerta-12">
+          <Lock className="size-5 text-alerta-11" /> Dia bloqueado: {bDia.motivo || 'sem aula'}
+        </p>
+      )}
 
       <ul className="space-y-2">
         {dia.data?.horarios.map((h) => {

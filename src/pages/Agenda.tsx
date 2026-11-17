@@ -35,6 +35,7 @@ export function Agenda() {
   const agendar = useAgendar(data ?? '')
   const tirar = useRetirar(data ?? '')
   const diasComAula = useMemo(() => new Set(inicio.data?.grade.map((g) => g.dia_semana)), [inicio.data])
+  const bloqueados = useMemo(() => new Set(inicio.data?.bloqueiosDia.map((b) => b.data)), [inicio.data])
 
   const confirmar = (aluno: Aluno) => {
     if (!agendarEm) return
@@ -74,6 +75,7 @@ export function Agenda() {
             hoje={inicio.data.agora.data}
             dias={15}
             diasComAula={diasComAula}
+            bloqueados={bloqueados}
             selecionado={data}
             onSelecionar={setEscolhido}
             onCalendario={() => setCalendario(true)}
@@ -83,7 +85,7 @@ export function Agenda() {
       )}
       <section className={`relative z-10 mt-5 space-y-3 px-5 transition-opacity duration-200 ${dia.isPlaceholderData ? 'opacity-40' : ''}`}>
         <EstadoDia carregando={inicio.isPending || dia.isPending} erro={inicio.error ?? dia.error} dia={dia.data} />
-        {dia.data && data && (
+        {dia.data && data && !dia.data.bloqueioDia && (
           <ListaHorarios
             data={dia.data.data}
             direcao={direcao}
@@ -103,6 +105,7 @@ export function Agenda() {
         <GavetaAgendar
           horario={agendarEm}
           data={data}
+          doDia={dia.data?.horarios ?? []}
           alunos={inicio.data?.alunos ?? []}
           meuId={meuId}
           enviando={agendar.isPending}

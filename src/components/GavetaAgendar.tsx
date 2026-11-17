@@ -10,6 +10,7 @@ import { Gaveta } from '@/ui/Gaveta'
 type Props = {
   horario: Horario | null
   data: string
+  doDia: Horario[]
   alunos: Aluno[]
   meuId: number | null
   enviando: boolean
@@ -19,11 +20,12 @@ type Props = {
 
 const exibir = (a: Aluno) => a.apelido || a.nome
 
-export function GavetaAgendar({ horario, data, alunos, meuId, enviando, onFechar, onConfirmar }: Props) {
+export function GavetaAgendar({ horario, data, doDia, alunos, meuId, enviando, onFechar, onConfirmar }: Props) {
   const [escolhido, setEscolhido] = useState<Aluno | null>(null)
-  const ja = new Set(horario?.agendados.map((a) => a.aluno_id))
-  const livres = alunos.filter((a) => !ja.has(a.id))
-  const eu = livres.find((a) => a.id === meuId)
+  // Um treino por dia: quem já está em outro horário do dia aparece, mas desabilitado.
+  const horaNoDia = new Map(doDia.flatMap((h) => h.agendados.map((a) => [a.aluno_id, h.hora] as const)))
+  const livres = alunos.filter((a) => !horario?.agendados.some((x) => x.aluno_id === a.id))
+  const eu = livres.find((a) => a.id === meuId && !horaNoDia.has(a.id))
   const fechar = () => { setEscolhido(null); onFechar() }
 
   return (
@@ -63,17 +65,22 @@ export function GavetaAgendar({ horario, data, alunos, meuId, enviando, onFechar
             <Command.Empty className="py-6 text-center text-carvao-10">
               {alunos.length ? 'Nome não encontrado. Fala com o professor.' : 'Ainda não tem aluno cadastrado. Fala com o professor.'}
             </Command.Empty>
-            {livres.map((a) => (
-              <Command.Item
-                key={a.id}
-                value={`${a.nome} ${a.apelido ?? ''}`}
-                onSelect={() => setEscolhido(a)}
-                className="flex h-13 cursor-pointer items-center gap-3 rounded-[var(--radius)] px-2 data-[selected=true]:bg-carvao-4"
-              >
-                <span className="font-cond grid size-9 place-items-center rounded-full bg-carvao-5 text-sm font-bold">{iniciais(exibir(a))}</span>
-                <span className="text-base">{exibir(a)}</span>
-              </Command.Item>
-            ))}
+            {livres.map((a) => {
+              const outra = horaNoDia.get(a.id)
+              return (
+                <Command.Item
+                  key={a.id}
+                  value={`${a.nome} ${a.apelido ?? ''}`}
+                  disabled={!!outra}
+                  onSelect={() => setEscolhido(a)}
+                  className="flex h-13 cursor-pointer items-center gap-3 rounded-[var(--radius)] px-2 data-[disabled=true]:cursor-default data-[disabled=true]:opacity-45 data-[selected=true]:bg-carvao-4"
+                >
+                  <span className="font-cond grid size-9 place-items-center rounded-full bg-carvao-5 text-sm font-bold">{iniciais(exibir(a))}</span>
+                  <span className="flex-1 text-base">{exibir(a)}</span>
+                  {outra && <span className="font-cond text-sm text-carvao-10">já treina às {horaCurta(outra)}</span>}
+                </Command.Item>
+              )
+            })}
           </Command.List>
         </Command>
       )}

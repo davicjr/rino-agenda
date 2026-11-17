@@ -1,5 +1,7 @@
 // Carregando, erro, dia bloqueado e dia sem treino.
+import { Lock } from 'lucide-react'
 import type { Dia } from '@/lib/api'
+import { cn } from '@/lib/cn'
 
 export function EstadoDia({ carregando, erro, dia }: { carregando: boolean; erro: Error | null; dia?: Dia }) {
   if (erro) return <Aviso titulo="Sem conexão" texto="Não deu para carregar a agenda. Puxe para atualizar ou tente daqui a pouco." />
@@ -11,16 +13,17 @@ export function EstadoDia({ carregando, erro, dia }: { carregando: boolean; erro
     )
   }
   if (!dia) return null
-  if (dia.bloqueioDia) return <Aviso titulo={dia.bloqueioDia} texto="Não tem treino neste dia." />
+  if (dia.bloqueioDia) return <Aviso titulo={dia.bloqueioDia} texto="Não tem treino neste dia." bloqueio />
   if (!dia.horarios.length) return <Aviso titulo="Dia de folga" texto="Sem treino na grade. Descansa que amanhã tem." />
   return null
 }
 
-function Aviso({ titulo, texto }: { titulo: string; texto: string }) {
+function Aviso({ titulo, texto, bloqueio = false }: { titulo: string; texto: string; bloqueio?: boolean }) {
   return (
-    <div className="corte bg-carvao-2 p-6">
-      <p className="font-display text-3xl uppercase">{titulo}</p>
-      <p className="mt-2 text-carvao-11">{texto}</p>
+    <div className={cn('corte p-6', bloqueio ? 'bg-alerta-3' : 'bg-carvao-2')}>
+      {bloqueio && <Lock className="mb-3 size-6 text-alerta-11" />}
+      <p className={cn('font-display text-3xl uppercase', bloqueio && 'text-alerta-12')}>{titulo}</p>
+      <p className={cn('mt-2', bloqueio ? 'text-alerta-11' : 'text-carvao-11')}>{texto}</p>
     </div>
   )
 }

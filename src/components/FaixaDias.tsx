@@ -8,9 +8,9 @@ import { cn } from '@/lib/cn'
 import { diaDoMes, diaSemana, nomeDiaCurto, somarDias } from '@/lib/datas'
 import { reduzirMovimento } from '@/lib/impacto'
 
-type Props = { hoje: string; desde?: string; dias: number; diasComAula: Set<number>; selecionado: string; onSelecionar: (d: string) => void; onCalendario: () => void }
+type Props = { hoje: string; desde?: string; dias: number; diasComAula: Set<number>; bloqueados?: Set<string>; selecionado: string; onSelecionar: (d: string) => void; onCalendario: () => void }
 
-export function FaixaDias({ hoje, desde, dias, diasComAula, selecionado, onSelecionar, onCalendario }: Props) {
+export function FaixaDias({ hoje, desde, dias, diasComAula, bloqueados, selecionado, onSelecionar, onCalendario }: Props) {
   const lista = Array.from({ length: dias }, (_, i) => somarDias(desde ?? hoje, i))
   const trilho = useRef<HTMLDivElement>(null)
   const indicador = useRef<HTMLSpanElement>(null)
@@ -42,7 +42,8 @@ export function FaixaDias({ hoje, desde, dias, diasComAula, selecionado, onSelec
       <div ref={trilho} className="sem-barra relative flex snap-x snap-mandatory gap-1.5 overflow-x-auto scroll-px-5 px-5 pb-1">
         <span ref={indicador} aria-hidden className="paralelo pointer-events-none absolute top-0 left-0 h-16 w-14 bg-ouro-9 opacity-0" />
         {lista.map((d) => {
-          const tem = diasComAula.has(diaSemana(d))
+          const bloq = bloqueados?.has(d) ?? false
+          const tem = diasComAula.has(diaSemana(d)) && !bloq
           const sel = d === selecionado
           return (
             <button
@@ -50,14 +51,14 @@ export function FaixaDias({ hoje, desde, dias, diasComAula, selecionado, onSelec
               data-dia={d}
               onClick={() => onSelecionar(d)}
               aria-pressed={sel}
-              aria-label={tem ? undefined : `${nomeDiaCurto(d)} ${diaDoMes(d)}, folga`}
+              aria-label={bloq ? `${nomeDiaCurto(d)} ${diaDoMes(d)}, sem aula` : tem ? undefined : `${nomeDiaCurto(d)} ${diaDoMes(d)}, folga`}
               className={cn(
                 'paralelo relative flex h-16 w-14 shrink-0 snap-start flex-col items-center justify-center transition-colors duration-300',
-                sel ? 'bg-transparent text-preto' : tem ? 'bg-carvao-3 text-carvao-12 active:bg-carvao-4' : 'bg-carvao-2 text-carvao-8',
+                sel ? 'bg-transparent text-preto' : bloq ? 'bg-alerta-3 text-alerta-11 active:bg-alerta-4' : tem ? 'bg-carvao-3 text-carvao-12 active:bg-carvao-4' : 'bg-carvao-2 text-carvao-8',
               )}
             >
               <span className="font-cond text-xs font-semibold tracking-widest">{d === hoje ? 'HOJE' : nomeDiaCurto(d)}</span>
-              <span className={cn('numero font-display text-2xl leading-tight', !tem && !sel && 'line-through decoration-2')}>{diaDoMes(d)}</span>
+              <span className={cn('numero font-display text-2xl leading-tight', !tem && !bloq && !sel && 'line-through decoration-2')}>{diaDoMes(d)}</span>
             </button>
           )
         })}

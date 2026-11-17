@@ -20,12 +20,13 @@ type Props = {
 export function LinhaAula({ h, aberta, onAlternar, onRemover, onEscalar, onBloquear, onDesbloquear }: Props) {
   const lotado = h.agendados.length >= h.vagas
   return (
-    <li className="overflow-hidden rounded-[var(--radius-lg)] bg-carvao-2">
-      <button onClick={onAlternar} aria-expanded={aberta} className="flex min-h-18 w-full items-center gap-4 px-4 py-3 text-left active:bg-carvao-3">
+    <li className={cn('overflow-hidden rounded-[var(--radius-lg)]', h.bloqueio ? 'bg-alerta-3' : 'bg-carvao-2')}>
+      <button onClick={onAlternar} aria-expanded={aberta} className={cn('flex min-h-18 w-full items-center gap-4 px-4 py-3 text-left', h.bloqueio ? 'active:bg-alerta-4' : 'active:bg-carvao-3')}>
         <span className="font-display w-14 text-3xl">{horaCurta(h.hora)}</span>
         <span className="min-w-0 flex-1">
-          <span className={cn('block font-semibold', lotado && 'text-ouro-11')}>
-            {h.bloqueio ? h.bloqueio : `${h.agendados.length} de ${h.vagas}${lotado ? ' · lotado' : ''}`}
+          <span className={cn('flex items-center gap-1.5 font-semibold', lotado && 'text-ouro-11', h.bloqueio && 'text-alerta-12')}>
+            {h.bloqueio && <Lock className="size-4 text-alerta-11" />}
+            {h.bloqueio ? `Bloqueado · ${h.bloqueio}` : `${h.agendados.length} de ${h.vagas}${lotado ? ' · lotado' : ''}`}
           </span>
           <span className="block truncate text-sm text-carvao-10">{h.professor ? `Prof. ${h.professor.nome}` : 'Sem professor definido'}</span>
         </span>
@@ -33,7 +34,7 @@ export function LinhaAula({ h, aberta, onAlternar, onRemover, onEscalar, onBloqu
       </button>
       <div className={cn('grid transition-[grid-template-rows] duration-300 ease-[var(--ease-saida)]', aberta ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]')}>
         <div className="min-h-0">
-          <div className="space-y-4 border-t border-carvao-4 px-4 pt-4 pb-4">
+          <div className={cn('space-y-4 border-t px-4 pt-4 pb-4', h.bloqueio ? 'border-alerta-4' : 'border-carvao-4')}>
             <div>
               <Rotulo htmlFor={`prof-${h.id}`}>Professor desta aula</Rotulo>
               <SeletorProfessor id={`prof-${h.id}`} valor={h.professorHorarioId} nenhum="Igual ao do dia" onMudar={onEscalar} className="w-full" />
@@ -57,7 +58,7 @@ export function LinhaAula({ h, aberta, onAlternar, onRemover, onEscalar, onBloqu
               )}
             </div>
             {onDesbloquear ? (
-              <button onClick={onDesbloquear} className="flex h-11 items-center gap-2 text-sm font-semibold text-ouro-11"><LockOpen className="size-4" /> Desbloquear horário</button>
+              <button onClick={onDesbloquear} className="flex h-11 items-center gap-2 text-sm font-semibold text-alerta-12"><LockOpen className="size-4" /> Desbloquear horário</button>
             ) : !h.bloqueio && (
               <button onClick={onBloquear} className="flex h-11 items-center gap-2 text-sm font-semibold text-carvao-11"><Lock className="size-4" /> Bloquear horário</button>
             )}

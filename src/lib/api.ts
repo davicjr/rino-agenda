@@ -2,7 +2,8 @@
 export type Aluno = { id: number; nome: string; apelido: string | null }
 export type GradeItem = { id: number; dia_semana: number; hora: string; vagas: number }
 export type Agora = { data: string; minutos: number }
-export type Inicio = { agora: Agora; janelaDias: number; grade: GradeItem[]; alunos: Aluno[] }
+export type BloqueioDia = { data: string; motivo: string | null }
+export type Inicio = { agora: Agora; janelaDias: number; grade: GradeItem[]; alunos: Aluno[]; bloqueiosDia: BloqueioDia[] }
 export type Agendado = { id: number; aluno_id: number; nome: string }
 export type Professor = { id: number; nome: string }
 export type Horario = {
