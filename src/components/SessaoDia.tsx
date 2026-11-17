@@ -41,7 +41,7 @@ export function SessaoDia({ horarios, direcaoDia, pulsos, onAgendar, onTocarNome
 
   if (!atual) return null
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <AbasHorarios horarios={horarios} selecionado={atual.id} onSelecionar={escolher} />
       <div ref={palco}>
         <CardAula horario={atual} pulso={pulsos[atual.id] ?? 0} onAgendar={onAgendar} onTocarNome={onTocarNome} />

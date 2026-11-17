@@ -79,7 +79,7 @@ export function Agenda() {
       {inicio.data && data && (
         <>
           <TituloDia data={data} hoje={inicio.data.agora.data} direcao={direcao} />
-          <div className="mt-5">
+          <div className="mt-1">
             <SemanaDias
               hoje={inicio.data.agora.data}
               selecionado={data}
