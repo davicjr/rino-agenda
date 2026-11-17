@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { agoraBahia, aulaNoFuturo, motivoRecusa, semanaDe, type PedidoAgendamento } from '../functions/_lib/regras'
+import { agoraBahia, aulaNoFuturo, limiteDaSemana, motivoRecusa, semanaDe, type PedidoAgendamento } from '../functions/_lib/regras'
 
 // Terça, 2026-11-17, 10:00 em Salvador.
 const agora = { data: '2026-11-17', minutos: 10 * 60 }
@@ -40,9 +40,10 @@ describe('motivoRecusa', () => {
 })
 
 describe('datas', () => {
-  it('semana vai de segunda a domingo', () => {
-    expect(semanaDe('2026-11-17')).toEqual({ inicio: '2026-11-16', fim: '2026-11-22' })
-    expect(semanaDe('2026-11-22')).toEqual({ inicio: '2026-11-16', fim: '2026-11-22' })
+  it('semana vai de domingo a sábado', () => {
+    expect(semanaDe('2026-11-17')).toEqual({ inicio: '2026-11-15', fim: '2026-11-21' })
+    expect(semanaDe('2026-11-15')).toEqual({ inicio: '2026-11-15', fim: '2026-11-21' })
+    expect(semanaDe('2026-11-21')).toEqual({ inicio: '2026-11-15', fim: '2026-11-21' })
   })
   it('converte UTC para Bahia', () => {
     expect(agoraBahia(Date.UTC(2026, 10, 18, 2, 30))).toEqual({ data: '2026-11-17', minutos: 23 * 60 + 30 })
@@ -51,4 +52,13 @@ describe('datas', () => {
     expect(aulaNoFuturo('2026-11-17', '10:00', agora)).toBe(false)
     expect(aulaNoFuturo('2026-11-17', '10:01', agora)).toBe(true)
   })
+})
+
+describe('limiteDaSemana', () => {
+  it('livre vale os dias com aula', () => expect(limiteDaSemana('livre', 5)).toBe(5))
+  it('3x e 2x valem o plano', () => {
+    expect(limiteDaSemana('3x', 5)).toBe(3)
+    expect(limiteDaSemana('2x', 5)).toBe(2)
+  })
+  it('semana com feriado reduz o teto', () => expect(limiteDaSemana('3x', 2)).toBe(2))
 })

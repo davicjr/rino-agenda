@@ -9,7 +9,7 @@ import { GavetaAgendar } from '@/components/GavetaAgendar'
 import { GavetaRetirar } from '@/components/GavetaRetirar'
 import { FundoMarca } from '@/components/FundoMarca'
 import { TituloDia } from '@/components/TituloDia'
-import { useAgendar, useDia, useInicio, useRetirar } from '@/hooks/useAgenda'
+import { useAgendar, useDia, useInicio, useRetirar, useSemana } from '@/hooks/useAgenda'
 import { useMeuAluno } from '@/hooks/useMeuAluno'
 import type { Agendado, Aluno, Horario } from '@/lib/api'
 import { horaCurta, somarDias } from '@/lib/datas'
@@ -28,6 +28,8 @@ export function Agenda() {
     setEscolhidoBruto(d)
   }
   const dia = useDia(data)
+  const semana = useSemana(data)
+  const uso = useMemo(() => new Map(semana.data?.alunos.map((a) => [a.id, a])), [semana.data])
   const [meuId, lembrar] = useMeuAluno()
   const [agendarEm, setAgendarEm] = useState<Horario | null>(null)
   const [retirar, setRetirar] = useState<{ agendado: Agendado; horario: Horario } | null>(null)
@@ -49,7 +51,8 @@ export function Agenda() {
           setAgendarEm(null)
           vibrar([18, 40, 30])
           setPulsos((p) => ({ ...p, [h.id]: (p[h.id] ?? 0) + 1 }))
-          toast.success(`Fechado, ${(aluno.apelido || aluno.nome).split(' ')[0]}! Te vejo às ${horaCurta(h.hora)}.`)
+          const u = uso.get(aluno.id)
+          toast.success(`Fechado, ${(aluno.apelido || aluno.nome).split(' ')[0]}! Te vejo às ${horaCurta(h.hora)}.${u ? ` ${u.usados + 1}/${u.limite} nesta semana.` : ''}`)
         },
         onError: (e) => toast.error(e.message),
       },
@@ -113,6 +116,7 @@ export function Agenda() {
           doDia={dia.data?.horarios ?? []}
           alunos={inicio.data?.alunos ?? []}
           meuId={meuId}
+          uso={uso}
           enviando={agendar.isPending}
           onFechar={() => setAgendarEm(null)}
           onConfirmar={confirmar}

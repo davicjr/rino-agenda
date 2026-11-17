@@ -10,7 +10,7 @@ Agenda de treinos da **Rino Fight Team** (muay thai). O aluno abre o app, escolh
 
 ## Regras
 - A vaga é reservada numa única instrução SQL, então dois alunos não ficam com a última vaga.
-- Planos: livre, 3x e 2x por semana (semana de segunda a domingo).
+- Planos: livre, 3x e 2x por semana (semana de domingo a sábado).
 - Não se agenda no passado, além de 30 dias, em horário bloqueado ou lotado.
 - O aluno só retira o agendamento antes do horário da aula.
 - O fuso é `America/Bahia`.

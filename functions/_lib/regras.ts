@@ -31,10 +31,9 @@ export function somarDias(data: string, dias: number): string {
   return d.toISOString().slice(0, 10)
 }
 
-/** Segunda a domingo da semana que contém `data`. */
+/** Domingo a sábado da semana que contém `data` (igual à semana que o app mostra). */
 export function semanaDe(data: string): { inicio: string; fim: string } {
-  const recuo = (diaSemana(data) + 6) % 7
-  const inicio = somarDias(data, -recuo)
+  const inicio = somarDias(data, -diaSemana(data))
   return { inicio, fim: somarDias(inicio, 6) }
 }
 
@@ -78,4 +77,9 @@ export function motivoRecusa(p: PedidoAgendamento, agora: Agora): string | null 
   const limite = LIMITE_SEMANAL[p.plano]
   if (p.agendadosNaSemana >= limite) return `Seu plano é ${p.plano} por semana e você já usou ${limite} nesta semana.`
   return null
+}
+
+/** Treinos que o plano permite numa semana com `diasComAula` dias de aula. */
+export function limiteDaSemana(plano: Plano, diasComAula: number): number {
+  return Math.min(LIMITE_SEMANAL[plano], diasComAula)
 }

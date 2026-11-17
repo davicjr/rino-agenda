@@ -2,7 +2,8 @@
 import { useState } from 'react'
 import { Command } from 'cmdk'
 import { Search } from 'lucide-react'
-import type { Aluno, Horario } from '@/lib/api'
+import type { Aluno, Horario, UsoSemana } from '@/lib/api'
+import { cn } from '@/lib/cn'
 import { horaCurta, iniciais, nomeDia } from '@/lib/datas'
 import { Botao } from '@/ui/Botao'
 import { Gaveta } from '@/ui/Gaveta'
@@ -13,6 +14,7 @@ type Props = {
   doDia: Horario[]
   alunos: Aluno[]
   meuId: number | null
+  uso: Map<number, UsoSemana>
   enviando: boolean
   onFechar: () => void
   onConfirmar: (aluno: Aluno) => void
@@ -20,12 +22,14 @@ type Props = {
 
 const exibir = (a: Aluno) => a.apelido || a.nome
 
-export function GavetaAgendar({ horario, data, doDia, alunos, meuId, enviando, onFechar, onConfirmar }: Props) {
+export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, enviando, onFechar, onConfirmar }: Props) {
   const [escolhido, setEscolhido] = useState<Aluno | null>(null)
   // Um treino por dia: quem já está em outro horário do dia aparece, mas desabilitado.
   const horaNoDia = new Map(doDia.flatMap((h) => h.agendados.map((a) => [a.aluno_id, h.hora] as const)))
   const livres = alunos.filter((a) => !horario?.agendados.some((x) => x.aluno_id === a.id))
-  const eu = livres.find((a) => a.id === meuId && !horaNoDia.has(a.id))
+  // Plano: quem já usou todos os treinos da semana também aparece desabilitado.
+  const completa = (id: number) => { const u = uso.get(id); return !!u && u.usados >= u.limite }
+  const eu = livres.find((a) => a.id === meuId && !horaNoDia.has(a.id) && !completa(a.id))
   const fechar = () => { setEscolhido(null); onFechar() }
 
   return (
@@ -41,6 +45,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, enviando, o
             <span className="font-cond grid size-12 place-items-center rounded-full bg-ouro-9 text-lg font-bold text-preto">{iniciais(exibir(escolhido))}</span>
             <p className="text-xl font-semibold">{exibir(escolhido)}</p>
           </div>
+          {uso.get(escolhido.id) && <ProximoTreino {...uso.get(escolhido.id)!} />}
           <Botao className="mt-5" disabled={enviando} onClick={() => onConfirmar(escolhido)}>
             {enviando ? 'Agendando…' : 'Confirmar treino'}
           </Botao>
@@ -67,17 +72,21 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, enviando, o
             </Command.Empty>
             {livres.map((a) => {
               const outra = horaNoDia.get(a.id)
+              const u = uso.get(a.id)
+              const cheia = completa(a.id)
               return (
                 <Command.Item
                   key={a.id}
                   value={`${a.nome} ${a.apelido ?? ''}`}
-                  disabled={!!outra}
+                  disabled={!!outra || cheia}
                   onSelect={() => setEscolhido(a)}
                   className="flex h-13 cursor-pointer items-center gap-3 rounded-[var(--radius)] px-2 data-[disabled=true]:cursor-default data-[disabled=true]:opacity-45 data-[selected=true]:bg-carvao-4"
                 >
                   <span className="font-cond grid size-9 place-items-center rounded-full bg-carvao-5 text-sm font-bold">{iniciais(exibir(a))}</span>
-                  <span className="flex-1 text-base">{exibir(a)}</span>
-                  {outra && <span className="font-cond text-sm text-carvao-10">já treina às {horaCurta(outra)}</span>}
+                  <span className="flex-1 truncate text-base">{exibir(a)}</span>
+                  <span className="font-cond text-sm text-carvao-10 tabular-nums">
+                    {outra ? `já treina às ${horaCurta(outra)}` : cheia ? 'semana completa' : u ? `${u.usados}/${u.limite}` : ''}
+                  </span>
                 </Command.Item>
               )
             })}
@@ -85,5 +94,22 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, enviando, o
         </Command>
       )}
     </Gaveta>
+  )
+}
+
+// Treinos da semana: os já usados em amarelo cheio e o que vai ser marcado agora contornado.
+function ProximoTreino({ usados, limite }: UsoSemana) {
+  return (
+    <div className="mt-4 rounded-[var(--radius)] bg-carvao-3 p-4">
+      <p className="font-cond flex items-baseline justify-between text-sm font-bold tracking-wider uppercase">
+        <span className="text-carvao-10">Treinos desta semana</span>
+        <span className="font-display text-xl text-ouro-9 tabular-nums">{usados + 1}/{limite}</span>
+      </p>
+      <div className="mt-2 flex gap-1">
+        {Array.from({ length: limite }, (_, i) => (
+          <span key={i} className={cn('h-2 flex-1 -skew-x-[20deg]', i < usados ? 'bg-ouro-9' : i === usados ? 'bg-ouro-9/35 ring-1 ring-ouro-9' : 'bg-carvao-5')} />
+        ))}
+      </div>
+    </div>
   )
 }

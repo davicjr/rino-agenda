@@ -18,6 +18,9 @@ export type Horario = {
 }
 export type Dia = { data: string; bloqueioDia: string | null; professorDiaId: number | null; horarios: Horario[] }
 
+export type UsoSemana = { id: number; usados: number; limite: number }
+export type Semana = { inicio: string; fim: string; alunos: UsoSemana[] }
+
 export async function chamar<T>(caminho: string, init?: RequestInit): Promise<T> {
   const r = await fetch(`/api${caminho}`, {
     ...init,
@@ -31,6 +34,7 @@ export async function chamar<T>(caminho: string, init?: RequestInit): Promise<T>
 export const api = {
   inicio: () => chamar<Inicio>('/inicio'),
   dia: (data: string) => chamar<Dia>(`/dia?data=${data}`),
+  semana: (data: string) => chamar<Semana>(`/semana?data=${data}`),
   agendar: (alunoId: number, gradeId: number, data: string) =>
     chamar<{ id: number }>('/agendar', { method: 'POST', body: JSON.stringify({ alunoId, gradeId, data }) }),
   retirar: (id: number) => chamar<{ ok: true }>(`/agendamento/${id}`, { method: 'DELETE' }),
