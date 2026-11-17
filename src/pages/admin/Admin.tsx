@@ -56,7 +56,7 @@ function Painel() {
           acoes={
             <>
               {aba === 'agenda' && hoje && <IconeTopo rotulo="Abrir calendário" onClick={() => setCalendario(true)}><CalendarDays className="size-5" /></IconeTopo>}
-              <IconeTopo rotulo="Regras de agendamento" onClick={() => setAjustes(true)}><SlidersHorizontal className="size-5" /></IconeTopo>
+              <IconeTopo rotulo="Ajustes" onClick={() => setAjustes(true)}><SlidersHorizontal className="size-5" /></IconeTopo>
               <IconeTopo rotulo="Ver agenda pública" para="/"><Eye className="size-5" /></IconeTopo>
               <IconeTopo rotulo="Sair" onClick={() => sair.mutate()}><LogOut className="size-5" /></IconeTopo>
             </>
@@ -91,7 +91,7 @@ function Painel() {
         regras={regras.data}
         enviando={salvarRegras.isPending}
         onFechar={() => setAjustes(false)}
-        onSalvar={(r) => salvarRegras.mutate(r, { onSuccess: () => setAjustes(false) })}
+        onSalvar={(r) => salvarRegras.mutate(r)}
       />
       {hoje && (
         <GavetaCalendario

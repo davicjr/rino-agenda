@@ -1,10 +1,11 @@
 // Tela pública: escolher o dia, ver quem vai e agendar ou retirar.
 import { useMemo, useState } from 'react'
-import { CalendarDays, Lock } from 'lucide-react'
+import { CalendarDays, Headset, Lock } from 'lucide-react'
 import { toast } from 'sonner'
 import { Cabecalho } from '@/components/Cabecalho'
 import { IconeTopo } from '@/ui/IconeTopo'
 import { GavetaCalendario } from '@/components/GavetaCalendario'
+import { GavetaSuporte } from '@/components/GavetaSuporte'
 import { SemanaDias } from '@/components/SemanaDias'
 import { GavetaAgendar } from '@/components/GavetaAgendar'
 import { GavetaRetirar } from '@/components/GavetaRetirar'
@@ -35,6 +36,7 @@ export function Agenda() {
   const [agendarEm, setAgendarEm] = useState<Horario | null>(null)
   const [retirar, setRetirar] = useState<{ agendado: Agendado; horario: Horario } | null>(null)
   const [calendario, setCalendario] = useState(false)
+  const [suporte, setSuporte] = useState(false)
   const [pulsos, setPulsos] = useState<Record<number, number>>({})
   const agendar = useAgendar(data ?? '')
   const tirar = useRetirar(data ?? '')
@@ -77,6 +79,7 @@ export function Agenda() {
         acoes={
           <>
             {inicio.data && <IconeTopo rotulo="Abrir calendário" onClick={() => setCalendario(true)}><CalendarDays className="size-5" /></IconeTopo>}
+            <IconeTopo rotulo="Suporte e contato" onClick={() => setSuporte(true)}><Headset className="size-5" /></IconeTopo>
             <IconeTopo rotulo="Área administrativa" para="/admin"><Lock className="size-5" /></IconeTopo>
           </>
         }
@@ -140,6 +143,7 @@ export function Agenda() {
           onEscolher={(d) => { setEscolhido(d); setCalendario(false) }}
         />
       )}
+      <GavetaSuporte aberta={suporte} onFechar={() => setSuporte(false)} />
     </main>
   )
 }

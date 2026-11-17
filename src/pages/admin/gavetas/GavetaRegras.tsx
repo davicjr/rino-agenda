@@ -1,4 +1,5 @@
-// Regras de agendamento: quando abre, quando fecha e até quando dá para retirar.
+// Ajustes do admin: regras de agendamento (quando abre, fecha e até quando retirar)
+// e as informações oficiais que aparecem no Suporte da agenda.
 import { useState } from 'react'
 import type { RegrasJanela } from '@/lib/api'
 import { resumoRegras } from '@/lib/textoRegras'
@@ -6,6 +7,7 @@ import { Botao } from '@/ui/Botao'
 import { Chips } from '@/ui/Chips'
 import { Gaveta } from '@/ui/Gaveta'
 import { Rotulo } from '@/ui/Rotulo'
+import { FormInfo } from './FormInfo'
 
 const ABRE = [{ valor: -1, rotulo: 'Livre' }, ...[1, 2, 7, 15, 30].map((n) => ({ valor: n, rotulo: `${n}d` }))]
 const HORAS = [{ valor: 0, rotulo: 'Na hora' }, ...[1, 2, 6, 12, 24].map((n) => ({ valor: n, rotulo: `${n}h` }))]
@@ -14,8 +16,11 @@ type Props = { aberta: boolean; regras: RegrasJanela | undefined; enviando: bool
 
 export function GavetaRegras({ aberta, regras, enviando, onFechar, onSalvar }: Props) {
   return (
-    <Gaveta aberta={aberta} onFechar={onFechar} titulo="Regras" descricao="Quando os alunos podem agendar e retirar.">
+    <Gaveta aberta={aberta} onFechar={onFechar} titulo="Ajustes">
+      <h3 className="font-display mb-3 text-xl tracking-wide uppercase">Regras de agendamento</h3>
       {regras && <Formulario key={JSON.stringify(regras)} inicial={regras} enviando={enviando} onSalvar={onSalvar} />}
+      <h3 className="font-display mt-8 mb-3 border-t border-carvao-4 pt-6 text-xl tracking-wide uppercase">Suporte e contato</h3>
+      <FormInfo />
     </Gaveta>
   )
 }
