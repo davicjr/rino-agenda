@@ -1,9 +1,9 @@
 // Chamadas do admin. Em produção o Cloudflare Access libera /api/admin pelo cookie da sessão.
 import { chamar } from './api'
 
-export type AlunoAdmin = { id: number; nome: string; apelido: string | null; plano: 'livre' | '3x' | '2x'; ativo: number }
+export type AlunoAdmin = { id: number; nome: string; apelido: string | null; plano: 'livre' | '3x' | '2x'; ativo: number; foto: number | null }
 export type GradeAdmin = { id: number; dia_semana: number; hora: string; vagas: number; ativo: number; professor_id: number | null }
-export type ProfessorAdmin = { id: number; nome: string; ativo: number }
+export type ProfessorAdmin = { id: number; nome: string; ativo: number; foto: number | null }
 export type Bloqueio = { id: number; data: string; grade_id: number | null; hora: string | null; motivo: string | null }
 
 const corpo = (metodo: string, dados: unknown) => ({ method: metodo, body: JSON.stringify(dados) })
@@ -28,6 +28,14 @@ export const admin = {
   salvarProfessor: (p: ProfessorAdmin) => chamar('/admin/professores', corpo('PATCH', { ...p, ativo: p.ativo === 1 })),
   apagarProfessor: (id: number) => chamar(`/admin/professores?id=${id}`, { method: 'DELETE' }),
   escalar: (data: string, gradeId: number | null, professorId: number | null) => chamar('/admin/escala', corpo('PUT', { data, gradeId, professorId })),
+
+  enviarFoto: async (tipo: 'aluno' | 'professor', id: number, imagem: Blob) => {
+    const r = await fetch(`/api/admin/foto?tipo=${tipo}&id=${id}`, { method: 'PUT', headers: { 'content-type': imagem.type }, body: imagem })
+    const corpo = (await r.json().catch(() => ({}))) as { erro?: string; foto?: number }
+    if (!r.ok) throw new Error(corpo.erro ?? 'Não deu para enviar a foto.')
+    return corpo.foto ?? null
+  },
+  removerFoto: (tipo: 'aluno' | 'professor', id: number) => chamar(`/admin/foto?tipo=${tipo}&id=${id}`, { method: 'DELETE' }),
 
   removerAgendamento: (id: number) => chamar(`/admin/agendamentos?id=${id}`, { method: 'DELETE' }),
 }

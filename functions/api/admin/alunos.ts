@@ -8,7 +8,7 @@ const plano = (v: unknown) => (typeof v === 'string' && PLANOS.includes(v) ? v :
 
 export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
   const r = await env.DB.prepare(
-    `SELECT id, nome, apelido, plano, ativo FROM alunos ORDER BY ativo DESC, nome COLLATE NOCASE`,
+    `SELECT id, nome, apelido, plano, ativo, foto FROM alunos ORDER BY ativo DESC, nome COLLATE NOCASE`,
   ).all()
   return json(r.results)
 }

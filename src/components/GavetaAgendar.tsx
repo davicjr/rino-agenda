@@ -4,7 +4,8 @@ import { Command } from 'cmdk'
 import { Search } from 'lucide-react'
 import type { Aluno, Horario, UsoSemana } from '@/lib/api'
 import { cn } from '@/lib/cn'
-import { horaCurta, iniciais, nomeDia } from '@/lib/datas'
+import { horaCurta, nomeDia } from '@/lib/datas'
+import { Avatar } from '@/ui/Avatar'
 import { Botao } from '@/ui/Botao'
 import { Gaveta } from '@/ui/Gaveta'
 
@@ -42,7 +43,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
       {escolhido ? (
         <div className="animate-surge">
           <div className="corte-sm flex items-center gap-3 bg-carvao-3 p-4">
-            <span className="font-cond grid size-12 place-items-center rounded-full bg-ouro-9 text-lg font-bold text-preto">{iniciais(exibir(escolhido))}</span>
+            <Avatar nome={exibir(escolhido)} tipo="aluno" id={escolhido.id} foto={escolhido.foto} destaque className="size-12 text-lg" />
             <p className="text-xl font-semibold">{exibir(escolhido)}</p>
           </div>
           {uso.get(escolhido.id) && <ProximoTreino {...uso.get(escolhido.id)!} />}
@@ -55,7 +56,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
         <Command label="Buscar aluno" className="flex min-h-0 flex-1 flex-col">
           {eu && (
             <button onClick={() => setEscolhido(eu)} className="corte-sm mb-3 flex items-center gap-3 bg-ouro-3 p-3 text-left active:bg-ouro-4">
-              <span className="font-cond grid size-10 place-items-center rounded-full bg-ouro-9 font-bold text-preto">{iniciais(exibir(eu))}</span>
+              <Avatar nome={exibir(eu)} tipo="aluno" id={eu.id} foto={eu.foto} destaque className="size-10" />
               <span>
                 <span className="block text-xs font-semibold tracking-widest text-ouro-11 uppercase">Usado por último neste celular</span>
                 <span className="text-lg font-semibold">{exibir(eu)}</span>
@@ -82,7 +83,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
                   onSelect={() => setEscolhido(a)}
                   className="flex h-13 cursor-pointer items-center gap-3 rounded-[var(--radius)] px-2 data-[disabled=true]:cursor-default data-[disabled=true]:opacity-45 data-[selected=true]:bg-carvao-4"
                 >
-                  <span className="font-cond grid size-9 place-items-center rounded-full bg-carvao-5 text-sm font-bold">{iniciais(exibir(a))}</span>
+                  <Avatar nome={exibir(a)} tipo="aluno" id={a.id} foto={a.foto} className="size-9 text-sm" />
                   <span className="flex-1 truncate text-base">{exibir(a)}</span>
                   <span className="font-cond text-sm text-carvao-10 tabular-nums">
                     {outra ? `já treina às ${horaCurta(outra)}` : cheia ? 'semana completa' : u ? `${u.usados}/${u.limite}` : ''}

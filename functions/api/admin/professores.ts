@@ -5,7 +5,7 @@ type Corpo = { id?: unknown; nome?: unknown; ativo?: unknown }
 const nome = (v: unknown) => (typeof v === 'string' ? v.trim().replace(/\s+/g, ' ').slice(0, 60) : '')
 
 export const onRequestGet: PagesFunction<Env> = async ({ env }) =>
-  json((await env.DB.prepare('SELECT id, nome, ativo FROM professores ORDER BY ativo DESC, nome COLLATE NOCASE').all()).results)
+  json((await env.DB.prepare('SELECT id, nome, ativo, foto FROM professores ORDER BY ativo DESC, nome COLLATE NOCASE').all()).results)
 
 export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
   const n = nome((await lerCorpo<Corpo>(request))?.nome)

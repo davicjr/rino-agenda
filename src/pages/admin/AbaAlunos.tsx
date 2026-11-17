@@ -5,6 +5,7 @@ import { Plus, Search } from 'lucide-react'
 import { useAcao } from '@/hooks/useAdmin'
 import { admin, type AlunoAdmin } from '@/lib/apiAdmin'
 import { PLANOS } from '@/lib/planos'
+import { Avatar } from '@/ui/Avatar'
 import { Chips } from '@/ui/Chips'
 import { Linha } from '@/ui/Linha'
 import { GavetaAluno } from './gavetas/GavetaAluno'
@@ -48,6 +49,7 @@ export function AbaAlunos() {
           <Linha
             key={a.id}
             titulo={a.nome}
+            esquerda={<Avatar nome={a.nome} tipo="aluno" id={a.id} foto={a.foto} className="size-11 text-sm" />}
             detalhe={[PLANOS.find((p) => p.valor === a.plano)?.rotulo, a.apelido && `"${a.apelido}"`].filter(Boolean).join(' · ')}
             apagada={!a.ativo}
             onClick={() => setEditando(a)}

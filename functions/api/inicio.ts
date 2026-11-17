@@ -17,6 +17,6 @@ export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
     bloqueiosDia: bloq.results,
     janelaDias: JANELA_DIAS,
     grade: grade.results,
-    alunos: alunos.results.map(({ id, nome, apelido }) => ({ id, nome, apelido })),
+    alunos: alunos.results.map(({ id, nome, apelido, foto }) => ({ id, nome, apelido, foto })),
   })
 }
