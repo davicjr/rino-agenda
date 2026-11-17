@@ -44,7 +44,7 @@ export function CardHorario({ horario: h, meuId, pulso, onAgendar, onTocarNome }
     <article ref={raiz} className="corte relative overflow-hidden bg-carvao-2 p-4" aria-label={`Treino das ${h.hora}`}>
       <span className="flash pointer-events-none absolute inset-0 bg-ouro-9 opacity-0" />
 
-      <div className="relative grid grid-cols-[5rem_1fr] items-center gap-4">
+      <div className="relative grid grid-cols-[5.25rem_1fr] items-center gap-4">
         <Hora hora={h.hora} />
         <div className="min-w-0">
           {lotado ? <Carimbo /> : <MedidorVagas ocupadas={n} vagas={h.vagas} />}
@@ -58,9 +58,9 @@ export function CardHorario({ horario: h, meuId, pulso, onAgendar, onTocarNome }
 
       {n > 0 && <ListaNomes agendados={h.agendados} meuId={meuId} pulso={pulso} podeRetirar onTocar={(a) => onTocarNome(a, h)} />}
 
-      <div className="relative mt-4 flex items-center justify-between gap-3">
+      <div className="relative mt-3 flex items-center justify-between gap-3">
         <p className="font-cond text-[0.95rem] font-semibold text-carvao-10">
-          {lotado ? 'Turma cheia. Se alguém sair, a vaga abre.' : n === 0 ? 'Ninguém ainda. Abre a roda!' : `${n} ${n === 1 ? 'confirmado' : 'confirmados'}`}
+          {lotado ? 'Turma cheia. Se alguém sair, a vaga abre.' : n === 0 ? 'Ninguém agendado ainda' : `${n} ${n === 1 ? 'confirmado' : 'confirmados'}`}
         </p>
         {!lotado && (
           <button
