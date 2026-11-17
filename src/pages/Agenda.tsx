@@ -64,12 +64,12 @@ export function Agenda() {
 
   return (
     <main className="relative mx-auto min-h-dvh max-w-lg overflow-x-clip pb-16">
-      <Textura className="top-[6.5rem] -right-28 h-56 w-[26rem] opacity-80" />
+      <Textura className="top-[5.5rem] -right-28 h-52 w-[26rem] opacity-70" />
       <Cabecalho />
       {inicio.data && data && (
         <>
           <TituloDia data={data} hoje={inicio.data.agora.data} direcao={direcao} />
-          <div className="mt-6">
+          <div className="mt-5">
           <FaixaDias
             hoje={inicio.data.agora.data}
             dias={15}
@@ -81,7 +81,7 @@ export function Agenda() {
           </div>
         </>
       )}
-      <section className={`relative z-10 mt-6 space-y-3 px-5 transition-opacity duration-200 ${dia.isPlaceholderData ? 'opacity-40' : ''}`}>
+      <section className={`relative z-10 mt-5 space-y-3 px-5 transition-opacity duration-200 ${dia.isPlaceholderData ? 'opacity-40' : ''}`}>
         <EstadoDia carregando={inicio.isPending || dia.isPending} erro={inicio.error ?? dia.error} dia={dia.data} />
         {dia.data && data && (
           <ListaHorarios

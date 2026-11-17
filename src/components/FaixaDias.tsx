@@ -40,7 +40,7 @@ export function FaixaDias({ hoje, desde, dias, diasComAula, selecionado, onSelec
   return (
     <nav aria-label="Escolher dia" className="relative z-10">
       <div ref={trilho} className="sem-barra relative flex snap-x snap-mandatory gap-1.5 overflow-x-auto scroll-px-5 px-5 pb-1">
-        <span ref={indicador} aria-hidden className="paralelo pointer-events-none absolute top-0 left-0 h-[4.5rem] w-14 bg-ouro-9 opacity-0" />
+        <span ref={indicador} aria-hidden className="paralelo pointer-events-none absolute top-0 left-0 h-16 w-14 bg-ouro-9 opacity-0" />
         {lista.map((d) => {
           const tem = diasComAula.has(diaSemana(d))
           const sel = d === selecionado
@@ -50,21 +50,21 @@ export function FaixaDias({ hoje, desde, dias, diasComAula, selecionado, onSelec
               data-dia={d}
               onClick={() => onSelecionar(d)}
               aria-pressed={sel}
+              aria-label={tem ? undefined : `${nomeDiaCurto(d)} ${diaDoMes(d)}, folga`}
               className={cn(
-                'paralelo relative flex h-[4.5rem] w-14 shrink-0 snap-start flex-col items-center justify-center transition-colors duration-300',
+                'paralelo relative flex h-16 w-14 shrink-0 snap-start flex-col items-center justify-center transition-colors duration-300',
                 sel ? 'bg-transparent text-preto' : tem ? 'bg-carvao-3 text-carvao-12 active:bg-carvao-4' : 'bg-carvao-2 text-carvao-8',
               )}
             >
               <span className="font-cond text-xs font-semibold tracking-widest">{d === hoje ? 'HOJE' : nomeDiaCurto(d)}</span>
-              <span className="numero font-display text-2xl leading-tight">{diaDoMes(d)}</span>
-              {!tem && <span className="font-cond text-[11px] leading-none uppercase">folga</span>}
+              <span className={cn('numero font-display text-2xl leading-tight', !tem && !sel && 'line-through decoration-2')}>{diaDoMes(d)}</span>
             </button>
           )
         })}
         <button
           onClick={onCalendario}
           aria-label="Abrir calendário"
-          className="paralelo flex h-[4.5rem] w-14 shrink-0 snap-start items-center justify-center bg-carvao-4 text-carvao-12 active:bg-carvao-5"
+          className="paralelo flex h-16 w-14 shrink-0 snap-start items-center justify-center bg-carvao-4 text-carvao-12 active:bg-carvao-5"
         >
           <CalendarDays className="size-6" />
         </button>

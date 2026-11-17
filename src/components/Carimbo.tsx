@@ -13,7 +13,7 @@ export function Carimbo({ texto = 'Lotado' }: { texto?: string }) {
   return (
     <span
       ref={ref}
-      className="font-display pointer-events-none inline-block -rotate-6 border-[3px] border-ouro-9 px-2.5 py-0.5 text-3xl tracking-widest text-ouro-9 uppercase"
+      className="font-display pointer-events-none inline-block -rotate-6 border-[3px] border-ouro-9 px-2 py-0.5 text-2xl tracking-widest text-ouro-9 uppercase"
     >
       {texto}
     </span>

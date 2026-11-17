@@ -20,9 +20,9 @@ export function TituloDia({ data, hoje, direcao }: { data: string; hoje: string;
     { dependencies: [data], scope: ref },
   )
   return (
-    <h1 ref={ref} className="font-display relative z-10 mt-7 -skew-x-6 px-5 leading-[0.82] uppercase">
-      <span className="linha block text-[clamp(3.5rem,19vw,6rem)]">{data === hoje ? 'Hoje' : nomeDia(data)}</span>
-      <span className="linha block text-[clamp(1.75rem,9vw,3rem)] text-ouro-9">
+    <h1 ref={ref} className="font-display relative z-10 mt-6 px-5 leading-[0.85] uppercase">
+      <span className="linha block origin-bottom-left -skew-x-6 text-[clamp(3.25rem,17vw,5.5rem)]">{data === hoje ? 'Hoje' : nomeDia(data)}</span>
+      <span className="linha mt-1 block origin-bottom-left -skew-x-6 text-[clamp(1.5rem,7.5vw,2.5rem)] text-ouro-9">
         {diaDoMes(data)} {mesCurto(data)}
       </span>
     </h1>

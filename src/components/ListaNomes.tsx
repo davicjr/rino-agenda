@@ -6,12 +6,9 @@ import { iniciais } from '@/lib/datas'
 type Props = { agendados: Agendado[]; meuId: number | null; pulso: number; podeRetirar: boolean; onTocar: (a: Agendado) => void }
 
 export function ListaNomes({ agendados, meuId, pulso, podeRetirar, onTocar }: Props) {
-  if (!agendados.length) {
-    return <p className="font-cond relative mt-3 text-base text-carvao-9">Ninguém ainda. Abre a roda!</p>
-  }
   const ultimo = agendados[agendados.length - 1]?.id
   return (
-    <ul className="relative mt-3 flex flex-wrap gap-1.5">
+    <ul className="relative mt-4 flex flex-wrap gap-1.5">
       {agendados.map((a) => {
         const eu = a.aluno_id === meuId
         return (
