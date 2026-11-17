@@ -1,52 +1,68 @@
-// Alunos: colar lista de nomes, plano, apelido e ativar/desativar.
+// Alunos: busca, filtro por situação e edição numa gaveta.
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Plus, Search } from 'lucide-react'
 import { useAcao } from '@/hooks/useAdmin'
-import { admin } from '@/lib/apiAdmin'
-import { Botao } from '@/ui/Botao'
-import { Seletor } from '@/ui/Campo'
-import { LinhaAluno } from './LinhaAluno'
+import { admin, type AlunoAdmin } from '@/lib/apiAdmin'
+import { PLANOS } from '@/lib/planos'
+import { Chips } from '@/ui/Chips'
+import { Linha } from '@/ui/Linha'
+import { GavetaAluno } from './gavetas/GavetaAluno'
+import { GavetaNovosAlunos } from './gavetas/GavetaNovosAlunos'
 
 const K = [['alunos-admin'], ['inicio']]
+const sem = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
 
 export function AbaAlunos() {
   const alunos = useQuery({ queryKey: ['alunos-admin'], queryFn: admin.alunos })
-  const [texto, setTexto] = useState('')
-  const [plano, setPlano] = useState('livre')
-  const nomes = texto.split('\n').map((n) => n.trim()).filter((n) => n.length >= 2)
-  const criar = useAcao(() => admin.criarAlunos(nomes, plano), K, `${nomes.length} aluno(s) cadastrado(s).`)
-  const salvar = useAcao(admin.salvarAluno, K)
+  const [busca, setBusca] = useState('')
+  const [filtro, setFiltro] = useState<'ativos' | 'inativos'>('ativos')
+  const [novo, setNovo] = useState(false)
+  const [editando, setEditando] = useState<AlunoAdmin | null>(null)
+  const criar = useAcao((v: { nomes: string[]; plano: string }) => admin.criarAlunos(v.nomes, v.plano), K, 'Alunos cadastrados.')
+  const salvar = useAcao(admin.salvarAluno, K, 'Aluno salvo.')
   const apagar = useAcao(admin.apagarAluno, K, 'Aluno apagado.')
 
+  const lista = (alunos.data ?? [])
+    .filter((a) => (filtro === 'ativos' ? a.ativo : !a.ativo))
+    .filter((a) => sem(`${a.nome} ${a.apelido ?? ''}`).includes(sem(busca)))
+  const inativos = alunos.data?.filter((a) => !a.ativo).length ?? 0
+
   return (
-    <div className="space-y-6">
-      <form className="corte space-y-2 bg-carvao-2 p-4" onSubmit={(e) => { e.preventDefault(); criar.mutate(undefined, { onSuccess: () => setTexto('') }) }}>
-        <label htmlFor="nomes" className="font-cond text-sm font-semibold tracking-widest text-carvao-11 uppercase">Cadastrar alunos (um por linha)</label>
-        <textarea
-          id="nomes"
-          rows={4}
-          value={texto}
-          onChange={(e) => setTexto(e.target.value)}
-          placeholder={'Islan Sena\nMaria Souza'}
-          className="w-full rounded-[var(--radius)] bg-carvao-4 p-3 text-base outline-none placeholder:text-carvao-9 focus:ring-2 focus:ring-sangue-9"
-        />
-        <div className="flex gap-2">
-          <Seletor aria-label="Plano" value={plano} onChange={(e) => setPlano(e.target.value)} className="w-40">
-            <option value="livre">Todos os dias</option>
-            <option value="3x">3x/semana</option>
-            <option value="2x">2x/semana</option>
-          </Seletor>
-          <Botao className="h-11 flex-1 text-base" disabled={!nomes.length || criar.isPending}>
-            Cadastrar {nomes.length > 1 ? nomes.length : ''}
-          </Botao>
-        </div>
-      </form>
-      <p className="font-cond text-sm tracking-widest text-carvao-10 uppercase">{alunos.data?.length ?? 0} alunos</p>
-      <ul className="space-y-1.5">
-        {alunos.data?.map((a) => (
-          <LinhaAluno key={`${a.id}-${a.plano}-${a.ativo}`} aluno={a} onSalvar={salvar.mutate} onApagar={() => confirm(`Apagar ${a.nome}? O histórico de agendamentos some junto. Para só esconder, use Desativar.`) && apagar.mutate(a.id)} />
+    <div className="space-y-4">
+      <div className="flex gap-2">
+        <label className="flex h-12 flex-1 items-center gap-2 rounded-[var(--radius)] bg-carvao-3 px-3 focus-within:ring-2 focus-within:ring-ouro-9">
+          <Search className="size-5 text-carvao-9" />
+          <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar aluno" className="h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-carvao-9 focus-visible:outline-none" />
+        </label>
+        <button onClick={() => setNovo(true)} aria-label="Novos alunos" className="paralelo grid h-12 w-14 place-items-center bg-ouro-9 text-preto active:bg-ouro-10"><Plus className="size-6" /></button>
+      </div>
+      <Chips
+        rotulo="Situação"
+        opcoes={[{ valor: 'ativos', rotulo: `Ativos · ${(alunos.data?.length ?? 0) - inativos}` }, { valor: 'inativos', rotulo: `Inativos · ${inativos}` }]}
+        valor={filtro}
+        onMudar={setFiltro}
+      />
+      <ul className="space-y-2">
+        {lista.map((a) => (
+          <Linha
+            key={a.id}
+            titulo={a.nome}
+            detalhe={[PLANOS.find((p) => p.valor === a.plano)?.rotulo, a.apelido && `"${a.apelido}"`].filter(Boolean).join(' · ')}
+            apagada={!a.ativo}
+            onClick={() => setEditando(a)}
+          />
         ))}
       </ul>
+      {alunos.data && !lista.length && <p className="py-8 text-center text-carvao-9">{busca ? 'Nenhum aluno com esse nome.' : 'Nenhum aluno aqui ainda. Toque no + para cadastrar.'}</p>}
+
+      <GavetaNovosAlunos aberta={novo} enviando={criar.isPending} onFechar={() => setNovo(false)} onConfirmar={(nomes, plano) => criar.mutate({ nomes, plano }, { onSuccess: () => setNovo(false) })} />
+      <GavetaAluno
+        aluno={editando}
+        onFechar={() => setEditando(null)}
+        onSalvar={(a) => salvar.mutate(a, { onSuccess: () => setEditando(null) })}
+        onApagar={(a) => confirm(`Apagar ${a.nome}? Os agendamentos dele somem junto. Para só esconder, desmarque "Ativo".`) && apagar.mutate(a.id, { onSuccess: () => setEditando(null) })}
+      />
     </div>
   )
 }

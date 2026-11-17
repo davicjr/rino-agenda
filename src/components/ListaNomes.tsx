@@ -21,15 +21,15 @@ export function ListaNomes({ agendados, meuId, pulso, podeRetirar, onTocar }: Pr
               onClick={() => onTocar(a)}
               className={cn(
                 'flex h-9 items-center gap-1.5 rounded-full pr-3 pl-1 text-sm font-medium transition-colors',
-                eu ? 'bg-sangue-4 text-sangue-12' : 'bg-carvao-4 text-carvao-12',
+                eu ? 'bg-ouro-4 text-ouro-12' : 'bg-carvao-4 text-carvao-12',
                 podeRetirar && 'active:bg-carvao-6',
               )}
             >
-              <span className={cn('font-cond grid size-7 place-items-center rounded-full text-xs font-bold', eu ? 'bg-sangue-9' : 'bg-carvao-6')}>
+              <span className={cn('font-cond grid size-7 place-items-center rounded-full text-xs font-bold', eu ? 'bg-ouro-9 text-preto' : 'bg-carvao-6')}>
                 {iniciais(a.nome)}
               </span>
               {a.nome.split(' ')[0]}
-              {eu && <span className="font-cond text-xs font-bold tracking-wider text-sangue-11 uppercase">você</span>}
+              {eu && <span className="font-cond text-xs font-bold tracking-wider text-ouro-11 uppercase">você</span>}
             </button>
           </li>
         )

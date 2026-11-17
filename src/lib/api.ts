@@ -4,8 +4,18 @@ export type GradeItem = { id: number; dia_semana: number; hora: string; vagas: n
 export type Agora = { data: string; minutos: number }
 export type Inicio = { agora: Agora; janelaDias: number; grade: GradeItem[]; alunos: Aluno[] }
 export type Agendado = { id: number; aluno_id: number; nome: string }
-export type Horario = { id: number; hora: string; vagas: number; bloqueio: string | null; aberto: boolean; agendados: Agendado[] }
-export type Dia = { data: string; bloqueioDia: string | null; horarios: Horario[] }
+export type Professor = { id: number; nome: string }
+export type Horario = {
+  id: number
+  hora: string
+  vagas: number
+  bloqueio: string | null
+  aberto: boolean
+  agendados: Agendado[]
+  professor: Professor | null
+  professorHorarioId: number | null
+}
+export type Dia = { data: string; bloqueioDia: string | null; professorDiaId: number | null; horarios: Horario[] }
 
 export async function chamar<T>(caminho: string, init?: RequestInit): Promise<T> {
   const r = await fetch(`/api${caminho}`, {

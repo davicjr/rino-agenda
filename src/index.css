@@ -2,37 +2,37 @@
 
 /* Tokens da Rino Fight Team. Escalas de 12 passos em OKLCH (papéis no estilo Radix):
    1-2 fundo, 3-5 componente, 6-8 borda, 9-10 sólido, 11 texto suave, 12 texto forte.
-   Carvão e ardósia vêm do anel da logo; o vermelho vem do fundo do escudo. */
+   Preto quente e amarelo-ouro vêm do cartaz de mensalidades e do escudo. */
 @theme {
   --color-*: initial;
-  --color-carvao-1: oklch(0.155 0.006 250);
-  --color-carvao-2: oklch(0.185 0.008 250);
-  --color-carvao-3: oklch(0.225 0.011 250);
-  --color-carvao-4: oklch(0.26 0.013 250);
-  --color-carvao-5: oklch(0.3 0.016 250);
-  --color-carvao-6: oklch(0.35 0.02 250);
-  --color-carvao-7: oklch(0.42 0.026 250);
-  --color-carvao-8: oklch(0.52 0.03 250);
-  --color-carvao-9: oklch(0.6 0.022 250);
-  --color-carvao-10: oklch(0.67 0.018 250);
-  --color-carvao-11: oklch(0.79 0.012 250);
-  --color-carvao-12: oklch(0.95 0.004 250);
+  --color-carvao-1: oklch(0.135 0.004 85);
+  --color-carvao-2: oklch(0.17 0.005 85);
+  --color-carvao-3: oklch(0.21 0.006 85);
+  --color-carvao-4: oklch(0.25 0.007 85);
+  --color-carvao-5: oklch(0.29 0.008 85);
+  --color-carvao-6: oklch(0.34 0.009 85);
+  --color-carvao-7: oklch(0.42 0.01 85);
+  --color-carvao-8: oklch(0.52 0.01 85);
+  --color-carvao-9: oklch(0.6 0.009 85);
+  --color-carvao-10: oklch(0.68 0.008 85);
+  --color-carvao-11: oklch(0.8 0.006 85);
+  --color-carvao-12: oklch(0.96 0.003 85);
 
-  --color-sangue-1: oklch(0.18 0.03 25);
-  --color-sangue-2: oklch(0.21 0.05 25);
-  --color-sangue-3: oklch(0.26 0.08 25);
-  --color-sangue-4: oklch(0.3 0.1 25);
-  --color-sangue-5: oklch(0.34 0.12 25);
-  --color-sangue-6: oklch(0.39 0.14 25);
-  --color-sangue-7: oklch(0.45 0.16 25);
-  --color-sangue-8: oklch(0.5 0.18 25);
-  --color-sangue-9: oklch(0.55 0.2 25);
-  --color-sangue-10: oklch(0.6 0.21 25);
-  --color-sangue-11: oklch(0.76 0.13 25);
-  --color-sangue-12: oklch(0.93 0.035 25);
+  --color-ouro-1: oklch(0.17 0.025 88);
+  --color-ouro-2: oklch(0.2 0.035 88);
+  --color-ouro-3: oklch(0.25 0.05 88);
+  --color-ouro-4: oklch(0.3 0.065 88);
+  --color-ouro-5: oklch(0.36 0.08 88);
+  --color-ouro-6: oklch(0.44 0.095 88);
+  --color-ouro-7: oklch(0.55 0.115 88);
+  --color-ouro-8: oklch(0.7 0.14 88);
+  --color-ouro-9: oklch(0.84 0.17 88);
+  --color-ouro-10: oklch(0.88 0.16 90);
+  --color-ouro-11: oklch(0.86 0.14 90);
+  --color-ouro-12: oklch(0.95 0.06 92);
 
   --color-branco: oklch(0.99 0 0);
-  --color-preto: oklch(0.1 0.005 250);
+  --color-preto: oklch(0.11 0.004 85);
 
   --font-display: 'Anton', 'Impact', sans-serif;
   --font-cond: 'Barlow Condensed', 'Arial Narrow', sans-serif;
@@ -61,7 +61,7 @@
 
 body { min-height: 100dvh; overscroll-behavior-y: none; }
 
-:focus-visible { outline: 2px solid var(--color-sangue-10); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--color-ouro-9); outline-offset: 2px; }
 
 /* Corte diagonal dos cards, como as faixas da camisa. */
 .corte { clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%); }

@@ -42,7 +42,7 @@ export function CardHorario({ horario: h, meuId, pulso, onAgendar, onTocarNome }
       className={cn('corte relative overflow-hidden bg-carvao-2 p-4 pb-5', fechado && 'opacity-55')}
       aria-label={`Treino das ${h.hora}`}
     >
-      <span className="flash pointer-events-none absolute inset-0 bg-sangue-9 opacity-0" />
+      <span className="flash pointer-events-none absolute inset-0 bg-ouro-9 opacity-0" />
 
       <div className="relative flex items-start gap-4">
         <p className="font-display -skew-x-6 text-[4.25rem] leading-[0.85] tracking-tight" aria-hidden>
@@ -59,6 +59,11 @@ export function CardHorario({ horario: h, meuId, pulso, onAgendar, onTocarNome }
           ) : (
             <MedidorVagas ocupadas={h.agendados.length} vagas={h.vagas} />
           )}
+          {h.professor && (
+            <p className="font-cond mt-2 text-sm font-semibold tracking-wide text-carvao-10">
+              Prof. <span className="text-ouro-11">{h.professor.nome}</span>
+            </p>
+          )}
         </div>
       </div>
 
@@ -67,7 +72,7 @@ export function CardHorario({ horario: h, meuId, pulso, onAgendar, onTocarNome }
       {!fechado && !lotado && (
         <button
           onClick={() => onAgendar(h)}
-          className="paralelo font-display relative mt-4 h-12 w-full bg-sangue-9 text-lg tracking-wider text-branco uppercase transition-transform duration-100 active:scale-[0.98] active:bg-sangue-10"
+          className="paralelo font-display relative mt-4 h-12 w-full bg-ouro-9 text-lg tracking-wider text-preto uppercase transition-transform duration-100 active:scale-[0.98] active:bg-ouro-10"
         >
           {estou ? 'Agendar outro aluno' : 'Bora treinar'}
         </button>

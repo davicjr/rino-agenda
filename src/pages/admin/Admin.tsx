@@ -1,16 +1,23 @@
-// Painel do professor: grade, alunos e agenda do dia.
+// Painel do professor: abas fixas no topo (Agenda, Alunos, Grade, Professores).
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { CalendarCheck, Clock, Eye, LogOut, Shield, Users } from 'lucide-react'
 import { Link } from 'react-router'
 import { sessao } from '@/lib/apiAdmin'
 import { cn } from '@/lib/cn'
 import { AbaAgenda } from './AbaAgenda'
 import { AbaAlunos } from './AbaAlunos'
 import { AbaGrade } from './AbaGrade'
+import { AbaProfessores } from './AbaProfessores'
 import { Login } from './Login'
 
-const ABAS = { agenda: 'Agenda', alunos: 'Alunos', grade: 'Grade' } as const
-type Aba = keyof typeof ABAS
+const ABAS = [
+  { id: 'agenda', rotulo: 'Agenda', Icone: CalendarCheck },
+  { id: 'alunos', rotulo: 'Alunos', Icone: Users },
+  { id: 'grade', rotulo: 'Grade', Icone: Clock },
+  { id: 'professores', rotulo: 'Profs', Icone: Shield },
+] as const
+type Aba = (typeof ABAS)[number]['id']
 
 export function Admin() {
   const estado = useQuery({ queryKey: ['sessao'], queryFn: sessao.estado })
@@ -24,31 +31,38 @@ function Painel() {
   const qc = useQueryClient()
   const sair = useMutation({ mutationFn: sessao.sair, onSuccess: () => qc.invalidateQueries({ queryKey: ['sessao'] }) })
   return (
-    <main className="mx-auto min-h-dvh max-w-lg px-5 pt-[max(env(safe-area-inset-top),1.25rem)] pb-16">
-      <header className="flex items-center gap-3">
-        <img src="/escudo.webp" alt="" className="size-10" />
-        <h1 className="font-display flex-1 text-2xl tracking-wide uppercase">Painel do professor</h1>
-        <Link to="/" className="font-cond text-sm font-semibold tracking-widest text-carvao-11 uppercase">Agenda</Link>
-        <button onClick={() => sair.mutate()} className="font-cond h-11 text-sm font-semibold tracking-widest text-carvao-10 uppercase">Sair</button>
-      </header>
-      <nav className="mt-5 grid grid-cols-3 gap-1.5" role="tablist">
-        {(Object.keys(ABAS) as Aba[]).map((a) => (
-          <button
-            key={a}
-            role="tab"
-            aria-selected={aba === a}
-            onClick={() => setAba(a)}
-            className={cn('paralelo font-display h-11 text-base tracking-wider uppercase', aba === a ? 'bg-sangue-9 text-branco' : 'bg-carvao-3 text-carvao-11')}
-          >
-            {ABAS[a]}
-          </button>
-        ))}
-      </nav>
-      <section className="mt-6">
+    <div className="mx-auto min-h-dvh max-w-lg pb-20">
+      <div className="sticky top-0 z-30 bg-carvao-1/95 px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-3 backdrop-blur">
+        <header className="flex h-12 items-center gap-3">
+          <img src="/escudo.webp" alt="" className="h-10 w-auto" />
+          <h1 className="font-display flex-1 text-xl tracking-wide uppercase">Painel</h1>
+          <Link to="/" aria-label="Ver agenda pública" className="grid size-11 place-items-center text-carvao-11"><Eye className="size-5" /></Link>
+          <button onClick={() => sair.mutate()} aria-label="Sair" className="grid size-11 place-items-center text-carvao-11"><LogOut className="size-5" /></button>
+        </header>
+        <nav role="tablist" className="mt-2 grid grid-cols-4 gap-1 rounded-[var(--radius-lg)] bg-carvao-2 p-1">
+          {ABAS.map(({ id, rotulo, Icone }) => (
+            <button
+              key={id}
+              role="tab"
+              aria-selected={aba === id}
+              onClick={() => setAba(id)}
+              className={cn(
+                'flex h-14 flex-col items-center justify-center gap-0.5 rounded-[var(--radius)] transition-colors duration-200',
+                aba === id ? 'bg-ouro-9 text-preto' : 'text-carvao-10 active:bg-carvao-3',
+              )}
+            >
+              <Icone className="size-5" />
+              <span className="font-cond text-xs font-bold tracking-widest uppercase">{rotulo}</span>
+            </button>
+          ))}
+        </nav>
+      </div>
+      <section key={aba} className="animate-surge px-5 pt-3">
         {aba === 'agenda' && <AbaAgenda />}
         {aba === 'alunos' && <AbaAlunos />}
         {aba === 'grade' && <AbaGrade />}
+        {aba === 'professores' && <AbaProfessores />}
       </section>
-    </main>
+    </div>
   )
 }

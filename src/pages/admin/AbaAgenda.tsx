@@ -1,57 +1,102 @@
-// Agenda do dia para o professor: presença, remover agendamento e bloquear dia ou horário.
-import { useState } from 'react'
+// Agenda do professor: escolhe o dia na faixa, define o professor do dia e abre cada horário.
+import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { X } from 'lucide-react'
+import { Lock, LockOpen } from 'lucide-react'
+import { FaixaDias } from '@/components/FaixaDias'
+import { GavetaCalendario } from '@/components/GavetaCalendario'
 import { useAcao } from '@/hooks/useAdmin'
+import { useInicio } from '@/hooks/useAgenda'
 import { api } from '@/lib/api'
 import { admin } from '@/lib/apiAdmin'
-import { horaCurta, nomeDia, paraData } from '@/lib/datas'
-import { Botao } from '@/ui/Botao'
-import { Entrada } from '@/ui/Campo'
-import { Bloqueios } from './Bloqueios'
+import { diaDoMes, horaCurta, mesCurto, nomeDia, somarDias } from '@/lib/datas'
+import { Rotulo } from '@/ui/Rotulo'
+import { SeletorProfessor } from '@/ui/SeletorProfessor'
+import { GavetaBloqueio } from './gavetas/GavetaBloqueio'
+import { LinhaAula } from './LinhaAula'
 
 export function AbaAgenda() {
-  const [data, setData] = useState(() => paraData(new Date()))
-  const dia = useQuery({ queryKey: ['dia', data], queryFn: () => api.dia(data) })
-  const remover = useAcao(admin.removerAgendamento, [['dia', data]], 'Agendamento removido.')
-  const bloquear = useAcao((v: { gradeId: number | null; motivo: string }) => admin.bloquear(data, v.gradeId, v.motivo), [['dia', data], ['bloqueios']], 'Bloqueado.')
-  const pedirMotivo = (gradeId: number | null) => {
-    const motivo = prompt('Motivo (aparece para os alunos):', 'Feriado')
-    if (motivo !== null) bloquear.mutate({ gradeId, motivo })
-  }
+  const inicio = useInicio()
+  const hoje = inicio.data?.agora.data
+  const [escolhido, setData] = useState<string | null>(null)
+  const data = escolhido ?? hoje ?? null
+  const [aberta, setAberta] = useState<number | null>(null)
+  const [calendario, setCalendario] = useState(false)
+  const [bloquearEm, setBloquearEm] = useState<{ gradeId: number | null; titulo: string } | null>(null)
+  const diasComAula = useMemo(() => new Set(inicio.data?.grade.map((g) => g.dia_semana)), [inicio.data])
+
+  const dia = useQuery({ queryKey: ['dia', data], queryFn: () => api.dia(data!), enabled: !!data })
+  const bloqueios = useQuery({ queryKey: ['bloqueios'], queryFn: admin.bloqueios })
+  const K = [['dia', data ?? ''], ['bloqueios']]
+  const remover = useAcao(admin.removerAgendamento, K, 'Agendamento removido.')
+  const escalar = useAcao((v: { gradeId: number | null; professorId: number | null }) => admin.escalar(data!, v.gradeId, v.professorId), K, 'Professor definido.')
+  const bloquear = useAcao((v: { gradeId: number | null; motivo: string }) => admin.bloquear(data!, v.gradeId, v.motivo), K, 'Bloqueado.')
+  const desbloquear = useAcao(admin.desbloquear, K, 'Desbloqueado.')
+  const bloqueioDe = (gradeId: number | null) => bloqueios.data?.find((b) => b.data === data && b.grade_id === gradeId)
+
+  if (!hoje || !data) return null
+  const bDia = bloqueioDe(null)
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Entrada type="date" value={data} onChange={(e) => e.target.value && setData(e.target.value)} className="flex-1" />
-        <span className="font-display w-24 text-lg uppercase">{nomeDia(data).slice(0, 3)}</span>
+    <div className="space-y-5">
+      <div className="-mx-5">
+        <FaixaDias hoje={hoje} desde={somarDias(hoje, -7)} dias={29} diasComAula={diasComAula} selecionado={data} onSelecionar={(d) => { setData(d); setAberta(null) }} onCalendario={() => setCalendario(true)} />
       </div>
-      {dia.data?.bloqueioDia ? (
-        <p className="corte bg-carvao-2 p-4 text-carvao-11">Dia bloqueado: {dia.data.bloqueioDia}</p>
-      ) : (
-        dia.data?.horarios.length ? <Botao variante="neutro" className="h-11 text-base" onClick={() => pedirMotivo(null)}>Bloquear o dia inteiro</Botao> : <p className="text-carvao-10">Sem horários na grade neste dia.</p>
-      )}
-      {dia.data?.horarios.map((h) => (
-        <div key={h.id} className="corte bg-carvao-2 p-4">
-          <div className="flex items-baseline gap-3">
-            <span className="font-display text-3xl">{horaCurta(h.hora)}</span>
-            <span className="text-carvao-11">{h.agendados.length}/{h.vagas}</span>
-            {h.bloqueio ? <span className="ml-auto text-sm text-sangue-11">{h.bloqueio}</span> : (
-              <button onClick={() => pedirMotivo(h.id)} className="ml-auto h-9 text-sm font-semibold text-carvao-11">Bloquear</button>
-            )}
-          </div>
-          <ol className="mt-2 space-y-1">
-            {h.agendados.map((a, i) => (
-              <li key={a.id} className="flex items-center gap-2 border-t border-carvao-4 pt-1">
-                <span className="w-6 text-carvao-9">{i + 1}</span>
-                <span className="flex-1">{a.nome}</span>
-                <button aria-label={`Remover ${a.nome}`} onClick={() => remover.mutate(a.id)} className="grid size-10 place-items-center text-carvao-10"><X className="size-5" /></button>
-              </li>
-            ))}
-          </ol>
+
+      <div className="flex items-end justify-between gap-3">
+        <h2 className="font-display -skew-x-6 text-3xl leading-none uppercase">
+          {nomeDia(data)} <span className="text-ouro-9">{diaDoMes(data)} {mesCurto(data)}</span>
+        </h2>
+        {bDia ? (
+          <button onClick={() => desbloquear.mutate(bDia.id)} className="flex h-11 items-center gap-1.5 text-sm font-semibold text-ouro-11"><LockOpen className="size-4" /> Liberar dia</button>
+        ) : dia.data?.horarios.length ? (
+          <button onClick={() => setBloquearEm({ gradeId: null, titulo: `${nomeDia(data)}, dia inteiro` })} className="flex h-11 items-center gap-1.5 text-sm font-semibold text-carvao-11"><Lock className="size-4" /> Bloquear dia</button>
+        ) : null}
+      </div>
+
+      {dia.data?.horarios.length ? (
+        <div className="rounded-[var(--radius-lg)] bg-carvao-2 p-4">
+          <Rotulo htmlFor="prof-dia">Professor do dia</Rotulo>
+          <SeletorProfessor id="prof-dia" valor={dia.data.professorDiaId} nenhum="Padrão de cada horário" onMudar={(id) => escalar.mutate({ gradeId: null, professorId: id })} className="w-full" />
         </div>
-      ))}
-      <Bloqueios />
+      ) : null}
+
+      {dia.data && !dia.data.horarios.length && <p className="rounded-[var(--radius-lg)] bg-carvao-2 p-5 text-carvao-10">Sem aula na grade neste dia.</p>}
+      {bDia && <p className="rounded-[var(--radius-lg)] bg-ouro-2 p-4 text-ouro-12">Dia bloqueado: {bDia.motivo || 'sem aula'}</p>}
+
+      <ul className="space-y-2">
+        {dia.data?.horarios.map((h) => {
+          const b = bloqueioDe(h.id)
+          return (
+            <LinhaAula
+              key={h.id}
+              h={h}
+              aberta={aberta === h.id}
+              onAlternar={() => setAberta(aberta === h.id ? null : h.id)}
+              onRemover={(id) => remover.mutate(id)}
+              onEscalar={(professorId) => escalar.mutate({ gradeId: h.id, professorId })}
+              onBloquear={() => setBloquearEm({ gradeId: h.id, titulo: `${nomeDia(data)}, ${horaCurta(h.hora)}` })}
+              onDesbloquear={b ? () => desbloquear.mutate(b.id) : null}
+            />
+          )
+        })}
+      </ul>
+
+      <GavetaBloqueio
+        alvo={bloquearEm}
+        enviando={bloquear.isPending}
+        onFechar={() => setBloquearEm(null)}
+        onConfirmar={(motivo) => bloquearEm && bloquear.mutate({ gradeId: bloquearEm.gradeId, motivo }, { onSuccess: () => setBloquearEm(null) })}
+      />
+      <GavetaCalendario
+        aberta={calendario}
+        hoje={hoje}
+        desde={somarDias(hoje, -60)}
+        janela={120}
+        diasComAula={new Set([0, 1, 2, 3, 4, 5, 6])}
+        selecionado={data}
+        onFechar={() => setCalendario(false)}
+        onEscolher={(d) => { setData(d); setCalendario(false); setAberta(null) }}
+      />
     </div>
   )
 }

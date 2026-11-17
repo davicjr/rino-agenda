@@ -1,7 +1,6 @@
 // Tela pública: escolher o dia, ver quem vai e agendar ou retirar.
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { CardHorario } from '@/components/CardHorario'
 import { Cabecalho } from '@/components/Cabecalho'
 import { FaixaDias } from '@/components/FaixaDias'
 import { GavetaAgendar } from '@/components/GavetaAgendar'
@@ -16,11 +15,17 @@ import { horaCurta } from '@/lib/datas'
 import { vibrar } from '@/lib/impacto'
 import { primeiroDia } from '@/lib/primeiroDia'
 import { EstadoDia } from '@/components/EstadoDia'
+import { ListaHorarios } from '@/components/ListaHorarios'
 
 export function Agenda() {
   const inicio = useInicio()
-  const [escolhido, setEscolhido] = useState<string | null>(null)
+  const [escolhido, setEscolhidoBruto] = useState<string | null>(null)
+  const [direcao, setDirecao] = useState(1)
   const data = escolhido ?? (inicio.data ? primeiroDia(inicio.data) : null)
+  const setEscolhido = (d: string) => {
+    if (data) setDirecao(d >= data ? 1 : -1)
+    setEscolhidoBruto(d)
+  }
   const dia = useDia(data)
   const [meuId, lembrar] = useMeuAluno()
   const [agendarEm, setAgendarEm] = useState<Horario | null>(null)
@@ -58,12 +63,13 @@ export function Agenda() {
   }
 
   return (
-    <main className="relative mx-auto min-h-dvh max-w-lg overflow-x-hidden pb-16">
-      <Textura className="-top-10 -right-24 h-80 w-[34rem]" />
+    <main className="relative mx-auto min-h-dvh max-w-lg overflow-x-clip pb-16">
+      <Textura className="top-[6.5rem] -right-28 h-56 w-[26rem] opacity-80" />
       <Cabecalho />
       {inicio.data && data && (
         <>
-          <TituloDia data={data} hoje={inicio.data.agora.data} />
+          <TituloDia data={data} hoje={inicio.data.agora.data} direcao={direcao} />
+          <div className="mt-6">
           <FaixaDias
             hoje={inicio.data.agora.data}
             dias={15}
@@ -72,21 +78,22 @@ export function Agenda() {
             onSelecionar={setEscolhido}
             onCalendario={() => setCalendario(true)}
           />
+          </div>
         </>
       )}
-      <section className="relative z-10 mt-6 space-y-3 px-5" aria-live="polite">
+      <section className={`relative z-10 mt-6 space-y-3 px-5 transition-opacity duration-200 ${dia.isPlaceholderData ? 'opacity-40' : ''}`}>
         <EstadoDia carregando={inicio.isPending || dia.isPending} erro={inicio.error ?? dia.error} dia={dia.data} />
-        {dia.data?.horarios.map((h, i) => (
-          <div key={h.id} className="animate-surge" style={{ animationDelay: `${i * 45}ms` }}>
-            <CardHorario
-              horario={h}
-              meuId={meuId}
-              pulso={pulsos[h.id] ?? 0}
-              onAgendar={setAgendarEm}
-              onTocarNome={(agendado, horario) => setRetirar({ agendado, horario })}
-            />
-          </div>
-        ))}
+        {dia.data && data && (
+          <ListaHorarios
+            data={dia.data.data}
+            direcao={direcao}
+            horarios={dia.data.horarios}
+            meuId={meuId}
+            pulsos={pulsos}
+            onAgendar={setAgendarEm}
+            onTocarNome={(agendado, horario) => setRetirar({ agendado, horario })}
+          />
+        )}
       </section>
       <footer className="font-cond mt-12 text-center text-sm tracking-[0.3em] text-carvao-8 uppercase">
         Disciplina · Foco · Força · Evolução

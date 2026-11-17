@@ -4,10 +4,10 @@ import { ptBR } from 'react-day-picker/locale'
 import { deData, paraData, somarDias } from '@/lib/datas'
 import { Gaveta } from '@/ui/Gaveta'
 
-type Props = { aberta: boolean; hoje: string; janela: number; diasComAula: Set<number>; selecionado: string; onFechar: () => void; onEscolher: (d: string) => void }
+type Props = { aberta: boolean; hoje: string; desde?: string; janela: number; diasComAula: Set<number>; selecionado: string; onFechar: () => void; onEscolher: (d: string) => void }
 
-export function GavetaCalendario({ aberta, hoje, janela, diasComAula, selecionado, onFechar, onEscolher }: Props) {
-  const inicio = deData(hoje)
+export function GavetaCalendario({ aberta, hoje, desde, janela, diasComAula, selecionado, onFechar, onEscolher }: Props) {
+  const inicio = deData(desde ?? hoje)
   const fim = deData(somarDias(hoje, janela))
   return (
     <Gaveta aberta={aberta} onFechar={onFechar} titulo="Escolher dia">
