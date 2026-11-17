@@ -19,7 +19,7 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
             aria-selected={sel}
             onClick={() => onSelecionar(h.id)}
             className={cn(
-              'paralelo flex h-15 min-w-[4.5rem] flex-1 shrink-0 flex-col items-center justify-center gap-0.5 transition-colors duration-300',
+              'paralelo flex h-15 min-w-[3.75rem] flex-1 shrink-0 flex-col items-center justify-center gap-0.5 transition-colors duration-300',
               sel ? 'bg-ouro-9 text-preto' : h.bloqueio ? 'bg-alerta-3 text-alerta-11' : !h.aberto ? 'bg-carvao-2 text-carvao-8' : 'bg-carvao-3 text-carvao-12 active:bg-carvao-4',
             )}
           >
