@@ -1,13 +1,15 @@
 // Área administrativa: abas fixas no topo (Agenda, Alunos, Grade, Professores).
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CalendarCheck, CalendarDays, Clock, Eye, LogOut, Shield, Users } from 'lucide-react'
+import { CalendarCheck, CalendarDays, Clock, Eye, LogOut, Shield, SlidersHorizontal, Users } from 'lucide-react'
 import { Cabecalho } from '@/components/Cabecalho'
 import { GavetaCalendario } from '@/components/GavetaCalendario'
 import { useInicio } from '@/hooks/useAgenda'
 import { admin } from '@/lib/apiAdmin'
 import { somarDias } from '@/lib/datas'
 import { IconeTopo } from '@/ui/IconeTopo'
+import { useAcao } from '@/hooks/useAdmin'
+import { GavetaRegras } from './gavetas/GavetaRegras'
 import { sessao } from '@/lib/apiAdmin'
 import { cn } from '@/lib/cn'
 import { AbaAgenda } from './AbaAgenda'
@@ -35,6 +37,9 @@ function Painel() {
   const [aba, setAba] = useState<Aba>('agenda')
   const [dataAgenda, setDataAgenda] = useState<string | null>(null)
   const [calendario, setCalendario] = useState(false)
+  const [ajustes, setAjustes] = useState(false)
+  const regras = useQuery({ queryKey: ['regras'], queryFn: admin.regras })
+  const salvarRegras = useAcao(admin.salvarRegras, [['regras'], ['inicio'], ['dia']], 'Regras salvas.')
   const qc = useQueryClient()
   const inicio = useInicio()
   const bloqueios = useQuery({ queryKey: ['bloqueios'], queryFn: admin.bloqueios })
@@ -51,6 +56,7 @@ function Painel() {
           acoes={
             <>
               {aba === 'agenda' && hoje && <IconeTopo rotulo="Abrir calendário" onClick={() => setCalendario(true)}><CalendarDays className="size-5" /></IconeTopo>}
+              <IconeTopo rotulo="Regras de agendamento" onClick={() => setAjustes(true)}><SlidersHorizontal className="size-5" /></IconeTopo>
               <IconeTopo rotulo="Ver agenda pública" para="/"><Eye className="size-5" /></IconeTopo>
               <IconeTopo rotulo="Sair" onClick={() => sair.mutate()}><LogOut className="size-5" /></IconeTopo>
             </>
@@ -80,6 +86,13 @@ function Painel() {
         {aba === 'grade' && <AbaGrade />}
         {aba === 'professores' && <AbaProfessores />}
       </section>
+      <GavetaRegras
+        aberta={ajustes}
+        regras={regras.data}
+        enviando={salvarRegras.isPending}
+        onFechar={() => setAjustes(false)}
+        onSalvar={(r) => salvarRegras.mutate(r, { onSuccess: () => setAjustes(false) })}
+      />
       {hoje && (
         <GavetaCalendario
           key={calendario ? 'aberta' : 'fechada'}

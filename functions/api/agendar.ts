@@ -1,5 +1,6 @@
 // POST /api/agendar {alunoId, gradeId, data}: valida e reserva a vaga numa instrução atômica.
 import { erro, inteiro, json, lerCorpo, type Env } from '../_lib/http'
+import { janelaAgendar, lerRegras, mensagemJanela } from '../_lib/janela'
 import { agoraBahia, ehDataValida, LIMITE_SEMANAL, motivoRecusa, semanaDe, type Plano } from '../_lib/regras'
 
 type Pedido = { alunoId?: unknown; gradeId?: unknown; data?: unknown }
@@ -27,13 +28,14 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
   if (!g) return erro('Horário não encontrado.', 404)
 
   const plano: Plano = a?.plano ?? 'livre'
+  const regras = await lerRegras(db)
   const recusa = motivoRecusa(
     {
       data, hora: g.hora, diaSemanaGrade: g.dia_semana, gradeAtiva: g.ativo === 1, alunoAtivo: a?.ativo === 1, plano,
       bloqueado: bloq.results.length > 0, ocupados: (ocup.results[0] as { n: number }).n, vagas: g.vagas,
       jaAgendado: ja.results.length > 0, jaTemNoDia: noDia.results.length > 0, agendadosNaSemana: (sem.results[0] as { n: number }).n,
+      foraDaJanela: mensagemJanela(janelaAgendar(data, g.hora, agoraBahia(), regras), regras),
     },
-    agoraBahia(),
   )
   if (recusa) return erro(recusa, 409)
 

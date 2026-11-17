@@ -4,18 +4,17 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { Lock } from 'lucide-react'
-import type { Agendado, Horario } from '@/lib/api'
-import { cn } from '@/lib/cn'
-import { horaCurta } from '@/lib/datas'
+import type { Agendado, Horario, RegrasJanela } from '@/lib/api'
 import { Avatar } from '@/ui/Avatar'
 import { reduzirMovimento } from '@/lib/impacto'
 import { Carimbo } from './Carimbo'
 import { ListaAlunos } from './ListaAlunos'
+import { BotaoAgendar } from './BotaoAgendar'
 import { MedidorVagas } from './MedidorVagas'
 
-type Props = { horario: Horario; pulso: number; onAgendar: (h: Horario) => void; onTocarNome: (a: Agendado, h: Horario) => void }
+type Props = { horario: Horario; regras?: RegrasJanela; pulso: number; onAgendar: (h: Horario) => void; onTocarNome: (a: Agendado, h: Horario) => void }
 
-export function CardAula({ horario: h, pulso, onAgendar, onTocarNome }: Props) {
+export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: Props) {
   const raiz = useRef<HTMLElement>(null)
   const n = h.agendados.length
   const lotado = n >= h.vagas
@@ -65,7 +64,7 @@ export function CardAula({ horario: h, pulso, onAgendar, onTocarNome }: Props) {
           {aberto ? `Confirmados · ${n}` : `Treinaram · ${n}`}
         </p>
         {n ? (
-          <ListaAlunos agendados={h.agendados} pulso={pulso} podeRetirar={aberto} onTocar={(a) => onTocarNome(a, h)} />
+          <ListaAlunos agendados={h.agendados} pulso={pulso} podeRetirar={h.podeRetirar} onTocar={(a) => onTocarNome(a, h)} />
         ) : (
           <p className="py-4 text-carvao-9">{aberto ? 'Ninguém agendado ainda.' : 'Ninguém treinou neste horário.'}</p>
         )}
@@ -73,16 +72,7 @@ export function CardAula({ horario: h, pulso, onAgendar, onTocarNome }: Props) {
 
       {aberto && (
         <div className="relative shrink-0 p-4 pt-3">
-          <button
-            onClick={() => onAgendar(h)}
-            disabled={lotado}
-            className={cn(
-              'paralelo font-display h-13 w-full text-xl tracking-wider uppercase transition-transform duration-100 active:scale-[0.98]',
-              lotado ? 'bg-carvao-4 text-carvao-9' : 'bg-ouro-9 text-preto active:bg-ouro-10',
-            )}
-          >
-            {lotado ? 'Turma cheia' : `Agendar às ${horaCurta(h.hora)}`}
-          </button>
+          <BotaoAgendar h={h} lotado={lotado} regras={regras} onAgendar={() => onAgendar(h)} />
         </div>
       )}
     </article>

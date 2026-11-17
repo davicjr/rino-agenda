@@ -1,5 +1,5 @@
 // Chamadas do admin. Em produção o Cloudflare Access libera /api/admin pelo cookie da sessão.
-import { chamar } from './api'
+import { chamar, type RegrasJanela } from './api'
 
 export type AlunoAdmin = { id: number; nome: string; apelido: string | null; plano: 'livre' | '3x' | '2x'; ativo: number; foto: number | null }
 export type GradeAdmin = { id: number; dia_semana: number; hora: string; vagas: number; ativo: number; professor_id: number | null }
@@ -36,6 +36,9 @@ export const admin = {
     return corpo.foto ?? null
   },
   removerFoto: (tipo: 'aluno' | 'professor', id: number) => chamar(`/admin/foto?tipo=${tipo}&id=${id}`, { method: 'DELETE' }),
+
+  regras: () => chamar<RegrasJanela>('/admin/config'),
+  salvarRegras: (r: RegrasJanela) => chamar<RegrasJanela>('/admin/config', corpo('PUT', r)),
 
   removerAgendamento: (id: number) => chamar(`/admin/agendamentos?id=${id}`, { method: 'DELETE' }),
 }

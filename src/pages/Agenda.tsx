@@ -103,6 +103,7 @@ export function Agenda() {
           <SessaoDia
             key={dia.data.data}
             horarios={dia.data.horarios}
+            regras={inicio.data?.regras}
             direcaoDia={direcao}
             pulsos={pulsos}
             onAgendar={setAgendarEm}

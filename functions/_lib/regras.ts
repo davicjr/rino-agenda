@@ -3,7 +3,6 @@
 export type Plano = 'livre' | '3x' | '2x'
 
 export const LIMITE_SEMANAL: Record<Plano, number> = { livre: Infinity, '3x': 3, '2x': 2 }
-export const JANELA_DIAS = 30
 const OFFSET_BAHIA_MIN = -3 * 60 // America/Bahia: UTC-3, sem horário de verão
 
 export type Agora = { data: string; minutos: number }
@@ -61,15 +60,16 @@ export type PedidoAgendamento = {
   jaAgendado: boolean
   jaTemNoDia: boolean
   agendadosNaSemana: number
+  /** Mensagem da janela de agendamento (null = aberta). */
+  foraDaJanela: string | null
 }
 
 /** Devolve a mensagem de erro, ou null se pode agendar. */
-export function motivoRecusa(p: PedidoAgendamento, agora: Agora): string | null {
+export function motivoRecusa(p: PedidoAgendamento): string | null {
   if (!ehDataValida(p.data)) return 'Data inválida.'
   if (!p.alunoAtivo) return 'Aluno não encontrado.'
   if (!p.gradeAtiva || diaSemana(p.data) !== p.diaSemanaGrade) return 'Esse horário não existe nesse dia.'
-  if (!aulaNoFuturo(p.data, p.hora, agora)) return 'Esse horário já passou.'
-  if (p.data > somarDias(agora.data, JANELA_DIAS)) return `Só dá para agendar até ${JANELA_DIAS} dias à frente.`
+  if (p.foraDaJanela) return p.foraDaJanela
   if (p.bloqueado) return 'Não tem aula nesse horário.'
   if (p.jaAgendado) return 'Você já está nesse horário.'
   if (p.jaTemNoDia) return 'Você já tem treino marcado nesse dia. É um por dia.'

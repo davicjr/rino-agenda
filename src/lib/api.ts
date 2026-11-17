@@ -3,9 +3,11 @@ export type Aluno = { id: number; nome: string; apelido: string | null; foto: nu
 export type GradeItem = { id: number; dia_semana: number; hora: string; vagas: number }
 export type Agora = { data: string; minutos: number }
 export type BloqueioDia = { data: string; motivo: string | null }
-export type Inicio = { agora: Agora; janelaDias: number; grade: GradeItem[]; alunos: Aluno[]; bloqueiosDia: BloqueioDia[] }
+export type Inicio = { agora: Agora; janelaDias: number; grade: GradeItem[]; alunos: Aluno[]; bloqueiosDia: BloqueioDia[]; regras: RegrasJanela }
 export type Agendado = { id: number; aluno_id: number; nome: string; foto: number | null }
 export type Professor = { id: number; nome: string; foto: number | null }
+export type RegrasJanela = { abreDiasAntes: number | null; fechaHorasAntes: number; retirarHorasAntes: number }
+export type Janela = { estado: 'aberta' | 'passou' | 'fechou' } | { estado: 'cedo'; abreEm: { data: string; hora: string } }
 export type Horario = {
   id: number
   hora: string
@@ -15,6 +17,8 @@ export type Horario = {
   agendados: Agendado[]
   professor: Professor | null
   professorHorarioId: number | null
+  janela: Janela
+  podeRetirar: boolean
 }
 export type Dia = { data: string; bloqueioDia: string | null; professorDiaId: number | null; horarios: Horario[] }
 

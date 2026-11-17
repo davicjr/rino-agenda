@@ -3,13 +3,14 @@
 import { useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import type { Agendado, Horario } from '@/lib/api'
+import type { Agendado, Horario, RegrasJanela } from '@/lib/api'
 import { reduzirMovimento } from '@/lib/impacto'
 import { AbasHorarios } from './AbasHorarios'
 import { CardAula } from './CardAula'
 
 type Props = {
   horarios: Horario[]
+  regras?: RegrasJanela
   direcaoDia: number
   pulsos: Record<number, number>
   onAgendar: (h: Horario) => void
@@ -18,7 +19,7 @@ type Props = {
 
 const inicial = (hs: Horario[]) => (hs.find((h) => h.aberto && !h.bloqueio) ?? hs[0])?.id
 
-export function SessaoDia({ horarios, direcaoDia, pulsos, onAgendar, onTocarNome }: Props) {
+export function SessaoDia({ horarios, regras, direcaoDia, pulsos, onAgendar, onTocarNome }: Props) {
   const [sel, setSel] = useState(() => inicial(horarios))
   const [direcao, setDirecao] = useState(direcaoDia)
   const palco = useRef<HTMLDivElement>(null)
@@ -44,7 +45,7 @@ export function SessaoDia({ horarios, direcaoDia, pulsos, onAgendar, onTocarNome
     <div className="flex min-h-0 flex-1 flex-col gap-3">
       <AbasHorarios horarios={horarios} selecionado={atual.id} onSelecionar={escolher} />
       <div ref={palco} className="flex min-h-0 flex-1 flex-col">
-        <CardAula horario={atual} pulso={pulsos[atual.id] ?? 0} onAgendar={onAgendar} onTocarNome={onTocarNome} />
+        <CardAula horario={atual} regras={regras} pulso={pulsos[atual.id] ?? 0} onAgendar={onAgendar} onTocarNome={onTocarNome} />
       </div>
     </div>
   )
