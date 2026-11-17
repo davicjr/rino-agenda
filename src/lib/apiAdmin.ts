@@ -24,3 +24,9 @@ export const admin = {
 
   removerAgendamento: (id: number) => chamar(`/admin/agendamentos?id=${id}`, { method: 'DELETE' }),
 }
+
+export const sessao = {
+  estado: () => chamar<{ logado: boolean }>('/admin/sessao'),
+  entrar: (senha: string) => chamar<{ logado: boolean }>('/admin/sessao', corpo('POST', { senha })),
+  sair: () => chamar<{ logado: boolean }>('/admin/sessao', { method: 'DELETE' }),
+}
