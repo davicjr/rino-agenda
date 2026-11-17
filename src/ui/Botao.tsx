@@ -1,0 +1,19 @@
+import type { ButtonHTMLAttributes } from 'react'
+import { cn } from '@/lib/cn'
+
+type Props = ButtonHTMLAttributes<HTMLButtonElement> & { variante?: 'forte' | 'contorno' | 'neutro' }
+
+export function Botao({ variante = 'forte', className, ...props }: Props) {
+  return (
+    <button
+      {...props}
+      className={cn(
+        'paralelo font-display h-13 w-full text-lg tracking-wider uppercase transition-transform duration-100 active:scale-[0.98] disabled:opacity-50',
+        variante === 'forte' && 'bg-sangue-9 text-branco active:bg-sangue-10',
+        variante === 'contorno' && 'bg-sangue-3 text-sangue-12 active:bg-sangue-4',
+        variante === 'neutro' && 'bg-carvao-4 text-carvao-12 active:bg-carvao-5',
+        className,
+      )}
+    />
+  )
+}
