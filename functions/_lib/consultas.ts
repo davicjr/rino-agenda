@@ -1,4 +1,5 @@
 // Leituras no D1 usadas pela agenda pública e pelo admin.
+import { professorDaAula, type Escala } from './professor'
 import type { Plano } from './regras'
 
 export type LinhaGrade = { id: number; dia_semana: number; hora: string; vagas: number; ativo: number }
@@ -11,8 +12,14 @@ export const alunosAtivos = (db: D1Database) =>
   db.prepare('SELECT id, nome, apelido FROM alunos WHERE ativo = 1 ORDER BY nome COLLATE NOCASE').all<LinhaAluno>()
 
 export async function horariosDoDia(db: D1Database, data: string, diaSemana: number) {
-  const [grade, agend, bloq] = await db.batch([
-    db.prepare('SELECT id, hora, vagas FROM grade WHERE ativo = 1 AND dia_semana = ? ORDER BY hora').bind(diaSemana),
+  const [grade, agend, bloq, esc] = await db.batch([
+    db
+      .prepare(
+        `SELECT g.id, g.hora, g.vagas, g.professor_id, p.nome AS professor_nome
+         FROM grade g LEFT JOIN professores p ON p.id = g.professor_id AND p.ativo = 1
+         WHERE g.ativo = 1 AND g.dia_semana = ? ORDER BY g.hora`,
+      )
+      .bind(diaSemana),
     db
       .prepare(
         `SELECT a.id, a.grade_id, a.aluno_id, COALESCE(NULLIF(al.apelido, ''), al.nome) AS nome
@@ -21,16 +28,22 @@ export async function horariosDoDia(db: D1Database, data: string, diaSemana: num
       )
       .bind(data),
     db.prepare('SELECT grade_id, motivo FROM bloqueios WHERE data = ?').bind(data),
+    db.prepare('SELECT e.grade_id, e.professor_id, p.nome FROM escala e JOIN professores p ON p.id = e.professor_id WHERE e.data = ?').bind(data),
   ])
+  const escala = esc.results as Escala[]
   const bloqueios = bloq.results as { grade_id: number | null; motivo: string | null }[]
   const diaTodo = bloqueios.find((b) => b.grade_id === null)
   const agendados = agend.results as { id: number; grade_id: number; aluno_id: number; nome: string }[]
+  type G = { id: number; hora: string; vagas: number; professor_id: number | null; professor_nome: string | null }
   return {
     bloqueioDia: diaTodo ? diaTodo.motivo || 'Sem aula' : null,
-    horarios: (grade.results as { id: number; hora: string; vagas: number }[]).map((g) => {
+    professorDiaId: escala.find((e) => e.grade_id === 0)?.professor_id ?? null,
+    horarios: (grade.results as G[]).map(({ professor_id, professor_nome, ...g }) => {
       const b = diaTodo ?? bloqueios.find((x) => x.grade_id === g.id)
       return {
         ...g,
+        professor: professorDaAula(g.id, { id: professor_id, nome: professor_nome }, escala),
+        professorHorarioId: escala.find((e) => e.grade_id === g.id)?.professor_id ?? null,
         bloqueio: b ? b.motivo || 'Sem aula' : null,
         agendados: agendados.filter((a) => a.grade_id === g.id).map(({ id, aluno_id, nome }) => ({ id, aluno_id, nome })),
       }
