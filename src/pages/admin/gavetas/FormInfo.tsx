@@ -25,7 +25,7 @@ function Campos({ inicial }: { inicial: InfoAcademia }) {
     </div>
   )
   return (
-    <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); salvar.mutate(i) }}>
+    <form className="space-y-4 [@media(max-height:620px)]:space-y-2" onSubmit={(e) => { e.preventDefault(); salvar.mutate(i) }}>
       {campo('responsavel', 'Responsável', { placeholder: 'Nome de quem responde pela academia' })}
       {campo('whatsapp', 'WhatsApp', { placeholder: '77 91234-5678', inputMode: 'tel' })}
       {campo('instagram', 'Instagram (opcional)', { placeholder: '@rinofightteam' })}

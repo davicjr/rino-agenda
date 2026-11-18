@@ -9,7 +9,7 @@ import { admin } from '@/lib/apiAdmin'
 import { somarDias } from '@/lib/datas'
 import { IconeTopo } from '@/ui/IconeTopo'
 import { useAcao } from '@/hooks/useAdmin'
-import { GavetaRegras } from './gavetas/GavetaRegras'
+import { GavetaAjustes } from './gavetas/GavetaAjustes'
 import { sessao } from '@/lib/apiAdmin'
 import { cn } from '@/lib/cn'
 import { AbaAgenda } from './AbaAgenda'
@@ -86,7 +86,7 @@ function Painel() {
         {aba === 'grade' && <AbaGrade />}
         {aba === 'equipe' && <AbaEquipe />}
       </section>
-      <GavetaRegras
+      <GavetaAjustes
         aberta={ajustes}
         regras={regras.data}
         enviando={salvarRegras.isPending}

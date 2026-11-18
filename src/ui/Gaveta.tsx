@@ -9,7 +9,7 @@ export function Gaveta({ aberta, onFechar, titulo, descricao, children }: Props)
     <Drawer.Root open={aberta} onOpenChange={(v) => !v && onFechar()} repositionInputs={false}>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-40 bg-preto/70" />
-        <Drawer.Content className="fixed inset-x-0 bottom-0 z-50 flex max-h-[88dvh] flex-col rounded-t-[var(--radius)] bg-carvao-2 outline-none">
+        <Drawer.Content className="fixed inset-x-0 bottom-0 z-50 flex max-h-[88dvh] flex-col [@media(max-height:620px)]:max-h-[97dvh] rounded-t-[var(--radius)] bg-carvao-2 outline-none">
           <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full bg-carvao-6" />
           <div className="shrink-0 px-5 pt-4 pb-3">
             <Drawer.Title className="font-display text-3xl leading-none tracking-wide uppercase">{titulo}</Drawer.Title>
