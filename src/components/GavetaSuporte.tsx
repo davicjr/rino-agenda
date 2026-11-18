@@ -11,14 +11,17 @@ import { MapaAcademia } from './MapaAcademia'
 const MENSAGEM = 'Olá! Vim pela agenda da Rino Fight Team e queria tirar uma dúvida.'
 const chave = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').trim().toLowerCase()
 
-/** Junta responsável e professores: quem é os dois aparece uma vez só, em primeiro. */
+/** Coloca o responsável em primeiro: quem também é da equipe aparece uma vez só. */
 function montarEquipe(d: Suporte) {
   const resp = chave(d.responsavel)
-  const dele = d.professores.find((p) => chave(p.nome) === resp)
-  const outros = d.professores.filter((p) => p !== dele).map((p) => ({ ...p, papel: 'Professor' }))
+  const dele = d.equipe.find((p) => chave(p.nome) === resp)
+  const outros = d.equipe.filter((p) => p !== dele).map((p) => ({ ...p, papel: p.funcao }))
   if (!d.responsavel) return outros
-  return [{ id: dele?.id ?? 0, nome: dele?.nome ?? d.responsavel, foto: dele?.foto ?? null, papel: dele ? 'Responsável · Professor' : 'Responsável' }, ...outros]
+  const papel = dele && chave(dele.funcao) !== 'responsavel' ? `Responsável · ${dele.funcao}` : 'Responsável'
+  return [{ id: 0, foto: null, funcao: '', telefone: null, instagram: null, ...dele, nome: dele?.nome ?? d.responsavel, papel }, ...outros]
 }
+
+const acaoPessoa = 'paralelo grid h-11 w-10 shrink-0 place-items-center active:brightness-95'
 
 function Titulo({ children }: { children: string }) {
   return <h3 className="font-display mb-3 text-xl tracking-wide uppercase">{children}</h3>
@@ -41,10 +44,20 @@ export function GavetaSuporte({ aberta, onFechar }: { aberta: boolean; onFechar:
                 {equipe.map((p) => (
                   <li key={`${p.id}-${p.nome}`} className="flex items-center gap-3 p-3">
                     <Avatar nome={p.nome} tipo="professor" id={p.id} foto={p.foto} destaque className="size-12" />
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="truncate text-[1.0625rem] font-semibold">{p.nome}</p>
-                      <p className="font-cond text-sm font-semibold tracking-wide text-ouro-11">{p.papel}</p>
+                      <p className="font-cond truncate text-sm font-semibold tracking-wide text-ouro-11">{p.papel}</p>
                     </div>
+                    {p.telefone && (
+                      <a href={`https://wa.me/${p.telefone}`} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp de ${p.nome}`} className={`${acaoPessoa} bg-[#25D366] text-preto`}>
+                        <IconeMarca icone={siWhatsapp} className="size-5" />
+                      </a>
+                    )}
+                    {p.instagram && (
+                      <a href={`https://instagram.com/${p.instagram}`} target="_blank" rel="noopener noreferrer" aria-label={`Instagram de ${p.nome}`} className={`${acaoPessoa} bg-gradient-to-r from-[#6d2fa0] to-[#d62f5f] text-branco`}>
+                        <IconeMarca icone={siInstagram} className="size-5" />
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

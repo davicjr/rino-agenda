@@ -20,6 +20,7 @@ export function EditorFoto({ tipo, id, nome, foto, onMudou }: Props) {
     onMudou(nova)
     qc.invalidateQueries({ queryKey: [tipo === 'aluno' ? 'alunos-admin' : 'professores'] })
     qc.invalidateQueries({ queryKey: ['inicio'] })
+    qc.invalidateQueries({ queryKey: ['info'] })
     qc.invalidateQueries({ queryKey: ['dia'] })
   }
   const escolher = (f?: File) => {

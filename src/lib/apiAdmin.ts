@@ -3,7 +3,9 @@ import { chamar, type InfoAcademia, type RegrasJanela } from './api'
 
 export type AlunoAdmin = { id: number; nome: string; apelido: string | null; plano: 'livre' | '3x' | '2x'; ativo: number; foto: number | null }
 export type GradeAdmin = { id: number; dia_semana: number; hora: string; vagas: number; sem_limite: number; ativo: number; professor_id: number | null }
-export type ProfessorAdmin = { id: number; nome: string; ativo: number; foto: number | null }
+export type ProfessorAdmin = { id: number; nome: string; funcao: string; telefone: string | null; instagram: string | null; da_aula: number; ativo: number; foto: number | null }
+export type PessoaForm = Omit<ProfessorAdmin, 'id' | 'foto'> & { id?: number; foto?: number | null }
+const corpoPessoa = (p: PessoaForm) => ({ ...p, ativo: p.ativo === 1, da_aula: p.da_aula === 1 })
 export type Bloqueio = { id: number; data: string; grade_id: number | null; hora: string | null; motivo: string | null; nota: string | null }
 
 const corpo = (metodo: string, dados: unknown) => ({ method: metodo, body: JSON.stringify(dados) })
@@ -24,8 +26,8 @@ export const admin = {
   desbloquear: (id: number) => chamar(`/admin/bloqueios?id=${id}`, { method: 'DELETE' }),
 
   professores: () => chamar<ProfessorAdmin[]>('/admin/professores'),
-  criarProfessor: (nome: string) => chamar('/admin/professores', corpo('POST', { nome })),
-  salvarProfessor: (p: ProfessorAdmin) => chamar('/admin/professores', corpo('PATCH', { ...p, ativo: p.ativo === 1 })),
+  criarPessoa: (p: PessoaForm) => chamar('/admin/professores', corpo('POST', corpoPessoa(p))),
+  salvarPessoa: (p: PessoaForm) => chamar('/admin/professores', corpo('PATCH', corpoPessoa(p))),
   apagarProfessor: (id: number) => chamar(`/admin/professores?id=${id}`, { method: 'DELETE' }),
   escalar: (data: string, gradeId: number | null, professorId: number | null) => chamar('/admin/escala', corpo('PUT', { data, gradeId, professorId })),
 

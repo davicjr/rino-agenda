@@ -1,7 +1,7 @@
-// Área administrativa: abas fixas no topo (Agenda, Alunos, Grade, Professores).
+// Área administrativa: abas fixas no topo (Agenda, Alunos, Grade, Equipe).
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CalendarCheck, CalendarDays, Clock, Eye, LogOut, Shield, SlidersHorizontal, Users } from 'lucide-react'
+import { CalendarCheck, CalendarDays, Clock, Eye, IdCard, LogOut, SlidersHorizontal, Users } from 'lucide-react'
 import { Cabecalho } from '@/components/Cabecalho'
 import { GavetaCalendario } from '@/components/GavetaCalendario'
 import { useInicio } from '@/hooks/useAgenda'
@@ -15,14 +15,14 @@ import { cn } from '@/lib/cn'
 import { AbaAgenda } from './AbaAgenda'
 import { AbaAlunos } from './AbaAlunos'
 import { AbaGrade } from './AbaGrade'
-import { AbaProfessores } from './AbaProfessores'
+import { AbaEquipe } from './AbaEquipe'
 import { Login } from './Login'
 
 const ABAS = [
   { id: 'agenda', rotulo: 'Agenda', Icone: CalendarCheck },
   { id: 'alunos', rotulo: 'Alunos', Icone: Users },
   { id: 'grade', rotulo: 'Grade', Icone: Clock },
-  { id: 'professores', rotulo: 'Profs', Icone: Shield },
+  { id: 'equipe', rotulo: 'Equipe', Icone: IdCard },
 ] as const
 type Aba = (typeof ABAS)[number]['id']
 
@@ -84,7 +84,7 @@ function Painel() {
         {aba === 'agenda' && <AbaAgenda escolhido={dataAgenda} setData={setDataAgenda} />}
         {aba === 'alunos' && <AbaAlunos />}
         {aba === 'grade' && <AbaGrade />}
-        {aba === 'professores' && <AbaProfessores />}
+        {aba === 'equipe' && <AbaEquipe />}
       </section>
       <GavetaRegras
         aberta={ajustes}

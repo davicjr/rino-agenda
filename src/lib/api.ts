@@ -28,7 +28,8 @@ export type UsoSemana = { id: number; usados: number; limite: number; marcados: 
 export type Semana = { inicio: string; fim: string; alunos: UsoSemana[] }
 
 export type InfoAcademia = { responsavel: string; whatsapp: string; instagram: string; endereco: string }
-export type Suporte = InfoAcademia & { professores: { id: number; nome: string; foto: number | null }[] }
+export type MembroEquipe = { id: number; nome: string; foto: number | null; funcao: string; telefone: string | null; instagram: string | null }
+export type Suporte = InfoAcademia & { equipe: MembroEquipe[] }
 
 export async function chamar<T>(caminho: string, init?: RequestInit): Promise<T> {
   const r = await fetch(`/api${caminho}`, {

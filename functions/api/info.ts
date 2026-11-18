@@ -1,11 +1,11 @@
-// GET /api/info: responsável, contato e professores ativos (com foto), para a gaveta de suporte.
+// GET /api/info: responsável, contato e equipe ativa (com foto e contatos), para a gaveta de suporte.
 import { lerInfo } from '../_lib/info'
 import { json, type Env } from '../_lib/http'
 
 export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
-  const [info, profs] = await Promise.all([
+  const [info, equipe] = await Promise.all([
     lerInfo(env.DB),
-    env.DB.prepare('SELECT id, nome, foto FROM professores WHERE ativo = 1 ORDER BY nome COLLATE NOCASE').all(),
+    env.DB.prepare('SELECT id, nome, foto, funcao, telefone, instagram FROM professores WHERE ativo = 1 ORDER BY nome COLLATE NOCASE').all(),
   ])
-  return json({ ...info, professores: profs.results })
+  return json({ ...info, equipe: equipe.results })
 }
