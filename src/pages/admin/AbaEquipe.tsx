@@ -1,11 +1,12 @@
 // Equipe: todas as pessoas da academia. Quem dá aulas aparece na Grade e na Agenda.
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
 import { useAcao } from '@/hooks/useAdmin'
 import { useProfessores } from '@/hooks/useProfessores'
 import { admin, type PessoaForm, type ProfessorAdmin } from '@/lib/apiAdmin'
 import { telefoneLegivel } from '@/lib/telefone'
+import { Ajuda } from '@/ui/Ajuda'
 import { Avatar } from '@/ui/Avatar'
+import { BotaoMais } from '@/ui/BotaoMais'
 import { Linha } from '@/ui/Linha'
 import { GavetaPessoa } from './gavetas/GavetaPessoa'
 
@@ -16,6 +17,7 @@ export function AbaEquipe() {
   const lista = useProfessores()
   const [alvo, setAlvo] = useState<PessoaForm | null>(null)
   const fechar = { onSuccess: () => setAlvo(null) }
+  const total = lista.data?.length ?? 0
   const criar = useAcao(admin.criarPessoa, K, 'Pessoa cadastrada.')
   const salvar = useAcao(admin.salvarPessoa, K, 'Dados salvos.')
   const apagar = useAcao(admin.apagarProfessor, K, 'Pessoa apagada.')
@@ -23,10 +25,11 @@ export function AbaEquipe() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm text-carvao-10">Quem dá aulas aparece na Grade e na Agenda. Toda a equipe ativa aparece no Suporte.</p>
-        <button onClick={() => setAlvo(NOVA)} className="paralelo font-display flex h-11 shrink-0 items-center gap-1.5 bg-ouro-9 px-4 tracking-wider text-preto uppercase active:bg-ouro-10">
-          <Plus className="size-5" /> Novo
-        </button>
+        <div className="flex items-center gap-3">
+          <h2 className="font-display -skew-x-6 text-3xl leading-none uppercase">{total} {total === 1 ? 'pessoa' : 'pessoas'}</h2>
+          <Ajuda assunto="equipe">Quem dá aulas aparece na Grade e na Agenda. Toda a equipe ativa aparece no Suporte.</Ajuda>
+        </div>
+        <BotaoMais rotulo="Nova pessoa" onClick={() => setAlvo(NOVA)} />
       </div>
       <ul className="space-y-2">
         {lista.data?.map((p) => (
@@ -40,7 +43,7 @@ export function AbaEquipe() {
           />
         ))}
       </ul>
-      {lista.data && !lista.data.length && <p className="py-8 text-center text-carvao-9">Ninguém na equipe ainda. Toque em + Novo.</p>}
+      {lista.data && !lista.data.length && <p className="py-8 text-center text-carvao-9">Ninguém na equipe ainda. Toque no + para cadastrar.</p>}
       <GavetaPessoa
         alvo={alvo}
         enviando={criar.isPending || salvar.isPending}

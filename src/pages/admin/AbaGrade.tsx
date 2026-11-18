@@ -1,10 +1,11 @@
 // Grade semanal: um dia por vez nos chips, horários em lista e edição numa gaveta.
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Plus } from 'lucide-react'
 import { useAcao } from '@/hooks/useAdmin'
 import { useProfessores } from '@/hooks/useProfessores'
 import { admin, type GradeAdmin } from '@/lib/apiAdmin'
+import { Ajuda } from '@/ui/Ajuda'
+import { BotaoMais } from '@/ui/BotaoMais'
 import { Chips } from '@/ui/Chips'
 import { GavetaHorario, type Rascunho } from './gavetas/GavetaHorario'
 import { LinhaHorario } from './LinhaHorario'
@@ -30,17 +31,18 @@ export function AbaGrade() {
     <div className="space-y-4">
       <Chips rotulo="Dia da semana" opcoes={ORDEM.map((d) => ({ valor: d, rotulo: CURTOS[d], marca: grade.data?.some((g) => g.dia_semana === d) }))} valor={dia} onMudar={setDia} />
       <div className="flex items-center justify-between pt-1">
-        <h2 className="font-display -skew-x-6 text-3xl uppercase">{DIAS[dia]}</h2>
-        <button onClick={() => setAlvo({ dia_semana: dia, hora: '18:00', vagas: 15, sem_limite: 0, ativo: 1, professor_id: null })} className="paralelo font-display flex h-11 items-center gap-1.5 bg-ouro-9 px-4 tracking-wider text-preto uppercase active:bg-ouro-10">
-          <Plus className="size-5" /> Horário
-        </button>
+        <div className="flex items-center gap-3">
+          <h2 className="font-display -skew-x-6 text-3xl uppercase">{DIAS[dia]}</h2>
+          <Ajuda assunto="grade">A grade se repete toda semana. Para mudar uma data específica, use a aba Agenda.</Ajuda>
+        </div>
+        <BotaoMais rotulo="Novo horário" onClick={() => setAlvo({ dia_semana: dia, hora: '18:00', vagas: 15, sem_limite: 0, ativo: 1, professor_id: null })} />
       </div>
       <ul className="space-y-2">
         {doDia.map((g) => (
           <LinhaHorario key={g.id} g={g} professor={nomeProf(g.professor_id)} onClick={() => setAlvo(g)} />
         ))}
       </ul>
-      {grade.data && !doDia.length && <p className="py-8 text-center text-carvao-9">Sem aula na {DIAS[dia].toLowerCase()}. Toque em + Horário para criar.</p>}
+      {grade.data && !doDia.length && <p className="py-8 text-center text-carvao-9">Sem aula na {DIAS[dia].toLowerCase()}. Toque no + para criar.</p>}
       <GavetaHorario
         alvo={alvo}
         nomeDia={DIAS[alvo?.dia_semana ?? dia]}

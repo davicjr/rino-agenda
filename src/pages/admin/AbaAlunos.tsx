@@ -1,12 +1,13 @@
 // Alunos: busca, filtro por situação e edição numa gaveta.
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Plus, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { useAcao } from '@/hooks/useAdmin'
 import { admin, type AlunoAdmin } from '@/lib/apiAdmin'
 import { PLANOS } from '@/lib/planos'
 import { cn } from '@/lib/cn'
 import { Avatar } from '@/ui/Avatar'
+import { BotaoMais } from '@/ui/BotaoMais'
 import { caixaCampo } from '@/ui/Campo'
 import { Chips } from '@/ui/Chips'
 import { Linha } from '@/ui/Linha'
@@ -38,7 +39,7 @@ export function AbaAlunos() {
           <Search className="size-5 text-carvao-9" />
           <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar aluno" className="h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-carvao-9 focus-visible:outline-none" />
         </label>
-        <button onClick={() => setNovo(true)} aria-label="Novos alunos" className="paralelo grid h-12 w-14 place-items-center bg-ouro-9 text-preto active:bg-ouro-10"><Plus className="size-6" /></button>
+        <BotaoMais rotulo="Novos alunos" onClick={() => setNovo(true)} />
       </div>
       <Chips
         rotulo="Situação"

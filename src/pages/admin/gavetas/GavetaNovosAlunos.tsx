@@ -24,7 +24,7 @@ export function GavetaNovosAlunos({ aberta, enviando, onFechar, onConfirmar }: P
           placeholder={'Islan Sena\nMaria Souza'}
         />
         <div>
-          <Rotulo>Plano</Rotulo>
+          <Rotulo ajuda="Define quantos dias o aluno pode treinar por semana, de domingo a sábado. Sempre um treino por dia.">Plano</Rotulo>
           <Chips rotulo="Plano" opcoes={PLANOS.map((p) => ({ valor: p.valor, rotulo: p.rotulo }))} valor={plano} onMudar={setPlano} />
         </div>
         <Botao disabled={!nomes.length || enviando}>{nomes.length > 1 ? `Cadastrar ${nomes.length} alunos` : 'Cadastrar'}</Botao>

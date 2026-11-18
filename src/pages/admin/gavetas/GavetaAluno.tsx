@@ -30,11 +30,11 @@ function Formulario({ aluno, onSalvar, onApagar }: { aluno: AlunoAdmin; onSalvar
         <Entrada id="nome" value={a.nome} onChange={(e) => setA({ ...a, nome: e.target.value })} />
       </div>
       <div>
-        <Rotulo htmlFor="apelido">Apelido (aparece na agenda)</Rotulo>
+        <Rotulo htmlFor="apelido" ajuda="Se preenchido, é o nome que aparece na agenda.">Apelido</Rotulo>
         <Entrada id="apelido" value={a.apelido ?? ''} placeholder="Opcional" onChange={(e) => setA({ ...a, apelido: e.target.value })} />
       </div>
       <div>
-        <Rotulo>Plano</Rotulo>
+        <Rotulo ajuda="Define quantos dias o aluno pode treinar por semana, de domingo a sábado. Sempre um treino por dia.">Plano</Rotulo>
         <Chips rotulo="Plano" opcoes={PLANOS.map((p) => ({ valor: p.valor, rotulo: p.rotulo }))} valor={a.plano} onMudar={(plano) => setA({ ...a, plano })} />
       </div>
       <Interruptor rotulo="Ativo (aparece para agendar)" ligado={a.ativo === 1} onMudar={(v) => setA({ ...a, ativo: v ? 1 : 0 })} />

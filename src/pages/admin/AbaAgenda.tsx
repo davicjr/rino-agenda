@@ -8,6 +8,7 @@ import { useInicio } from '@/hooks/useAgenda'
 import { api } from '@/lib/api'
 import { admin } from '@/lib/apiAdmin'
 import { horaCurta, nomeDia } from '@/lib/datas'
+import { Ajuda } from '@/ui/Ajuda'
 import { Rotulo } from '@/ui/Rotulo'
 import { SeletorProfessor } from '@/ui/SeletorProfessor'
 import { GavetaBloqueio } from './gavetas/GavetaBloqueio'
@@ -41,9 +42,12 @@ export function AbaAgenda({ escolhido, setData }: { escolhido: string | null; se
       </div>
 
       <div className="flex items-end justify-between gap-3">
-        <h2 className="font-display -skew-x-6 text-3xl leading-none uppercase">
-          {data === hoje ? 'Hoje' : nomeDia(data)}
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="font-display -skew-x-6 text-3xl leading-none uppercase">
+            {data === hoje ? 'Hoje' : nomeDia(data)}
+          </h2>
+          <Ajuda assunto="agenda do dia">Aqui você ajusta só esta data. Ao bloquear, ninguém consegue agendar e a agenda mostra o motivo.</Ajuda>
+        </div>
         {bDia ? (
           <button onClick={() => desbloquear.mutate(bDia.id)} className="flex h-11 items-center gap-1.5 text-sm font-semibold text-alerta-11"><LockOpen className="size-4" /> Liberar dia</button>
         ) : dia.data?.horarios.length ? (
@@ -53,7 +57,7 @@ export function AbaAgenda({ escolhido, setData }: { escolhido: string | null; se
 
       {dia.data?.horarios.length ? (
         <div className="paralelo bg-carvao-2 p-4">
-          <Rotulo htmlFor="prof-dia">Professor do dia</Rotulo>
+          <Rotulo htmlFor="prof-dia" ajuda="Vale só para esta data e substitui o professor padrão dos horários do dia.">Professor do dia</Rotulo>
           <SeletorProfessor id="prof-dia" valor={dia.data.professorDiaId} nenhum="Padrão de cada horário" onMudar={(id) => escalar.mutate({ gradeId: null, professorId: id })} className="w-full" />
         </div>
       ) : null}

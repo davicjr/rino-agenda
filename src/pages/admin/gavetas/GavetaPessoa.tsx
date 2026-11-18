@@ -42,7 +42,7 @@ function Formulario({ alvo, enviando, onSalvar, onApagar }: { alvo: PessoaForm; 
         <Entrada id="pessoa-nome" value={p.nome} maxLength={60} onChange={(e) => setP({ ...p, nome: e.target.value })} />
       </div>
       <div className="space-y-2">
-        <Rotulo>Função</Rotulo>
+        <Rotulo ajuda="Quem dá aulas aparece na Grade e na Agenda. Toda a equipe ativa aparece no Suporte.">Função</Rotulo>
         <Chips rotulo="Função" opcoes={OPCOES} valor={outra ? OUTRA : p.funcao} onMudar={escolher} />
         {outra && <Entrada aria-label="Nome da função" placeholder="Ex.: Coordenação" value={p.funcao} maxLength={FUNCAO_MAX} onChange={(e) => setP({ ...p, funcao: e.target.value })} />}
       </div>
@@ -55,14 +55,13 @@ function Formulario({ alvo, enviando, onSalvar, onApagar }: { alvo: PessoaForm; 
   const contato = (
     <div className="space-y-4">
       <div>
-        <Rotulo htmlFor="pessoa-telefone">Telefone / WhatsApp (opcional)</Rotulo>
+        <Rotulo htmlFor="pessoa-telefone" ajuda="Os contatos preenchidos ficam visíveis para todos no Suporte da agenda.">Telefone / WhatsApp (opcional)</Rotulo>
         <Entrada id="pessoa-telefone" inputMode="tel" placeholder="77 91234-5678" value={p.telefone ?? ''} onChange={(e) => setP({ ...p, telefone: e.target.value })} />
       </div>
       <div>
         <Rotulo htmlFor="pessoa-instagram">Instagram (opcional)</Rotulo>
         <Entrada id="pessoa-instagram" autoCapitalize="none" placeholder="@perfil" value={p.instagram ?? ''} onChange={(e) => setP({ ...p, instagram: e.target.value })} />
       </div>
-      <p className="text-sm text-carvao-10">Os contatos preenchidos ficam visíveis para todos no Suporte da agenda.</p>
     </div>
   )
   const abas = [{ id: 'dados', rotulo: 'Dados', conteudo: dados }, { id: 'contato', rotulo: 'Contato', conteudo: contato }]

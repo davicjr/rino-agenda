@@ -33,15 +33,15 @@ function Formulario({ inicial, enviando, onSalvar }: { inicial: RegrasJanela; en
   return (
     <form className="space-y-4 [@media(max-height:620px)]:space-y-2" onSubmit={(e) => { e.preventDefault(); onSalvar(r) }}>
       <div>
-        <Rotulo>Abre para agendar (antes da aula)</Rotulo>
+        <Rotulo ajuda="Quantos dias antes da aula o agendamento libera. Em Livre, dá para agendar qualquer data disponível.">Abre para agendar</Rotulo>
         <Chips rotulo="Abre" conteudo opcoes={ABRE} valor={r.abreDiasAntes ?? -1} onMudar={(v) => setR({ ...r, abreDiasAntes: v === -1 ? null : v })} />
       </div>
       <div>
-        <Rotulo>Fecha o agendamento</Rotulo>
+        <Rotulo ajuda="Quanto tempo antes da aula o agendamento encerra. Em Na hora, fica aberto até a aula começar.">Fecha o agendamento</Rotulo>
         <Chips rotulo="Fecha" conteudo opcoes={HORAS} valor={r.fechaHorasAntes} onMudar={(v) => setR({ ...r, fechaHorasAntes: v })} />
       </div>
       <div>
-        <Rotulo>Retirar até</Rotulo>
+        <Rotulo ajuda="Até quanto tempo antes da aula o aluno pode tirar o nome da lista.">Retirar até</Rotulo>
         <Chips rotulo="Retirar" conteudo opcoes={HORAS} valor={r.retirarHorasAntes} onMudar={(v) => setR({ ...r, retirarHorasAntes: v })} />
       </div>
       <p className="paralelo bg-carvao-3 p-3 text-sm leading-snug text-carvao-11">{resumoRegras(r)}</p>

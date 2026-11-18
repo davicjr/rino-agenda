@@ -32,7 +32,7 @@ function Formulario({ alvo, enviando, onSalvar, onApagar }: { alvo: Rascunho; en
           <Entrada id="hora" type="time" value={g.hora} onChange={(e) => setG({ ...g, hora: e.target.value })} />
         </div>
         <div>
-          <Rotulo htmlFor="vagas">Vagas</Rotulo>
+          <Rotulo htmlFor="vagas" ajuda="Quantos alunos podem agendar neste horário, de 1 a 999.">Vagas</Rotulo>
           {g.sem_limite ? (
             <p className={cn(caixaCampo, 'font-semibold text-carvao-10')}>Sem limite</p>
           ) : (
@@ -46,7 +46,7 @@ function Formulario({ alvo, enviando, onSalvar, onApagar }: { alvo: Rascunho; en
   const detalhes = (
     <div className="space-y-4">
       <div>
-        <Rotulo htmlFor="prof-padrao">Professor padrão</Rotulo>
+        <Rotulo htmlFor="prof-padrao" ajuda="Aparece em toda aula deste horário. Para trocar em uma data, use a aba Agenda.">Professor padrão</Rotulo>
         <SeletorProfessor id="prof-padrao" valor={g.professor_id} nenhum="Nenhum" onMudar={(professor_id) => setG({ ...g, professor_id })} />
       </div>
       {g.id && <Interruptor rotulo="Ativo (aparece na agenda)" ligado={g.ativo === 1} onMudar={(v) => setG({ ...g, ativo: v ? 1 : 0 })} />}
