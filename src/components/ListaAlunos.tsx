@@ -1,23 +1,23 @@
-// Alunos do horário em páginas: mede o espaço do card e mostra só os nomes que cabem,
-// sem rolagem. Ao agendar, vai para a última página, onde o nome novo aparece.
+// Alunos do horário em páginas: o card cresce com a lista até o espaço disponível e
+// mostra só os nomes que cabem, sem rolagem. Ao agendar, vai para a última página, onde o nome novo aparece.
 import { useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import type { Agendado } from '@/lib/api'
 import { cn } from '@/lib/cn'
 import { reduzirMovimento } from '@/lib/impacto'
 import { paginar } from '@/lib/paginar'
 import { Avatar } from '@/ui/Avatar'
 
-type Props = { titulo: string; vazio: string; agendados: Agendado[]; pulso: number; podeRetirar: boolean; onTocar: (a: Agendado) => void }
+type Props = { titulo: string; vazio: string; agendados: Agendado[]; limite: number | null; pulso: number; podeRetirar: boolean; onTocar: (a: Agendado) => void }
 
-// Linha mínima confortável ao toque; em tela alta sobra mais respiro por aluno.
-const linhaMinima = (alturaTela: number) => (alturaTela >= 800 ? 56 : 48)
+// Linha confortável ao toque; em tela alta sobra mais respiro por aluno.
+const alturaDaLinha = (alturaTela: number) => (alturaTela >= 800 ? 60 : 52)
 
 const botaoPagina = 'paralelo grid size-11 place-items-center bg-carvao-4 text-carvao-12 active:bg-carvao-5 disabled:text-carvao-7'
 
-export function ListaAlunos({ titulo, vazio, agendados, pulso, podeRetirar, onTocar }: Props) {
+export function ListaAlunos({ titulo, vazio, agendados, limite, pulso, podeRetirar, onTocar }: Props) {
   const area = useRef<HTMLDivElement>(null)
   const lista = useRef<HTMLOListElement>(null)
   const direcao = useRef(1)
@@ -30,15 +30,18 @@ export function ListaAlunos({ titulo, vazio, agendados, pulso, podeRetirar, onTo
 
   useLayoutEffect(() => {
     const el = area.current
-    if (!el || !n) return
+    const painel = el?.closest<HTMLElement>('[data-painel]')
+    const palco = el?.closest<HTMLElement>('[data-palco]')
+    if (!el || !painel || !palco || !n) return
     const medir = () => {
-      const qtd = Math.max(1, Math.floor(el.clientHeight / linhaMinima(window.innerHeight)))
-      setPorPagina(qtd)
-      setAlturaLinha(Math.min(el.clientHeight / qtd, 72))
+      const linha = alturaDaLinha(window.innerHeight)
+      const resto = painel.scrollHeight - el.offsetHeight // scrollHeight: o painel pode estar limitado pelo palco
+      setAlturaLinha(linha)
+      setPorPagina(Math.max(1, Math.floor((palco.clientHeight - resto) / linha)))
     }
     medir()
     const observador = new ResizeObserver(medir)
-    observador.observe(el)
+    observador.observe(palco)
     return () => observador.disconnect()
   }, [n])
 
@@ -62,10 +65,10 @@ export function ListaAlunos({ titulo, vazio, agendados, pulso, podeRetirar, onTo
   )
 
   return (
-    <section className="relative flex min-h-0 flex-1 flex-col border-t border-carvao-4 px-5 pt-[var(--folga-p)]">
+    <section className="relative flex shrink-0 flex-col border-t border-carvao-4 px-5 pt-1 pb-2">
       <div className="flex h-11 shrink-0 items-center justify-between gap-3">
-        <h2 className="font-display flex items-baseline gap-2 text-xl tracking-wide uppercase">
-          {titulo} <span className="text-ouro-9 tabular-nums">{n}</span>
+        <h2 className="font-cond flex items-baseline gap-2 text-sm font-bold tracking-wider text-carvao-11 uppercase">
+          {titulo} <span className="text-ouro-9 tabular-nums">{limite === null ? n : `${n}/${limite}`}</span>
         </h2>
         {paginas > 1 && (
           <nav aria-label="Páginas de alunos" className="flex items-center gap-1">
@@ -75,22 +78,21 @@ export function ListaAlunos({ titulo, vazio, agendados, pulso, podeRetirar, onTo
           </nav>
         )}
       </div>
-      <div ref={area} className="min-h-0 flex-1 overflow-hidden">
+      <div ref={area} style={n ? { height: alturaLinha * Math.min(n, porPagina) } : undefined} className="shrink-0 overflow-hidden">
         {n ? (
           <ol ref={lista}>
-            {agendados.slice(inicio, fim).map((a, i) => (
+            {agendados.slice(inicio, fim).map((a) => (
               <li key={a.id} style={{ height: alturaLinha }} className={cn('border-b border-carvao-3 last:border-b-0', pulso && a.id === ultimo && 'nome-novo')}>
-                <button disabled={!podeRetirar} onClick={() => onTocar(a)} className="flex h-full w-full items-center gap-3 text-left active:bg-carvao-3">
-                  <span className="font-cond w-5 text-right text-sm text-carvao-9 tabular-nums">{inicio + i + 1}</span>
+                <button disabled={!podeRetirar} onClick={() => onTocar(a)} aria-label={podeRetirar ? `Retirar ${a.nome}` : undefined} className="flex h-full w-full items-center gap-3 text-left active:bg-carvao-3">
                   <Avatar nome={a.nome} tipo="aluno" id={a.aluno_id} foto={a.foto} className="size-10 text-sm" />
-                  <span className="min-w-0 flex-1 truncate text-[1.0625rem] font-medium">{a.nome}</span>
-                  {podeRetirar && <span className="font-cond text-xs font-bold tracking-wider text-carvao-10 uppercase">Retirar</span>}
+                  <span className="min-w-0 flex-1 truncate text-base font-medium">{a.nome}</span>
+                  {podeRetirar && <X aria-hidden className="size-5 shrink-0 text-carvao-9" />}
                 </button>
               </li>
             ))}
           </ol>
         ) : (
-          <p className="py-3 text-carvao-10">{vazio}</p>
+          <p className="pb-2 text-carvao-10">{vazio}</p>
         )}
       </div>
     </section>

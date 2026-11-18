@@ -5,12 +5,13 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { Lock } from 'lucide-react'
 import type { Agendado, Horario, RegrasJanela } from '@/lib/api'
+import { cn } from '@/lib/cn'
 import { Avatar } from '@/ui/Avatar'
 import { reduzirMovimento } from '@/lib/impacto'
 import { Carimbo } from './Carimbo'
 import { ListaAlunos } from './ListaAlunos'
 import { BotaoAgendar } from './BotaoAgendar'
-import { MedidorVagas } from './MedidorVagas'
+import { BarraVagas, ResumoVagas } from './MedidorVagas'
 
 type Props = { horario: Horario; regras?: RegrasJanela; pulso: number; onAgendar: (h: Horario) => void; onTocarNome: (a: Agendado, h: Horario) => void }
 
@@ -42,36 +43,39 @@ export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: 
   }
 
   return (
-    <article ref={raiz} className="paralelo relative flex min-h-0 flex-1 flex-col overflow-hidden bg-carvao-2" aria-label={`Treino das ${h.hora}`}>
-      <span className="flash pointer-events-none absolute inset-0 bg-ouro-9 opacity-0" />
-      <div className="relative shrink-0 px-5 py-[var(--folga-m)]">
-        {(lotado && aberto) || !aberto ? (
-          <div className="mb-4">
-            {lotado && aberto ? <Carimbo /> : <span className="paralelo font-cond inline-block bg-carvao-4 px-4 py-1.5 text-xs font-bold tracking-widest text-carvao-10 uppercase">Encerrado</span>}
+    <article ref={raiz} className="flex min-h-0 flex-1 flex-col" aria-label={`Treino das ${h.hora}`}>
+      <div data-palco className="min-h-0 flex-1">
+        <div data-painel className="paralelo relative flex max-h-full flex-col overflow-hidden bg-carvao-2">
+          <span className="flash pointer-events-none absolute inset-0 bg-ouro-9 opacity-0" />
+          <div className="relative shrink-0 space-y-3 px-5 py-4">
+            <div className="flex items-center gap-3">
+              {h.professor && <Avatar nome={h.professor.nome} tipo="professor" id={h.professor.id} foto={h.professor.foto} destaque className="size-12 shrink-0 text-sm" />}
+              <p className="min-w-0 flex-1">
+                <span className="font-cond block text-xs font-bold tracking-wider text-carvao-10 uppercase">Professor</span>
+                <span className={cn('mt-0.5 block truncate text-lg leading-7 font-semibold', !h.professor && 'text-carvao-10')}>{h.professor?.nome ?? 'A definir'}</span>
+              </p>
+              {!aberto
+                ? <span className="paralelo font-cond shrink-0 bg-carvao-4 px-3 py-1.5 text-xs font-bold tracking-widest text-carvao-10 uppercase">Encerrado</span>
+                : lotado ? <Carimbo /> : <ResumoVagas ocupadas={n} vagas={h.vagas} />}
+            </div>
+            {aberto && h.vagas !== null && <BarraVagas ocupadas={n} vagas={h.vagas} />}
           </div>
-        ) : null}
-        {h.professor && (
-          <p className="flex items-center gap-3">
-            <Avatar nome={h.professor.nome} tipo="professor" id={h.professor.id} foto={h.professor.foto} destaque className="size-10 text-sm" />
-            <span className="font-cond text-sm font-bold tracking-wider text-carvao-9 uppercase">Prof.</span>
-            <span className="truncate text-lg font-semibold">{h.professor.nome}</span>
-          </p>
-        )}
-        {aberto && <div className={h.professor ? 'mt-[var(--folga-m)]' : ''}><MedidorVagas ocupadas={n} vagas={h.vagas} /></div>}
+
+          <ListaAlunos
+            key={h.id}
+            titulo={aberto ? 'Confirmados' : 'Treinaram'}
+            vazio={aberto ? 'Ninguém agendado ainda.' : 'Ninguém treinou neste horário.'}
+            agendados={h.agendados}
+            limite={aberto ? h.vagas : null}
+            pulso={pulso}
+            podeRetirar={h.podeRetirar}
+            onTocar={(a) => onTocarNome(a, h)}
+          />
+        </div>
       </div>
 
-      <ListaAlunos
-        key={h.id}
-        titulo={aberto ? 'Confirmados' : 'Treinaram'}
-        vazio={aberto ? 'Ninguém agendado ainda.' : 'Ninguém treinou neste horário.'}
-        agendados={h.agendados}
-        pulso={pulso}
-        podeRetirar={h.podeRetirar}
-        onTocar={(a) => onTocarNome(a, h)}
-      />
-
       {aberto && (
-        <div className="relative shrink-0 px-5 pt-[var(--folga-p)] pb-[var(--folga-m)]">
+        <div className="shrink-0 pt-[var(--folga-m)]">
           <BotaoAgendar h={h} lotado={lotado} regras={regras} onAgendar={() => onAgendar(h)} />
         </div>
       )}
