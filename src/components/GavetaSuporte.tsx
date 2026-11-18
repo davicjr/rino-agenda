@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { siInstagram, siWhatsapp } from 'simple-icons'
 import { api, type Suporte } from '@/lib/api'
+import { cn } from '@/lib/cn'
 import { telefoneLegivel } from '@/lib/telefone'
 import { AbasGaveta, type AbaGaveta } from '@/ui/AbasGaveta'
 import { Avatar } from '@/ui/Avatar'
@@ -23,6 +24,7 @@ function montarEquipe(d: Suporte) {
 }
 
 const acaoPessoa = 'paralelo grid h-11 w-10 shrink-0 place-items-center active:brightness-95'
+const cartaoContato = 'paralelo flex h-32 min-w-0 flex-col items-center justify-center gap-1 px-4 text-center active:brightness-95'
 
 export function GavetaSuporte({ aberta, onFechar }: { aberta: boolean; onFechar: () => void }) {
   const info = useQuery({ queryKey: ['info'], queryFn: api.info, enabled: aberta, staleTime: 5 * 60_000 })
@@ -71,23 +73,19 @@ function ListaEquipe({ equipe }: { equipe: ReturnType<typeof montarEquipe> }) {
 function Contato({ d }: { d: Suporte }) {
   if (!d.whatsapp && !d.instagram) return <p className="paralelo bg-carvao-3 p-4 text-carvao-10">Contato ainda não cadastrado. Fale com o professor no treino.</p>
   return (
-    <div className="space-y-2">
+    <div className={cn('grid gap-2', d.whatsapp && d.instagram && 'grid-cols-2')}>
       {d.whatsapp && (
-        <a href={`https://wa.me/${d.whatsapp}?text=${encodeURIComponent(MENSAGEM)}`} target="_blank" rel="noopener noreferrer" className="paralelo flex h-16 items-center justify-center gap-3 bg-[#25D366] text-preto active:brightness-95">
-          <IconeMarca icone={siWhatsapp} className="size-7" />
-          <span className="text-left leading-none">
-            <span className="font-display block text-xl tracking-wide uppercase">Chamar no WhatsApp</span>
-            <span className="font-cond mt-1 block text-sm font-bold tabular-nums">{telefoneLegivel(d.whatsapp)}</span>
-          </span>
+        <a href={`https://wa.me/${d.whatsapp}?text=${encodeURIComponent(MENSAGEM)}`} target="_blank" rel="noopener noreferrer" aria-label={`Chamar no WhatsApp: ${telefoneLegivel(d.whatsapp)}`} className={`${cartaoContato} bg-[#25D366] text-preto`}>
+          <IconeMarca icone={siWhatsapp} className="size-8" />
+          <span className="font-display mt-1 text-xl leading-none tracking-wide uppercase">WhatsApp</span>
+          <span className="font-cond max-w-full truncate text-sm font-bold tabular-nums">{telefoneLegivel(d.whatsapp)}</span>
         </a>
       )}
       {d.instagram && (
-        <a href={`https://instagram.com/${d.instagram}`} target="_blank" rel="noopener noreferrer" className="paralelo flex h-16 items-center justify-center gap-3 bg-gradient-to-r from-[#6d2fa0] via-[#b92b7a] to-[#d62f5f] text-branco active:brightness-95">
-          <IconeMarca icone={siInstagram} className="size-7" />
-          <span className="min-w-0 text-left leading-none">
-            <span className="font-display block text-xl tracking-wide uppercase">Seguir no Instagram</span>
-            <span className="font-cond mt-1 block truncate text-sm font-bold">@{d.instagram}</span>
-          </span>
+        <a href={`https://instagram.com/${d.instagram}`} target="_blank" rel="noopener noreferrer" aria-label={`Seguir no Instagram: @${d.instagram}`} className={`${cartaoContato} bg-gradient-to-r from-[#6d2fa0] via-[#b92b7a] to-[#d62f5f] text-branco`}>
+          <IconeMarca icone={siInstagram} className="size-8" />
+          <span className="font-display mt-1 text-xl leading-none tracking-wide uppercase">Instagram</span>
+          <span className="font-cond max-w-full truncate text-sm font-bold">@{d.instagram}</span>
         </a>
       )}
     </div>
