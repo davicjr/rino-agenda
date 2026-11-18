@@ -11,7 +11,7 @@ import { GavetaHorario, type Rascunho } from './gavetas/GavetaHorario'
 
 const DIAS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
 const CURTOS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
-const ORDEM = [1, 2, 3, 4, 5, 6, 0]
+const ORDEM = [0, 1, 2, 3, 4, 5, 6]
 const K = [['grade-admin'], ['inicio'], ['dia']]
 
 export function AbaGrade() {
