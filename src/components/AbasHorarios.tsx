@@ -57,7 +57,7 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
           >
             <span className="font-display text-[clamp(1.25rem,3dvh,1.75rem)] leading-none">
               {hh}
-              <span className="font-cond ml-0.5 text-sm font-bold">{mm === '00' ? 'h' : `:${mm}`}</span>
+              <span className="font-cond ml-0.5 text-sm font-bold">h{mm !== '00' && mm}</span>
             </span>
             <span className={cn('font-cond mt-1 text-xs font-semibold tracking-wide', treinando && 'text-ouro-11')}>{status}</span>
           </button>
