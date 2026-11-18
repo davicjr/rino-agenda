@@ -50,7 +50,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
     >
       {escolhido ? (
         <div className="animate-surge">
-          <div className="corte-sm flex items-center gap-3 bg-carvao-3 p-4">
+          <div className="paralelo flex items-center gap-3 bg-carvao-3 p-4">
             <Avatar nome={exibir(escolhido)} tipo="aluno" id={escolhido.id} foto={escolhido.foto} destaque className="size-12 text-lg" />
             <p className="text-xl font-semibold">{exibir(escolhido)}</p>
           </div>
@@ -63,7 +63,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
       ) : (
         <Command label="Buscar aluno" className="flex min-h-0 flex-1 flex-col">
           {eu && (
-            <button onClick={() => setEscolhido(eu)} className="corte-sm mb-3 flex shrink-0 items-center gap-3 bg-ouro-3 p-3 text-left active:bg-ouro-4">
+            <button onClick={() => setEscolhido(eu)} className="paralelo mb-3 flex shrink-0 items-center gap-3 bg-ouro-3 p-3 text-left active:bg-ouro-4">
               <Avatar nome={exibir(eu)} tipo="aluno" id={eu.id} foto={eu.foto} destaque className="size-10" />
               <span>
                 <span className="block text-xs font-semibold tracking-widest text-ouro-11 uppercase">Usado por último neste celular</span>
@@ -89,7 +89,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
                   value={`${a.nome} ${a.apelido ?? ''}`}
                   disabled={!!outra || cheia}
                   onSelect={() => setEscolhido(a)}
-                  className="flex h-13 cursor-pointer items-center gap-3 rounded-[var(--radius)] px-2 data-[disabled=true]:cursor-default data-[disabled=true]:opacity-45 data-[selected=true]:bg-carvao-4"
+                  className="paralelo flex h-13 cursor-pointer items-center gap-3 px-3 data-[disabled=true]:cursor-default data-[disabled=true]:opacity-45 data-[selected=true]:bg-carvao-4"
                 >
                   <Avatar nome={exibir(a)} tipo="aluno" id={a.id} foto={a.foto} className="size-9 text-sm" />
                   <span className="flex-1 truncate text-base">{exibir(a)}</span>
@@ -110,7 +110,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
 // e quais dias já estão marcados para a pessoa conferir.
 function ProximoTreino({ usados, limite, marcados }: UsoSemana) {
   return (
-    <div className="mt-4 rounded-[var(--radius)] bg-carvao-3 p-4">
+    <div className="mt-4 paralelo bg-carvao-3 p-4">
       <p className="font-cond flex items-baseline justify-between gap-3 text-sm font-bold tracking-wider uppercase">
         <span className="text-carvao-10">Com este, nesta semana</span>
         <span className="font-display text-xl text-ouro-9 tabular-nums">{usados + 1} de {limite}</span>

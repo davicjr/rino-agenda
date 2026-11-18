@@ -52,15 +52,15 @@ export function AbaAgenda({ escolhido, setData }: { escolhido: string | null; se
       </div>
 
       {dia.data?.horarios.length ? (
-        <div className="rounded-[var(--radius-lg)] bg-carvao-2 p-4">
+        <div className="paralelo bg-carvao-2 p-4">
           <Rotulo htmlFor="prof-dia">Professor do dia</Rotulo>
           <SeletorProfessor id="prof-dia" valor={dia.data.professorDiaId} nenhum="Padrão de cada horário" onMudar={(id) => escalar.mutate({ gradeId: null, professorId: id })} className="w-full" />
         </div>
       ) : null}
 
-      {dia.data && !dia.data.horarios.length && <p className="rounded-[var(--radius-lg)] bg-carvao-2 p-5 text-carvao-10">Sem aula na grade neste dia.</p>}
+      {dia.data && !dia.data.horarios.length && <p className="paralelo bg-carvao-2 p-5 text-carvao-10">Sem aula na grade neste dia.</p>}
       {bDia && (
-        <div className="rounded-[var(--radius-lg)] bg-alerta-3 p-4 text-alerta-12">
+        <div className="paralelo bg-alerta-3 p-4 text-alerta-12">
           <p className="flex items-center gap-2 font-semibold [overflow-wrap:anywhere]"><Lock className="size-5 shrink-0 text-alerta-11" /> Dia bloqueado: {bDia.motivo || 'sem aula'}</p>
           {bDia.nota && <p className="mt-2 text-sm text-alerta-11 [overflow-wrap:anywhere]">{bDia.nota}</p>}
         </div>

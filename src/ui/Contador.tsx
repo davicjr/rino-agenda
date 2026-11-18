@@ -6,14 +6,14 @@ import { caixaCampo } from './Campo'
 
 type Props = { valor: number; onMudar: (v: number) => void; min?: number; max?: number; rotulo: string; id?: string }
 
-const botao = 'paralelo grid h-10 w-10 shrink-0 place-items-center bg-carvao-5 active:bg-carvao-6'
+const botao = 'paralelo grid h-9 w-9 shrink-0 place-items-center bg-carvao-5 active:bg-carvao-6'
 
 export function Contador({ valor, onMudar, min = 1, max = 999, rotulo, id }: Props) {
   const [texto, setTexto] = useState(String(valor))
   const limitar = (n: number) => Math.min(max, Math.max(min, n))
   const definir = (n: number) => { const v = limitar(n); setTexto(String(v)); onMudar(v) }
   return (
-    <div className={cn(caixaCampo, 'justify-between gap-1 px-1')} role="group" aria-label={rotulo}>
+    <div className={cn(caixaCampo, 'justify-between gap-1 px-2.5')} role="group" aria-label={rotulo}>
       <button type="button" aria-label="Menos" onClick={() => definir(valor - 1)} className={botao}><Minus className="size-5" /></button>
       <input
         id={id}

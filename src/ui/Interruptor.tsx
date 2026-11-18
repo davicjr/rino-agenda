@@ -10,7 +10,7 @@ export function Interruptor({ rotulo, ligado, onMudar }: Props) {
       role="switch"
       aria-checked={ligado}
       onClick={() => onMudar(!ligado)}
-      className="flex h-12 w-full items-center justify-between rounded-[var(--radius)] bg-carvao-3 px-4 text-left"
+      className="losango flex h-12 w-full items-center justify-between px-4 text-left"
     >
       <span className="font-semibold">{rotulo}</span>
       <span className={cn('paralelo relative h-7 w-12 transition-colors duration-200', ligado ? 'bg-ouro-9' : 'bg-carvao-6')}>

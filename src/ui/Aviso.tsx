@@ -30,7 +30,7 @@ export function Aviso({ tipo, titulo, detalhe, duracao, onFechar }: Props) {
   )
   return (
     <div ref={raiz} role={tipo === 'erro' ? 'alert' : 'status'} className="group w-full drop-shadow-[0_10px_18px_rgb(0_0_0/0.55)]">
-      <div className={cn('corte-sm relative flex min-h-15 items-center gap-2.5 overflow-hidden py-2 pl-2.5', v.fundo)}>
+      <div className={cn('paralelo relative flex min-h-15 items-center gap-2.5 overflow-hidden py-2 pl-2.5', v.fundo)}>
         <span className={cn('aviso-selo paralelo grid h-10 w-10 shrink-0 place-items-center', v.selo)}><v.Icone className="size-5" strokeWidth={2.75} /></span>
         <div className="aviso-texto min-w-0 flex-1">
           <p className={cn('font-display truncate text-lg leading-tight tracking-wide uppercase', v.titulo)}>{titulo}</p>

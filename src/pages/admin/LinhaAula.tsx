@@ -22,7 +22,7 @@ type Props = {
 export function LinhaAula({ h, aberta, onAlternar, onRemover, onEscalar, onBloquear, onDesbloquear, mostrarNota }: Props) {
   const lotado = h.vagas !== null && h.agendados.length >= h.vagas
   return (
-    <li className={cn('overflow-hidden rounded-[var(--radius-lg)]', h.bloqueio ? 'bg-alerta-3' : 'bg-carvao-2')}>
+    <li className={cn('overflow-hidden paralelo', h.bloqueio ? 'bg-alerta-3' : 'bg-carvao-2')}>
       <button onClick={onAlternar} aria-expanded={aberta} className={cn('flex min-h-18 w-full items-center gap-4 px-4 py-3 text-left', h.bloqueio ? 'active:bg-alerta-4' : 'active:bg-carvao-3')}>
         <span className="font-display w-14 text-3xl">{horaCurta(h.hora)}</span>
         <span className="min-w-0 flex-1">

@@ -46,7 +46,7 @@
   --font-cond: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   --font-sans: 'Barlow', system-ui, sans-serif;
 
-  /* Raio único e pequeno para superfícies (cards, campos, listas); ações e seleção usam o paralelogramo. */
+  /* Raio só da borda superior das gavetas; o resto do app usa o paralelogramo. */
   --radius: 0.25rem;
   --radius-sm: 0.125rem;
   --radius-lg: 0.25rem;
@@ -81,10 +81,11 @@ body { min-height: 100dvh; overscroll-behavior-y: none; }
 }
 
 /* Seta própria do seletor, igual em todo aparelho. */
+.campo-seletor option { background: var(--color-carvao-3); }
 .campo-seletor {
   appearance: none;
   padding-right: 2.75rem;
-  background: var(--color-carvao-3) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a9a9a2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0.875rem center / 1.25rem;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a9a9a2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0.875rem center / 1.25rem;
 }
 
 /* Barra de tempo do aviso e entrada suave da pilha do sonner. */
@@ -92,10 +93,21 @@ body { min-height: 100dvh; overscroll-behavior-y: none; }
 .aviso-tempo { animation: aviso-tempo linear forwards; }
 [data-sonner-toaster] [data-sonner-toast] { transition-timing-function: var(--ease-saida); }
 
-/* Corte diagonal dos cards, como as faixas da camisa. */
-.corte { clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%); }
-.corte-sm { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); }
-.paralelo { clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
+/* Forma da marca: toda superfície, campo e botão é um paralelogramo com a mesma inclinação. */
+.paralelo, .losango { clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
+.paralelo:focus-visible { outline: none; filter: brightness(1.45); }
+
+/* Campo: a caixa externa vira o contorno de foco e o ::before é o fundo, ambos na mesma forma. */
+.losango { position: relative; isolation: isolate; outline: none; transition: background-color 150ms; }
+.losango::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  z-index: -1;
+  background: var(--color-carvao-3);
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+.losango:focus-visible, .losango:has(:focus-visible) { background-color: var(--color-ouro-9); }
 
 .sem-barra { scrollbar-width: none; }
 .sem-barra::-webkit-scrollbar { display: none; }

@@ -8,7 +8,7 @@ export function MapaAcademia({ endereco }: { endereco: string }) {
   const q = encodeURIComponent(endereco)
   const rota = `https://www.google.com/maps/dir/?api=1&destination=${q}`
   return (
-    <div className="corte overflow-hidden bg-carvao-3">
+    <div className="paralelo overflow-hidden bg-carvao-3">
       <div className="relative h-40 bg-carvao-4">
         <iframe
           title={`Mapa: ${endereco}`}

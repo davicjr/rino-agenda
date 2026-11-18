@@ -11,7 +11,7 @@ export function LinhaHorario({ g, professor, onClick }: Props) {
   const complemento = [professor && `Prof. ${professor}`, !g.ativo && 'pausado'].filter(Boolean).join(' · ')
   return (
     <li>
-      <button onClick={onClick} className={cn('flex min-h-20 w-full items-center gap-3 rounded-[var(--radius)] bg-carvao-2 px-4 py-3 text-left active:bg-carvao-3', !g.ativo && 'opacity-50')}>
+      <button onClick={onClick} className={cn('flex min-h-20 w-full items-center gap-3 paralelo bg-carvao-2 px-4 py-3 text-left active:bg-carvao-3', !g.ativo && 'opacity-50')}>
         <span className="font-display w-[4.5rem] shrink-0 text-2xl tracking-wide">{g.hora}</span>
         <span className="min-w-0 flex-1">
           <span className="font-cond flex items-baseline gap-1.5 text-sm font-bold tracking-wide text-carvao-11 uppercase">

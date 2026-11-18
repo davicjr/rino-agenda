@@ -8,7 +8,7 @@ export function EstadoDia({ carregando, erro, dia }: { carregando: boolean; erro
   if (carregando && !dia) {
     return (
       <div className="space-y-3" aria-label="Carregando">
-        {[0, 1, 2].map((i) => <div key={i} className="corte h-36 animate-pulse bg-carvao-2" />)}
+        {[0, 1, 2].map((i) => <div key={i} className="paralelo h-36 animate-pulse bg-carvao-2" />)}
       </div>
     )
   }
@@ -20,7 +20,7 @@ export function EstadoDia({ carregando, erro, dia }: { carregando: boolean; erro
 
 function Aviso({ titulo, texto, nota, bloqueio = false }: { titulo: string; texto: string; nota?: string | null; bloqueio?: boolean }) {
   return (
-    <div className={cn('corte p-6', bloqueio ? 'bg-alerta-3' : 'bg-carvao-2')}>
+    <div className={cn('paralelo p-6', bloqueio ? 'bg-alerta-3' : 'bg-carvao-2')}>
       {bloqueio && <Lock className="mb-3 size-6 text-alerta-11" />}
       <p className={cn('font-display text-3xl uppercase [overflow-wrap:anywhere]', bloqueio && 'text-alerta-12')}>{titulo}</p>
       <p className={cn('mt-2', bloqueio ? 'text-alerta-11' : 'text-carvao-11')}>{texto}</p>

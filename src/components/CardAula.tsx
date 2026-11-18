@@ -33,7 +33,7 @@ export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: 
 
   if (h.bloqueio) {
     return (
-      <article className="corte bg-alerta-3 p-5" aria-label={`Treino das ${h.hora}`}>
+      <article className="paralelo bg-alerta-3 p-5" aria-label={`Treino das ${h.hora}`}>
         <p className="font-display flex items-center gap-2 text-2xl text-alerta-12 uppercase [overflow-wrap:anywhere]"><Lock className="size-5 shrink-0 text-alerta-11" /> <span className="min-w-0">{h.bloqueio}</span></p>
         <p className="mt-1 text-alerta-11">Não tem treino neste horário.</p>
         {h.bloqueioNota && <p className="mt-3 border-t border-alerta-4 pt-3 text-alerta-12 [overflow-wrap:anywhere]">{h.bloqueioNota}</p>}
@@ -42,7 +42,7 @@ export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: 
   }
 
   return (
-    <article ref={raiz} className="corte relative flex min-h-0 flex-1 flex-col overflow-hidden bg-carvao-2" aria-label={`Treino das ${h.hora}`}>
+    <article ref={raiz} className="paralelo relative flex min-h-0 flex-1 flex-col overflow-hidden bg-carvao-2" aria-label={`Treino das ${h.hora}`}>
       <span className="flash pointer-events-none absolute inset-0 bg-ouro-9 opacity-0" />
       <div className="relative shrink-0 px-5 py-[var(--folga-m)]">
         {(lotado && aberto) || !aberto ? (
