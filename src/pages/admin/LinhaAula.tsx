@@ -39,8 +39,8 @@ export function LinhaAula({ h, aberta, onAlternar, onRemover, onEscalar, onBloqu
           <div className={cn('space-y-4 border-t px-4 pt-4 pb-4', h.bloqueio ? 'border-alerta-4' : 'border-carvao-4')}>
             {mostrarNota && h.bloqueioNota && <p className="text-sm text-alerta-12 [overflow-wrap:anywhere]">{h.bloqueioNota}</p>}
             <div>
-              <Rotulo htmlFor={`prof-${h.id}`}>Professor desta aula</Rotulo>
-              <SeletorProfessor id={`prof-${h.id}`} valor={h.professorHorarioId} nenhum="Igual ao do dia" onMudar={onEscalar} className="w-full" />
+              <Rotulo htmlFor={`prof-${h.id}`} ajuda="Troque só se esta data for diferente. Em Padrão da grade, entra o professor definido na aba Grade.">Professor nesta data</Rotulo>
+              <SeletorProfessor id={`prof-${h.id}`} valor={h.professorHorarioId} nenhum="Padrão da grade" onMudar={onEscalar} className="w-full" />
             </div>
             <div>
               <Rotulo>Alunos ({h.agendados.length})</Rotulo>

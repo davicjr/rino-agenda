@@ -29,7 +29,7 @@ export const admin = {
   criarPessoa: (p: PessoaForm) => chamar('/admin/professores', corpo('POST', corpoPessoa(p))),
   salvarPessoa: (p: PessoaForm) => chamar('/admin/professores', corpo('PATCH', corpoPessoa(p))),
   apagarProfessor: (id: number) => chamar(`/admin/professores?id=${id}`, { method: 'DELETE' }),
-  escalar: (data: string, gradeId: number | null, professorId: number | null) => chamar('/admin/escala', corpo('PUT', { data, gradeId, professorId })),
+  escalar: (data: string, gradeId: number, professorId: number | null) => chamar('/admin/escala', corpo('PUT', { data, gradeId, professorId })),
 
   enviarFoto: async (tipo: 'aluno' | 'professor', id: number, imagem: Blob) => {
     const r = await fetch(`/api/admin/foto?tipo=${tipo}&id=${id}`, { method: 'PUT', headers: { 'content-type': imagem.type }, body: imagem })

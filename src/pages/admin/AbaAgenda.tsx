@@ -1,4 +1,4 @@
-// Agenda do professor: escolhe o dia na faixa, define o professor do dia e abre cada horário.
+// Agenda do professor: escolhe o dia na faixa e abre cada horário para ajustar a aula.
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Lock, LockOpen } from 'lucide-react'
@@ -9,8 +9,6 @@ import { api } from '@/lib/api'
 import { admin } from '@/lib/apiAdmin'
 import { horaCurta, nomeDia } from '@/lib/datas'
 import { Ajuda } from '@/ui/Ajuda'
-import { Rotulo } from '@/ui/Rotulo'
-import { SeletorProfessor } from '@/ui/SeletorProfessor'
 import { GavetaBloqueio } from './gavetas/GavetaBloqueio'
 import { LinhaAula } from './LinhaAula'
 
@@ -26,7 +24,7 @@ export function AbaAgenda({ escolhido, setData }: { escolhido: string | null; se
   const bloqueios = useQuery({ queryKey: ['bloqueios'], queryFn: admin.bloqueios })
   const K = [['dia', data ?? ''], ['bloqueios']]
   const remover = useAcao(admin.removerAgendamento, K, 'Agendamento removido.')
-  const escalar = useAcao((v: { gradeId: number | null; professorId: number | null }) => admin.escalar(data!, v.gradeId, v.professorId), K, 'Professor definido.')
+  const escalar = useAcao((v: { gradeId: number; professorId: number | null }) => admin.escalar(data!, v.gradeId, v.professorId), K, 'Professor definido.')
   const bloquear = useAcao((v: { gradeId: number | null; motivo: string; nota: string }) => admin.bloquear(data!, v.gradeId, v.motivo, v.nota), K, 'Bloqueado.')
   const desbloquear = useAcao(admin.desbloquear, K, 'Desbloqueado.')
   const diasBloqueados = useMemo(() => new Set(bloqueios.data?.filter((b) => b.grade_id === null).map((b) => b.data)), [bloqueios.data])
@@ -54,13 +52,6 @@ export function AbaAgenda({ escolhido, setData }: { escolhido: string | null; se
           <button onClick={() => setBloquearEm({ gradeId: null, titulo: `${nomeDia(data)}, dia inteiro` })} className="flex h-11 items-center gap-1.5 text-sm font-semibold text-carvao-11"><Lock className="size-4" /> Bloquear dia</button>
         ) : null}
       </div>
-
-      {dia.data?.horarios.length ? (
-        <div className="paralelo bg-carvao-2 p-4">
-          <Rotulo htmlFor="prof-dia" ajuda="Vale só para esta data e substitui o professor padrão dos horários do dia.">Professor do dia</Rotulo>
-          <SeletorProfessor id="prof-dia" valor={dia.data.professorDiaId} nenhum="Padrão de cada horário" onMudar={(id) => escalar.mutate({ gradeId: null, professorId: id })} className="w-full" />
-        </div>
-      ) : null}
 
       {dia.data && !dia.data.horarios.length && <p className="paralelo bg-carvao-2 p-5 text-carvao-10">Sem aula na grade neste dia.</p>}
       {bDia && (

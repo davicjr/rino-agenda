@@ -1,4 +1,4 @@
-// PUT {data, gradeId?, professorId}: define quem dá aula na data (gradeId ausente = dia inteiro).
+// PUT {data, gradeId, professorId}: define quem dá aquela aula na data.
 // professorId nulo remove a escala e volta ao professor padrão da grade.
 import { erro, inteiro, json, lerCorpo, type Env } from '../../_lib/http'
 import { ehDataValida } from '../../_lib/regras'
@@ -9,7 +9,8 @@ export const onRequestPut: PagesFunction<Env> = async ({ env, request }) => {
   const c = await lerCorpo<Corpo>(request)
   const data = typeof c?.data === 'string' ? c.data : ''
   if (!ehDataValida(data)) return erro('Data inválida.')
-  const gradeId = inteiro(c?.gradeId) ?? 0
+  const gradeId = inteiro(c?.gradeId)
+  if (!gradeId) return erro('Escolha a aula.')
   const professorId = inteiro(c?.professorId)
   if (professorId) {
     await env.DB.prepare(

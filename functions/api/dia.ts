@@ -13,7 +13,6 @@ export const onRequestGet: PagesFunction<Env> = async ({ env, request }) => {
     data,
     bloqueioDia: dia.bloqueioDia,
     bloqueioDiaNota: dia.bloqueioDiaNota,
-    professorDiaId: dia.professorDiaId,
     horarios: dia.horarios.map((h) => ({
       ...h,
       aberto: aulaNoFuturo(data, h.hora, agora),

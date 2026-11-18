@@ -38,7 +38,6 @@ export async function horariosDoDia(db: D1Database, data: string, diaSemana: num
   return {
     bloqueioDia: diaTodo ? diaTodo.motivo || 'Sem aula' : null,
     bloqueioDiaNota: diaTodo?.nota ?? null,
-    professorDiaId: escala.find((e) => e.grade_id === 0)?.professor_id ?? null,
     horarios: (grade.results as G[]).map(({ professor_id, professor_nome, professor_foto, sem_limite, ...g }) => {
       const b = diaTodo ?? bloqueios.find((x) => x.grade_id === g.id)
       return {
