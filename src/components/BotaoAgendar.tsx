@@ -10,15 +10,10 @@ export function BotaoAgendar({ h, lotado, regras, onAgendar }: Props) {
   const livre = j.estado === 'aberta' && !lotado
   const texto =
     j.estado === 'cedo' ? `Abre ${nomeDiaCurto(j.abreEm.data).toLowerCase()} ${diaDoMes(j.abreEm.data)}, ${horaCurta(j.abreEm.hora)}`
-    : j.estado === 'fechou' ? 'Agendamento fechado'
+    : j.estado === 'fechou' ? (regras?.fechaHorasAntes ? `Fechou ${regras.fechaHorasAntes}h antes` : 'Agendamento fechado')
     : lotado ? 'Turma cheia'
     : `Agendar às ${horaCurta(h.hora)}`
-  const dica =
-    j.estado === 'cedo' && regras?.abreDiasAntes ? `O agendamento abre ${regras.abreDiasAntes} ${regras.abreDiasAntes === 1 ? 'dia' : 'dias'} antes da aula.`
-    : j.estado === 'fechou' && regras ? `O agendamento fecha ${regras.fechaHorasAntes}h antes da aula.`
-    : null
   return (
-    <>
     <button
       onClick={onAgendar}
       disabled={!livre}
@@ -29,7 +24,5 @@ export function BotaoAgendar({ h, lotado, regras, onAgendar }: Props) {
     >
       {texto}
     </button>
-    {dica && <p className="font-cond mt-2 text-center text-sm text-carvao-10">{dica}</p>}
-    </>
   )
 }

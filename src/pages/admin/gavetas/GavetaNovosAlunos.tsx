@@ -14,15 +14,18 @@ export function GavetaNovosAlunos({ aberta, enviando, onFechar, onConfirmar }: P
   const [plano, setPlano] = useState<Plano>('livre')
   const nomes = texto.split('\n').map((n) => n.trim()).filter((n) => n.length >= 2)
   return (
-    <Gaveta aberta={aberta} onFechar={onFechar} titulo="Novos alunos" descricao="Um nome por linha. Dá para colar a lista inteira.">
+    <Gaveta aberta={aberta} onFechar={onFechar} titulo="Novos alunos">
       <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); onConfirmar(nomes, plano); setTexto('') }}>
-        <AreaTexto
-          aria-label="Nomes"
-          rows={5}
-          value={texto}
-          onChange={(e) => setTexto(e.target.value)}
-          placeholder={'Islan Sena\nMaria Souza'}
-        />
+        <div>
+          <Rotulo htmlFor="novos-nomes" ajuda="Um nome por linha. Dá para colar a lista inteira.">Nomes</Rotulo>
+          <AreaTexto
+            id="novos-nomes"
+            rows={5}
+            value={texto}
+            onChange={(e) => setTexto(e.target.value)}
+            placeholder={'Islan Sena\nMaria Souza'}
+          />
+        </div>
         <div>
           <Rotulo ajuda="Define quantos dias o aluno pode treinar por semana, de domingo a sábado. Sempre um treino por dia.">Plano</Rotulo>
           <Chips rotulo="Plano" opcoes={PLANOS.map((p) => ({ valor: p.valor, rotulo: p.rotulo }))} valor={plano} onMudar={setPlano} />

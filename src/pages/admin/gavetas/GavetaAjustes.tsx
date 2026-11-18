@@ -2,7 +2,6 @@
 // e as informações oficiais que aparecem no Suporte da agenda.
 import { useState } from 'react'
 import type { RegrasJanela } from '@/lib/api'
-import { resumoRegras } from '@/lib/textoRegras'
 import { AbasGaveta } from '@/ui/AbasGaveta'
 import { Botao } from '@/ui/Botao'
 import { Chips } from '@/ui/Chips'
@@ -44,7 +43,6 @@ function Formulario({ inicial, enviando, onSalvar }: { inicial: RegrasJanela; en
         <Rotulo ajuda="Até quanto tempo antes da aula o aluno pode tirar o nome da lista.">Retirar até</Rotulo>
         <Chips rotulo="Retirar" conteudo opcoes={HORAS} valor={r.retirarHorasAntes} onMudar={(v) => setR({ ...r, retirarHorasAntes: v })} />
       </div>
-      <p className="paralelo bg-carvao-3 p-3 text-sm leading-snug text-carvao-11">{resumoRegras(r)}</p>
       <Botao disabled={enviando}>Salvar regras</Botao>
     </form>
   )
