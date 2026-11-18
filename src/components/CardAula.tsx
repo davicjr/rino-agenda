@@ -46,9 +46,9 @@ export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: 
   return (
     <article ref={raiz} className="flex min-h-0 flex-1 flex-col" aria-label={`Treino das ${h.hora}`}>
       <div data-palco className="min-h-0 flex-1">
-        <div data-painel className="paralelo relative flex max-h-full flex-col overflow-hidden bg-carvao-2">
+        <div data-painel className="relative flex max-h-full flex-col overflow-hidden">
           <span className="flash pointer-events-none absolute inset-0 bg-ouro-9 opacity-0" />
-          <div className="relative shrink-0 space-y-3 px-5 py-4">
+          <div className="relative shrink-0 space-y-3 pt-2 pb-4">
             <div className="flex items-center gap-3">
               {h.professor && <Avatar nome={h.professor.nome} tipo="professor" id={h.professor.id} foto={h.professor.foto} destaque className="size-12 shrink-0 text-sm" />}
               <p className="min-w-0 flex-1">

@@ -65,7 +65,7 @@ export function ListaAlunos({ titulo, vazio, agendados, limite, pulso, podeRetir
   )
 
   return (
-    <section className="relative flex shrink-0 flex-col border-t border-carvao-4 px-5 pt-1 pb-2">
+    <section className="relative flex shrink-0 flex-col border-t border-carvao-4 pt-1">
       <div className="flex h-11 shrink-0 items-center justify-between gap-3">
         <h2 className="font-cond flex items-baseline gap-2 text-sm font-bold tracking-wider text-carvao-11 uppercase">
           {titulo} <span className="text-ouro-9 tabular-nums">{limite === null ? n : `${n}/${limite}`}</span>
