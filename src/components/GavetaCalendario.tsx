@@ -79,7 +79,7 @@ export function GavetaCalendario({ aberta, hoje, selecionado, diasComAula, bloqu
                 className={cn(estiloDia(estado), 'h-11', fora && 'invisible')}
               >
                 <span className={cn('text-lg', estiloNumero(estado))}>{diaDoMes(d)}</span>
-                {d === hoje && <span className={cn('absolute bottom-1 size-1 rounded-full', estado.sel ? 'bg-preto' : 'bg-ouro-9')} />}
+                {d === hoje && <span className={cn('absolute bottom-1 size-1 rounded-full', estado.sel ? (bloq ? 'bg-branco' : 'bg-preto') : 'bg-ouro-9')} />}
               </button>
             )
           })}

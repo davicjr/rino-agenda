@@ -35,6 +35,8 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
     return () => observador.disconnect()
   }, [selecionado])
 
+  const selBloqueado = !!horarios.find((h) => h.id === selecionado)?.bloqueio
+
   return (
     <div ref={raiz} role="tablist" aria-label="Horários do dia" className="relative flex shrink-0 border-b border-carvao-4">
       {horarios.map((h) => {
@@ -52,7 +54,7 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
             onClick={() => onSelecionar(h.id)}
             className={cn(
               'flex h-[var(--altura-aba)] flex-1 flex-col items-center justify-center transition-colors duration-200',
-              sel ? 'text-carvao-12' : h.bloqueio ? 'text-alerta-11' : treinando ? 'text-ouro-11' : !h.aberto ? 'text-carvao-8' : 'text-carvao-10',
+              h.bloqueio ? 'text-alerta-11' : sel ? 'text-carvao-12' : treinando ? 'text-ouro-11' : !h.aberto ? 'text-carvao-8' : 'text-carvao-10',
             )}
           >
             <span className="font-display text-[clamp(1.25rem,3dvh,1.75rem)] leading-none">
@@ -63,7 +65,7 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
           </button>
         )
       })}
-      <span ref={barra} aria-hidden className="absolute -bottom-px left-0 h-[3px] -skew-x-[20deg] bg-ouro-9 opacity-0" />
+      <span ref={barra} aria-hidden className={cn('absolute -bottom-px left-0 h-[3px] -skew-x-[20deg] opacity-0 transition-colors duration-300', selBloqueado ? 'bg-alerta-9' : 'bg-ouro-9')} />
     </div>
   )
 }

@@ -74,6 +74,7 @@ export function SemanaDias({ hoje, selecionado, onSelecionar, diasComAula, bloqu
     return () => observador.disconnect()
   }, [selecionado])
 
+  const selBloqueado = bloqueados?.has(selecionado) ?? false
   const rotulo = mesCurto(domingo) === mesCurto(sabado)
     ? `${diaDoMes(domingo)} – ${diaDoMes(sabado)} ${mesCurto(sabado)}`
     : `${diaDoMes(domingo)} ${mesCurto(domingo)} – ${diaDoMes(sabado)} ${mesCurto(sabado)}`
@@ -93,7 +94,7 @@ export function SemanaDias({ hoje, selecionado, onSelecionar, diasComAula, bloqu
         {INICIAIS.map((l, i) => <span key={i}>{l}</span>)}
       </div>
       <div ref={grade} className="relative grid grid-cols-7 gap-1.5">
-        <span ref={indicador} aria-hidden className="paralelo pointer-events-none absolute top-0 left-0 h-[var(--altura-dia)] bg-ouro-9 opacity-0" />
+        <span ref={indicador} aria-hidden className={cn('paralelo pointer-events-none absolute top-0 left-0 h-[var(--altura-dia)] opacity-0 transition-colors duration-300', selBloqueado ? 'bg-alerta-9' : 'bg-ouro-9')} />
         {dias.map((d) => {
           const bloq = bloqueados?.has(d) ?? false
           const tem = diasComAula.has(diaSemana(d)) && !bloq
@@ -109,7 +110,7 @@ export function SemanaDias({ hoje, selecionado, onSelecionar, diasComAula, bloqu
               className={cn(estiloDia({ sel, bloq, tem, passado: d < hoje }), 'h-[var(--altura-dia)]', sel && 'bg-transparent')}
             >
               <span className={cn('numero text-[clamp(1.25rem,2.9dvh,1.625rem)]', estiloNumero({ sel, bloq, tem, passado: false }))}>{diaDoMes(d)}</span>
-              {d === hoje && <span className={cn('absolute bottom-1 size-1 rounded-full', sel ? 'bg-preto' : 'bg-ouro-9')} />}
+              {d === hoje && <span className={cn('absolute bottom-1 size-1 rounded-full', sel ? (bloq ? 'bg-branco' : 'bg-preto') : 'bg-ouro-9')} />}
             </button>
           )
         })}
