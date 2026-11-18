@@ -1,5 +1,5 @@
 // Card do horário escolhido: hora, professor, vagas, lista completa e a ação.
-// Durante a aula mostra quem está treinando; encerrado mostra quem treinou; bloqueado fica vermelho.
+// Durante a aula mostra quem está treinando; encerrado mostra quem treinou; bloqueado mostra o motivo.
 import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -8,6 +8,7 @@ import type { Agendado, Horario, RegrasJanela } from '@/lib/api'
 import { cn } from '@/lib/cn'
 import { Avatar } from '@/ui/Avatar'
 import { reduzirMovimento } from '@/lib/impacto'
+import { AvisoSemTreino } from './AvisoSemTreino'
 import { Carimbo } from './Carimbo'
 import { ListaAlunos } from './ListaAlunos'
 import { BotaoAgendar } from './BotaoAgendar'
@@ -35,10 +36,8 @@ export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: 
 
   if (h.bloqueio) {
     return (
-      <article className="paralelo bg-alerta-3 p-5" aria-label={`Treino das ${h.hora}`}>
-        <p className="font-display flex items-center gap-2 text-2xl text-alerta-12 uppercase [overflow-wrap:anywhere]"><Lock className="size-5 shrink-0 text-alerta-11" /> <span className="min-w-0">{h.bloqueio}</span></p>
-        <p className="mt-1 text-alerta-11">Não tem treino neste horário.</p>
-        {h.bloqueioNota && <p className="mt-3 border-t border-alerta-4 pt-3 text-alerta-12 [overflow-wrap:anywhere]">{h.bloqueioNota}</p>}
+      <article className="flex min-h-0 flex-1 flex-col" aria-label={`Treino das ${h.hora}`}>
+        <AvisoSemTreino alerta icone={Lock} rotulo="Sem treino neste horário" titulo={h.bloqueio} nota={h.bloqueioNota} />
       </article>
     )
   }
