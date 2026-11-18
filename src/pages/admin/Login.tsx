@@ -1,6 +1,6 @@
 // Porta do painel no estilo do cartaz: escudo sobre uma faixa amarela inclinada,
 // senha com mostrar/esconder e o formulário tremendo quando a senha está errada.
-import { useRef, useState } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock } from 'lucide-react'
 import { Link } from 'react-router'
 import { sessao } from '@/lib/apiAdmin'
 import { cn } from '@/lib/cn'
+import { Botao } from '@/ui/Botao'
 import { caixaCampo } from '@/ui/Campo'
 import { reduzirMovimento } from '@/lib/impacto'
 
@@ -16,13 +17,22 @@ export function Login() {
   const raiz = useRef<HTMLElement>(null)
   const [senha, setSenha] = useState('')
   const [ver, setVer] = useState(false)
+  const [faltaSenha, setFaltaSenha] = useState(false)
+  const campo = useRef<HTMLInputElement>(null)
+  const tremer = () => { if (!reduzirMovimento()) gsap.to('.formulario', { keyframes: { x: [0, -10, 8, -5, 3, 0] }, duration: 0.4, ease: 'power2.out' }) }
   const entrar = useMutation({
     mutationFn: () => sessao.entrar(senha),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['sessao'] }),
-    onError: () => {
-      if (!reduzirMovimento()) gsap.to('.formulario', { keyframes: { x: [0, -10, 8, -5, 3, 0] }, duration: 0.4, ease: 'power2.out' })
-    },
+    onError: tremer,
   })
+
+  const enviar = (e: FormEvent) => {
+    e.preventDefault()
+    if (senha) return entrar.mutate()
+    setFaltaSenha(true)
+    tremer()
+    campo.current?.focus()
+  }
 
   useGSAP(
     () => {
@@ -53,29 +63,29 @@ export function Login() {
 
         <h1 className="entra font-display mt-8 -skew-x-6 text-center text-4xl leading-none uppercase">Área administrativa</h1>
 
-        <form className="formulario mt-7" onSubmit={(e) => { e.preventDefault(); entrar.mutate() }}>
+        <form className="formulario mt-7" onSubmit={enviar}>
           <label htmlFor="senha" className="entra font-cond mb-1.5 block text-xs font-bold tracking-[0.16em] text-carvao-10 uppercase">Senha</label>
           <div className={cn('entra', caixaCampo)}>
             <Lock className="size-5 shrink-0 text-carvao-9" />
             <input
+              ref={campo}
               id="senha"
               type={ver ? 'text' : 'password'}
               autoComplete="current-password"
               value={senha}
-              onChange={(e) => setSenha(e.target.value)}
+              onChange={(e) => { setSenha(e.target.value); setFaltaSenha(false); entrar.reset() }}
               className="h-full min-w-0 flex-1 bg-transparent outline-none focus-visible:outline-none"
             />
             <button type="button" onClick={() => setVer(!ver)} aria-label={ver ? 'Esconder senha' : 'Mostrar senha'} className="-mr-2 grid size-11 place-items-center text-carvao-9 active:text-carvao-12">
               {ver ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
             </button>
           </div>
-          <p role="alert" className="mt-2 min-h-6 text-sm text-alerta-11">{entrar.error?.message}</p>
-          <button
-            disabled={!senha || entrar.isPending}
-            className="entra paralelo font-display mt-2 flex h-14 w-full items-center justify-center gap-2 bg-ouro-9 text-xl tracking-wider text-preto uppercase transition-transform duration-100 active:scale-[0.98] disabled:opacity-50"
-          >
-            {entrar.isPending ? 'Entrando…' : <>Entrar <ArrowRight className="size-5" /></>}
-          </button>
+          <p role="alert" className="mt-2 min-h-6 text-sm text-alerta-11">{faltaSenha ? 'Digite a senha para entrar.' : entrar.error?.message}</p>
+          <div className="entra mt-2">
+            <Botao disabled={entrar.isPending} className="flex items-center justify-center gap-2 text-xl">
+              {entrar.isPending ? 'Entrando…' : <>Entrar <ArrowRight className="size-5" /></>}
+            </Botao>
+          </div>
         </form>
       </div>
 
