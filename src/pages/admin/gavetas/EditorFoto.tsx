@@ -53,14 +53,14 @@ export function EditorFoto({ tipo, id, nome, foto, onMudou }: Props) {
   if (previa) return <RecortarFoto imagem={previa} enviando={enviando} onCancelar={cancelar} onUsar={usar} />
   return (
     <div className="flex items-center gap-4">
-      <Avatar nome={nome || '?'} tipo={tipo} id={id} foto={foto} destaque={tipo === 'professor'} className={`size-20 text-2xl ${enviando ? 'opacity-50' : ''}`} />
-      <div className="flex flex-col gap-1">
-        <label className="font-cond flex h-11 cursor-pointer items-center gap-2 text-sm font-bold tracking-wider text-ouro-11 uppercase">
+      <Avatar nome={nome || '?'} tipo={tipo} id={id} foto={foto} destaque={tipo === 'professor'} className={`size-16 shrink-0 text-2xl min-[360px]:size-20 ${enviando ? 'opacity-50' : ''}`} />
+      <div className="flex min-w-0 items-center gap-3">
+        <label className="font-cond flex h-11 cursor-pointer items-center gap-2 text-sm font-bold tracking-wider whitespace-nowrap text-ouro-11 uppercase">
           <Camera className="size-5" /> {enviando ? 'Enviando…' : foto ? 'Trocar foto' : 'Escolher foto'}
           <input type="file" accept="image/*" className="sr-only" disabled={enviando} onChange={(e) => { escolher(e.target.files?.[0]); e.target.value = '' }} />
         </label>
         {foto && (
-          <button type="button" onClick={remover} className="font-cond flex h-9 items-center gap-2 text-sm font-bold tracking-wider text-carvao-10 uppercase">
+          <button type="button" onClick={remover} className="font-cond flex h-11 items-center gap-2 text-sm font-bold tracking-wider whitespace-nowrap text-carvao-10 uppercase">
             <Trash2 className="size-4" /> Remover
           </button>
         )}
