@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { janelaAgendar, mensagemJanela, minutosAte, podeRetirar, REGRAS_PADRAO, type RegrasJanela } from '../functions/_lib/janela'
+import { faseAula, janelaAgendar, mensagemJanela, minutosAte, podeRetirar, REGRAS_PADRAO, type RegrasJanela } from '../functions/_lib/janela'
 
 // Terça, 2026-11-17, 10:00 em Salvador.
 const agora = { data: '2026-11-17', minutos: 10 * 60 }
@@ -11,6 +11,17 @@ describe('minutosAte', () => {
     expect(minutosAte('2026-11-18', '09:00', agora)).toBe(23 * 60)
     expect(minutosAte('2026-11-17', '09:00', agora)).toBe(-60)
   })
+})
+
+describe('faseAula', () => {
+  it('antes de começar é futura', () => expect(faseAula('2026-11-17', '10:01', agora)).toBe('futura'))
+  it('no minuto em que começa já está treinando', () => expect(faseAula('2026-11-17', '10:00', agora)).toBe('treinando'))
+  it('segue treinando até o último minuto da hora', () => expect(faseAula('2026-11-17', '09:01', agora)).toBe('treinando'))
+  it('encerra quando completa 1h', () => expect(faseAula('2026-11-17', '09:00', agora)).toBe('encerrada'))
+  it('aula de outro dia já passou', () => expect(faseAula('2026-11-16', '10:00', agora)).toBe('encerrada'))
+  it('aula de amanhã é futura', () => expect(faseAula('2026-11-18', '09:00', agora)).toBe('futura'))
+  it('aula das 23h30 segue treinando depois da meia-noite', () =>
+    expect(faseAula('2026-11-16', '23:30', { data: '2026-11-17', minutos: 15 })).toBe('treinando'))
 })
 
 describe('janelaAgendar', () => {

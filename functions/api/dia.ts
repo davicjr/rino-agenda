@@ -1,7 +1,7 @@
 // GET /api/dia?data=YYYY-MM-DD: horários do dia com ocupação e nomes.
 import { horariosDoDia } from '../_lib/consultas'
 import { erro, json, type Env } from '../_lib/http'
-import { janelaAgendar, lerRegras, podeRetirar } from '../_lib/janela'
+import { faseAula, janelaAgendar, lerRegras, podeRetirar } from '../_lib/janela'
 import { agoraBahia, aulaNoFuturo, diaSemana, ehDataValida } from '../_lib/regras'
 
 export const onRequestGet: PagesFunction<Env> = async ({ env, request }) => {
@@ -17,6 +17,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ env, request }) => {
     horarios: dia.horarios.map((h) => ({
       ...h,
       aberto: aulaNoFuturo(data, h.hora, agora),
+      fase: faseAula(data, h.hora, agora),
       janela: janelaAgendar(data, h.hora, agora, regras),
       podeRetirar: podeRetirar(data, h.hora, agora, regras),
     })),

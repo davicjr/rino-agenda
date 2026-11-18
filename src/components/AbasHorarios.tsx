@@ -1,5 +1,5 @@
 // Abas de texto com os horários do dia: o escolhido ganha um sublinhado amarelo que desliza.
-// Ocupação embaixo da hora; lotado, encerrado e sem aula mudam a cor do texto.
+// Ocupação embaixo da hora; lotado, treinando, encerrado e sem aula mudam a cor do texto.
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -40,7 +40,8 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
       {horarios.map((h) => {
         const sel = h.id === selecionado
         const n = h.agendados.length
-        const status = h.bloqueio ? 'sem aula' : !h.aberto ? 'encerrado' : h.vagas === null ? `${n}/∞` : n >= h.vagas ? 'lotado' : `${n}/${h.vagas}`
+        const treinando = h.fase === 'treinando' && !h.bloqueio
+        const status = h.bloqueio ? 'sem aula' : treinando ? 'treinando' : !h.aberto ? 'encerrado' : h.vagas === null ? `${n}/∞` : n >= h.vagas ? 'lotado' : `${n}/${h.vagas}`
         const [hh, mm] = h.hora.split(':')
         return (
           <button
@@ -51,14 +52,14 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
             onClick={() => onSelecionar(h.id)}
             className={cn(
               'flex h-[var(--altura-aba)] flex-1 flex-col items-center justify-center transition-colors duration-200',
-              sel ? 'text-carvao-12' : h.bloqueio ? 'text-alerta-11' : !h.aberto ? 'text-carvao-8' : 'text-carvao-10',
+              sel ? 'text-carvao-12' : h.bloqueio ? 'text-alerta-11' : treinando ? 'text-ouro-11' : !h.aberto ? 'text-carvao-8' : 'text-carvao-10',
             )}
           >
             <span className="font-display text-[clamp(1.25rem,3dvh,1.75rem)] leading-none">
               {hh}
               <span className="font-cond ml-0.5 text-sm font-bold">{mm === '00' ? 'h' : `:${mm}`}</span>
             </span>
-            <span className="font-cond mt-1 text-xs font-semibold tracking-wide">{status}</span>
+            <span className={cn('font-cond mt-1 text-xs font-semibold tracking-wide', treinando && 'text-ouro-11')}>{status}</span>
           </button>
         )
       })}

@@ -17,6 +17,17 @@ export function minutosAte(data: string, hora: string, agora: Agora): number {
   return dias * 1440 + minutosDe(hora) - agora.minutos
 }
 
+/** Duração de um treino: do início até 1h depois a turma está treinando. */
+const DURACAO_AULA_MIN = 60
+
+export type FaseAula = 'futura' | 'treinando' | 'encerrada'
+
+export function faseAula(data: string, hora: string, agora: Agora): FaseAula {
+  const m = minutosAte(data, hora, agora)
+  if (m > 0) return 'futura'
+  return m > -DURACAO_AULA_MIN ? 'treinando' : 'encerrada'
+}
+
 export function janelaAgendar(data: string, hora: string, agora: Agora, r: RegrasJanela): EstadoJanela {
   const m = minutosAte(data, hora, agora)
   if (m <= 0) return { estado: 'passou' }

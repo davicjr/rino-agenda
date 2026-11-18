@@ -16,6 +16,7 @@ export type Horario = {
   bloqueio: string | null
   bloqueioNota: string | null
   aberto: boolean
+  fase: 'futura' | 'treinando' | 'encerrada'
   agendados: Agendado[]
   professor: Professor | null
   professorHorarioId: number | null

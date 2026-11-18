@@ -1,5 +1,5 @@
 // Card do horário escolhido: hora, professor, vagas, lista completa e a ação.
-// Encerrado mostra quem treinou; bloqueado fica vermelho com o motivo.
+// Durante a aula mostra quem está treinando; encerrado mostra quem treinou; bloqueado fica vermelho.
 import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -20,6 +20,7 @@ export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: 
   const n = h.agendados.length
   const lotado = h.vagas !== null && n >= h.vagas
   const aberto = h.aberto && !h.bloqueio
+  const treinando = h.fase === 'treinando'
 
   useGSAP(
     () => {
@@ -54,7 +55,9 @@ export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: 
                 <span className="font-cond block text-xs font-bold tracking-wider text-carvao-10 uppercase">Professor</span>
                 <span className={cn('mt-0.5 block truncate text-lg leading-7 font-semibold', !h.professor && 'text-carvao-10')}>{h.professor?.nome ?? 'A definir'}</span>
               </p>
-              {!aberto
+              {treinando
+                ? <span className="paralelo font-cond flex shrink-0 items-center gap-1.5 bg-ouro-9 px-3 py-1.5 text-xs font-bold tracking-widest text-preto uppercase"><span aria-hidden className="size-1.5 rounded-full bg-preto motion-safe:animate-pulse" /> Agora</span>
+                : !aberto
                 ? <span className="paralelo font-cond shrink-0 bg-carvao-4 px-3 py-1.5 text-xs font-bold tracking-widest text-carvao-10 uppercase">Encerrado</span>
                 : lotado ? <Carimbo /> : <ResumoVagas ocupadas={n} vagas={h.vagas} />}
             </div>
@@ -63,8 +66,8 @@ export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: 
 
           <ListaAlunos
             key={h.id}
-            titulo={aberto ? 'Confirmados' : 'Treinaram'}
-            vazio={aberto ? 'Ninguém agendado ainda.' : 'Ninguém treinou neste horário.'}
+            titulo={aberto ? 'Confirmados' : treinando ? 'Treinando' : 'Treinaram'}
+            vazio={aberto ? 'Ninguém agendado ainda.' : treinando ? 'Ninguém agendado neste horário.' : 'Ninguém treinou neste horário.'}
             agendados={h.agendados}
             limite={aberto ? h.vagas : null}
             pulso={pulso}
