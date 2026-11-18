@@ -26,6 +26,13 @@ const exibir = (a: Aluno) => a.apelido || a.nome
 
 export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, enviando, onFechar, onConfirmar }: Props) {
   const [escolhido, setEscolhido] = useState<Aluno | null>(null)
+  // Toda abertura começa na escolha do nome: quem agendou antes neste celular não fica selecionado.
+  const aberta = !!horario
+  const [estavaAberta, setEstavaAberta] = useState(aberta)
+  if (aberta !== estavaAberta) {
+    setEstavaAberta(aberta)
+    if (aberta) setEscolhido(null)
+  }
   // Um treino por dia: quem já está em outro horário do dia aparece, mas desabilitado.
   const horaNoDia = new Map(doDia.flatMap((h) => h.agendados.map((a) => [a.aluno_id, h.hora] as const)))
   const livres = alunos.filter((a) => !horario?.agendados.some((x) => x.aluno_id === a.id))
@@ -56,7 +63,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
       ) : (
         <Command label="Buscar aluno" className="flex min-h-0 flex-1 flex-col">
           {eu && (
-            <button onClick={() => setEscolhido(eu)} className="corte-sm mb-3 flex items-center gap-3 bg-ouro-3 p-3 text-left active:bg-ouro-4">
+            <button onClick={() => setEscolhido(eu)} className="corte-sm mb-3 flex shrink-0 items-center gap-3 bg-ouro-3 p-3 text-left active:bg-ouro-4">
               <Avatar nome={exibir(eu)} tipo="aluno" id={eu.id} foto={eu.foto} destaque className="size-10" />
               <span>
                 <span className="block text-xs font-semibold tracking-widest text-ouro-11 uppercase">Usado por último neste celular</span>
