@@ -6,8 +6,8 @@ import { useAcao } from '@/hooks/useAdmin'
 import { useProfessores } from '@/hooks/useProfessores'
 import { admin, type GradeAdmin } from '@/lib/apiAdmin'
 import { Chips } from '@/ui/Chips'
-import { Linha } from '@/ui/Linha'
 import { GavetaHorario, type Rascunho } from './gavetas/GavetaHorario'
+import { LinhaHorario } from './LinhaHorario'
 
 const DIAS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
 const CURTOS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
@@ -37,13 +37,7 @@ export function AbaGrade() {
       </div>
       <ul className="space-y-2">
         {doDia.map((g) => (
-          <Linha
-            key={g.id}
-            titulo={<span className="font-display text-2xl tracking-wide">{g.hora}</span>}
-            detalhe={[g.sem_limite ? 'Sem limite de vagas' : `${g.vagas} ${g.vagas === 1 ? 'vaga' : 'vagas'}`, nomeProf(g.professor_id) && `Prof. ${nomeProf(g.professor_id)}`, !g.ativo && 'pausado'].filter(Boolean).join(' · ')}
-            apagada={!g.ativo}
-            onClick={() => setAlvo(g)}
-          />
+          <LinhaHorario key={g.id} g={g} professor={nomeProf(g.professor_id)} onClick={() => setAlvo(g)} />
         ))}
       </ul>
       {grade.data && !doDia.length && <p className="py-8 text-center text-carvao-9">Sem aula na {DIAS[dia].toLowerCase()}. Toque em + Horário para criar.</p>}
