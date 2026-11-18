@@ -29,7 +29,7 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
     if (!el) return
     const observador = new ResizeObserver(() => {
       const alvo = el.querySelector<HTMLElement>(`[data-h="${selecionado}"]`)
-      if (alvo) gsap.set(barra.current, { x: alvo.offsetLeft + 12, width: alvo.offsetWidth - 24 })
+      if (alvo && barra.current) gsap.set(barra.current, { x: alvo.offsetLeft + 12, width: alvo.offsetWidth - 24 })
     })
     observador.observe(el)
     return () => observador.disconnect()

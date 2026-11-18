@@ -55,7 +55,7 @@ export function ListaAlunos({ titulo, vazio, agendados, pulso, podeRetirar, onTo
 
   useGSAP(
     () => {
-      if (reduzirMovimento() || (pagina === 1 && direcao.current === 1)) return
+      if (reduzirMovimento() || !lista.current || (pagina === 1 && direcao.current === 1)) return
       gsap.fromTo(lista.current, { x: 28 * direcao.current, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: 'expo.out' })
     },
     { dependencies: [pagina] },

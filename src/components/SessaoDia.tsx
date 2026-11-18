@@ -34,7 +34,7 @@ export function SessaoDia({ horarios, regras, direcaoDia, pulsos, onAgendar, onT
 
   useGSAP(
     () => {
-      if (reduzirMovimento()) return
+      if (reduzirMovimento() || !palco.current) return
       gsap.fromTo(palco.current, { x: 48 * direcao, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'expo.out', clearProps: 'transform' })
     },
     { dependencies: [atual?.id] },

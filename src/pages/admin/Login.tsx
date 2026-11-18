@@ -27,24 +27,28 @@ export function Login() {
   useGSAP(
     () => {
       if (reduzirMovimento()) return
+      // O escudo fica sólido antes de a faixa abrir, de trás dele para os dois lados.
       gsap.timeline()
-        .from('.faixa', { scaleX: 0, transformOrigin: '0% 50%', duration: 0.6, ease: 'expo.out' })
-        .from('.escudo-login', { y: -30, scale: 1.2, opacity: 0, duration: 0.7, ease: 'expo.out' }, 0.1)
-        .from('.entra', { y: 18, opacity: 0, duration: 0.5, ease: 'expo.out', stagger: 0.07 }, 0.3)
+        .from('.escudo-login', { opacity: 0, duration: 0.14, ease: 'none' }, 0)
+        .from('.escudo-login', { y: -22, scale: 1.14, duration: 0.5, ease: 'expo.out' }, 0)
+        .fromTo('.faixa', { clipPath: 'inset(0 50% 0 50%)' }, { clipPath: 'inset(0 0% 0 0%)', duration: 0.6, ease: 'expo.out' }, 0.2)
+        .from('.entra', { y: 16, opacity: 0, duration: 0.45, ease: 'expo.out', stagger: 0.06, clearProps: 'transform,opacity' }, 0.34)
     },
     { scope: raiz },
   )
 
   return (
-    <main ref={raiz} className="relative mx-auto flex min-h-dvh max-w-sm flex-col px-6 pt-[max(env(safe-area-inset-top),1rem)] pb-[max(env(safe-area-inset-bottom),1.5rem)]">
+    <main ref={raiz} className="relative mx-auto flex min-h-dvh max-w-sm flex-col overflow-x-clip px-6 pt-[max(env(safe-area-inset-top),1rem)] pb-[max(env(safe-area-inset-bottom),1.5rem)]">
       <Link to="/" className="font-cond -ml-2 flex h-11 w-fit items-center gap-2 px-2 text-sm font-bold tracking-widest text-carvao-10 uppercase active:text-carvao-12">
         <ArrowLeft className="size-5" /> Agenda
       </Link>
 
       <div className="flex flex-1 flex-col justify-center">
         <div className="relative mx-auto grid h-40 w-full place-items-center">
-          <span aria-hidden className="faixa paralelo absolute top-1/2 left-1/2 h-12 w-[120%] -translate-x-1/2 -translate-y-1/2 -rotate-6 bg-ouro-9" />
-          <img src="/escudo.webp" alt="Rino Fight Team" className="escudo-login relative h-40 w-auto drop-shadow-[0_12px_24px_rgb(0_0_0/0.6)]" />
+          <span aria-hidden className="faixa absolute top-1/2 left-1/2 h-12 w-[130%] -translate-x-1/2 -translate-y-1/2 -rotate-6">
+            <span className="paralelo block size-full bg-ouro-9" />
+          </span>
+          <img src="/escudo.webp" alt="Rino Fight Team" className="escudo-login relative h-40 w-auto drop-shadow-[0_3px_6px_rgb(0_0_0/0.45)]" />
         </div>
 
         <h1 className="entra font-display mt-8 -skew-x-6 text-center text-4xl leading-none uppercase">Área administrativa</h1>

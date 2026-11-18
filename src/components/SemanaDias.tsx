@@ -68,7 +68,7 @@ export function SemanaDias({ hoje, selecionado, onSelecionar, diasComAula, bloqu
     if (!el) return
     const observador = new ResizeObserver(() => {
       const alvo = el.querySelector<HTMLElement>(`[data-dia="${selecionado}"]`)
-      if (alvo) gsap.set(indicador.current, { x: alvo.offsetLeft, width: alvo.offsetWidth })
+      if (alvo && indicador.current) gsap.set(indicador.current, { x: alvo.offsetLeft, width: alvo.offsetWidth })
     })
     observador.observe(el)
     return () => observador.disconnect()
