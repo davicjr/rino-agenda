@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { RegrasJanela } from '@/lib/api'
 import { resumoRegras } from '@/lib/textoRegras'
+import { AbasGaveta } from '@/ui/AbasGaveta'
 import { Botao } from '@/ui/Botao'
 import { Chips } from '@/ui/Chips'
 import { Gaveta } from '@/ui/Gaveta'
@@ -22,20 +23,9 @@ export function GavetaAjustes({ aberta, regras, enviando, onFechar, onSalvar }: 
   )
 }
 
-// As duas abas ficam montadas: trocar de aba não perde o que foi digitado e ainda não salvo.
 function Abas({ regras, enviando, onSalvar }: Pick<Props, 'regras' | 'enviando' | 'onSalvar'>) {
-  const [aba, setAba] = useState<'regras' | 'contato'>('regras')
-  return (
-    <div className="space-y-4 [@media(max-height:620px)]:space-y-2">
-      <Chips rotulo="Seções dos ajustes" opcoes={[{ valor: 'regras', rotulo: 'Regras' }, { valor: 'contato', rotulo: 'Contato' }]} valor={aba} onMudar={setAba} />
-      <div role="tabpanel" aria-label="Regras de agendamento" hidden={aba !== 'regras'}>
-        {regras && <Formulario key={JSON.stringify(regras)} inicial={regras} enviando={enviando} onSalvar={onSalvar} />}
-      </div>
-      <div role="tabpanel" aria-label="Suporte e contato" hidden={aba !== 'contato'}>
-        <FormInfo />
-      </div>
-    </div>
-  )
+  const formRegras = regras && <Formulario key={JSON.stringify(regras)} inicial={regras} enviando={enviando} onSalvar={onSalvar} />
+  return <AbasGaveta rotulo="Seções dos ajustes" abas={[{ id: 'regras', rotulo: 'Regras', conteudo: formRegras }, { id: 'contato', rotulo: 'Contato', conteudo: <FormInfo /> }]} />
 }
 
 function Formulario({ inicial, enviando, onSalvar }: { inicial: RegrasJanela; enviando: boolean; onSalvar: (r: RegrasJanela) => void }) {
@@ -54,7 +44,7 @@ function Formulario({ inicial, enviando, onSalvar }: { inicial: RegrasJanela; en
         <Rotulo>Retirar até</Rotulo>
         <Chips rotulo="Retirar" conteudo opcoes={HORAS} valor={r.retirarHorasAntes} onMudar={(v) => setR({ ...r, retirarHorasAntes: v })} />
       </div>
-      <p className="rounded-[var(--radius)] bg-carvao-3 p-3 text-sm leading-snug text-carvao-11">{resumoRegras(r)}</p>
+      <p className="paralelo bg-carvao-3 p-3 text-sm leading-snug text-carvao-11">{resumoRegras(r)}</p>
       <Botao disabled={enviando}>Salvar regras</Botao>
     </form>
   )

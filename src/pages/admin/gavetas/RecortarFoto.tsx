@@ -12,7 +12,7 @@ export function RecortarFoto({ imagem, enviando, onCancelar, onUsar }: Props) {
   const [area, setArea] = useState<Area | null>(null)
   return (
     <div className="space-y-4">
-      <div data-vaul-no-drag className="relative h-72 w-full overflow-hidden rounded-[var(--radius)] bg-preto">
+      <div data-vaul-no-drag className="relative h-[min(18rem,32dvh)] w-full overflow-hidden paralelo bg-preto">
         <Cropper
           image={imagem}
           crop={posicao}

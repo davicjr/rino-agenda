@@ -9,8 +9,9 @@ export function Linha({ titulo, detalhe, esquerda, direita, apagada, onClick }: 
   return (
     <li>
       <button
+        type="button"
         onClick={onClick}
-        className={cn('flex min-h-16 w-full items-center gap-3 rounded-[var(--radius)] bg-carvao-2 px-4 py-3 text-left active:bg-carvao-3', apagada && 'opacity-50')}
+        className={cn('flex min-h-16 w-full items-center gap-3 paralelo bg-carvao-2 px-4 py-3 text-left active:bg-carvao-3', apagada && 'opacity-50')}
       >
         {esquerda}
         <span className="min-w-0 flex-1">

@@ -1,8 +1,9 @@
-// Suporte: equipe (responsável primeiro, sem repetir), contato oficial e localização com mapa.
+// Suporte em abas: equipe (responsável primeiro, sem repetir), contato oficial e localização com mapa.
 import { useQuery } from '@tanstack/react-query'
 import { siInstagram, siWhatsapp } from 'simple-icons'
 import { api, type Suporte } from '@/lib/api'
 import { telefoneLegivel } from '@/lib/telefone'
+import { AbasGaveta, type AbaGaveta } from '@/ui/AbasGaveta'
 import { Avatar } from '@/ui/Avatar'
 import { Gaveta } from '@/ui/Gaveta'
 import { IconeMarca } from '@/ui/IconeMarca'
@@ -23,89 +24,72 @@ function montarEquipe(d: Suporte) {
 
 const acaoPessoa = 'paralelo grid h-11 w-10 shrink-0 place-items-center active:brightness-95'
 
-function Titulo({ children }: { children: string }) {
-  return <h3 className="font-display mb-3 text-xl tracking-wide uppercase">{children}</h3>
-}
-
 export function GavetaSuporte({ aberta, onFechar }: { aberta: boolean; onFechar: () => void }) {
   const info = useQuery({ queryKey: ['info'], queryFn: api.info, enabled: aberta, staleTime: 5 * 60_000 })
-  const d = info.data
-  const equipe = d ? montarEquipe(d) : []
   return (
     <Gaveta aberta={aberta} onFechar={onFechar} titulo="Suporte">
-      {!d ? (
-        <p className="py-6 text-carvao-10">{info.error ? 'Não deu para carregar agora.' : 'Carregando…'}</p>
-      ) : (
-        <div className="space-y-7 pb-2">
-          {equipe.length > 0 && (
-            <section>
-              <Titulo>Equipe</Titulo>
-              <ul className="divide-y divide-carvao-4 rounded-[var(--radius)] bg-carvao-3">
-                {equipe.map((p) => (
-                  <li key={`${p.id}-${p.nome}`} className="flex items-center gap-3 p-3">
-                    <Avatar nome={p.nome} tipo="professor" id={p.id} foto={p.foto} destaque className="size-12" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[1.0625rem] font-semibold">{p.nome}</p>
-                      <p className="font-cond truncate text-sm font-semibold tracking-wide text-ouro-11">{p.papel}</p>
-                    </div>
-                    {p.telefone && (
-                      <a href={`https://wa.me/${p.telefone}`} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp de ${p.nome}`} className={`${acaoPessoa} bg-[#25D366] text-preto`}>
-                        <IconeMarca icone={siWhatsapp} className="size-5" />
-                      </a>
-                    )}
-                    {p.instagram && (
-                      <a href={`https://instagram.com/${p.instagram}`} target="_blank" rel="noopener noreferrer" aria-label={`Instagram de ${p.nome}`} className={`${acaoPessoa} bg-gradient-to-r from-[#6d2fa0] to-[#d62f5f] text-branco`}>
-                        <IconeMarca icone={siInstagram} className="size-5" />
-                      </a>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          <section>
-            <Titulo>Contato</Titulo>
-            {d.whatsapp ? (
-              <a
-                href={`https://wa.me/${d.whatsapp}?text=${encodeURIComponent(MENSAGEM)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="paralelo flex h-16 items-center justify-center gap-3 bg-[#25D366] text-preto active:brightness-95"
-              >
-                <IconeMarca icone={siWhatsapp} className="size-7" />
-                <span className="text-left leading-none">
-                  <span className="font-display block text-xl tracking-wide uppercase">Chamar no WhatsApp</span>
-                  <span className="font-cond mt-1 block text-sm font-bold tabular-nums">{telefoneLegivel(d.whatsapp)}</span>
-                </span>
-              </a>
-            ) : (
-              <p className="rounded-[var(--radius)] bg-carvao-3 p-4 text-carvao-10">Contato ainda não cadastrado. Fale com o professor no treino.</p>
-            )}
-            {d.instagram && (
-              <a
-                href={`https://instagram.com/${d.instagram}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="paralelo mt-2 flex h-16 items-center justify-center gap-3 bg-gradient-to-r from-[#6d2fa0] via-[#b92b7a] to-[#d62f5f] text-branco active:brightness-95"
-              >
-                <IconeMarca icone={siInstagram} className="size-7" />
-                <span className="min-w-0 text-left leading-none">
-                  <span className="font-display block text-xl tracking-wide uppercase">Seguir no Instagram</span>
-                  <span className="font-cond mt-1 block truncate text-sm font-bold">@{d.instagram}</span>
-                </span>
-              </a>
-            )}
-          </section>
-
-          {d.endereco && (
-            <section>
-              <Titulo>Onde estamos</Titulo>
-              <MapaAcademia endereco={d.endereco} />
-            </section>
-          )}
-        </div>
-      )}
+      {info.data ? <Conteudo d={info.data} /> : <p className="py-6 text-carvao-10">{info.error ? 'Não deu para carregar agora.' : 'Carregando…'}</p>}
     </Gaveta>
+  )
+}
+
+function Conteudo({ d }: { d: Suporte }) {
+  const equipe = montarEquipe(d)
+  const abas: AbaGaveta[] = []
+  if (equipe.length) abas.push({ id: 'equipe', rotulo: 'Equipe', conteudo: <ListaEquipe equipe={equipe} /> })
+  abas.push({ id: 'contato', rotulo: 'Contato', conteudo: <Contato d={d} /> })
+  if (d.endereco) abas.push({ id: 'local', rotulo: 'Local', conteudo: <MapaAcademia endereco={d.endereco} /> })
+  return <div className="pb-2"><AbasGaveta rotulo="Seções do suporte" abas={abas} /></div>
+}
+
+function ListaEquipe({ equipe }: { equipe: ReturnType<typeof montarEquipe> }) {
+  return (
+    <ul className="space-y-2">
+      {equipe.map((p) => (
+        <li key={`${p.id}-${p.nome}`} className="paralelo flex items-center gap-3 bg-carvao-3 py-3 pr-4 pl-4">
+          <Avatar nome={p.nome} tipo="professor" id={p.id} foto={p.foto} destaque className="size-12" />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[1.0625rem] font-semibold">{p.nome}</p>
+            <p className="font-cond truncate text-sm font-semibold tracking-wide text-ouro-11">{p.papel}</p>
+          </div>
+          {p.telefone && (
+            <a href={`https://wa.me/${p.telefone}`} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp de ${p.nome}`} className={`${acaoPessoa} bg-[#25D366] text-preto`}>
+              <IconeMarca icone={siWhatsapp} className="size-5" />
+            </a>
+          )}
+          {p.instagram && (
+            <a href={`https://instagram.com/${p.instagram}`} target="_blank" rel="noopener noreferrer" aria-label={`Instagram de ${p.nome}`} className={`${acaoPessoa} bg-gradient-to-r from-[#6d2fa0] to-[#d62f5f] text-branco`}>
+              <IconeMarca icone={siInstagram} className="size-5" />
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function Contato({ d }: { d: Suporte }) {
+  if (!d.whatsapp && !d.instagram) return <p className="paralelo bg-carvao-3 p-4 text-carvao-10">Contato ainda não cadastrado. Fale com o professor no treino.</p>
+  return (
+    <div className="space-y-2">
+      {d.whatsapp && (
+        <a href={`https://wa.me/${d.whatsapp}?text=${encodeURIComponent(MENSAGEM)}`} target="_blank" rel="noopener noreferrer" className="paralelo flex h-16 items-center justify-center gap-3 bg-[#25D366] text-preto active:brightness-95">
+          <IconeMarca icone={siWhatsapp} className="size-7" />
+          <span className="text-left leading-none">
+            <span className="font-display block text-xl tracking-wide uppercase">Chamar no WhatsApp</span>
+            <span className="font-cond mt-1 block text-sm font-bold tabular-nums">{telefoneLegivel(d.whatsapp)}</span>
+          </span>
+        </a>
+      )}
+      {d.instagram && (
+        <a href={`https://instagram.com/${d.instagram}`} target="_blank" rel="noopener noreferrer" className="paralelo flex h-16 items-center justify-center gap-3 bg-gradient-to-r from-[#6d2fa0] via-[#b92b7a] to-[#d62f5f] text-branco active:brightness-95">
+          <IconeMarca icone={siInstagram} className="size-7" />
+          <span className="min-w-0 text-left leading-none">
+            <span className="font-display block text-xl tracking-wide uppercase">Seguir no Instagram</span>
+            <span className="font-cond mt-1 block truncate text-sm font-bold">@{d.instagram}</span>
+          </span>
+        </a>
+      )}
+    </div>
   )
 }

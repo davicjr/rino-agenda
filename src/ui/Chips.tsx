@@ -9,6 +9,7 @@ export function Chips<T extends string | number>({ opcoes, valor, onMudar, rotul
       {opcoes.map((o) => (
         <button
           key={o.valor}
+          type="button"
           role="tab"
           aria-selected={o.valor === valor}
           onClick={() => onMudar(o.valor)}
