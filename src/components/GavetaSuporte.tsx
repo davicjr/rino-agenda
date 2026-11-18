@@ -1,66 +1,90 @@
-// Suporte: responsável, professores e contato oficial. O WhatsApp abre a conversa com mensagem pronta.
+// Suporte: equipe (responsável primeiro, sem repetir), contato oficial e localização com mapa.
 import { useQuery } from '@tanstack/react-query'
-import { AtSign, MapPin, MessageCircle } from 'lucide-react'
-import { api } from '@/lib/api'
+import { ExternalLink } from 'lucide-react'
+import { siInstagram, siWhatsapp } from 'simple-icons'
+import { api, type Suporte } from '@/lib/api'
+import { telefoneLegivel } from '@/lib/telefone'
 import { Avatar } from '@/ui/Avatar'
 import { Gaveta } from '@/ui/Gaveta'
-import { Rotulo } from '@/ui/Rotulo'
+import { IconeMarca } from '@/ui/IconeMarca'
+import { MapaAcademia } from './MapaAcademia'
 
 const MENSAGEM = 'Olá! Vim pela agenda da Rino Fight Team e queria tirar uma dúvida.'
+const chave = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').trim().toLowerCase()
+
+/** Junta responsável e professores: quem é os dois aparece uma vez só, em primeiro. */
+function montarEquipe(d: Suporte) {
+  const resp = chave(d.responsavel)
+  const dele = d.professores.find((p) => chave(p.nome) === resp)
+  const outros = d.professores.filter((p) => p !== dele).map((p) => ({ ...p, papel: 'Professor' }))
+  if (!d.responsavel) return outros
+  return [{ id: dele?.id ?? 0, nome: dele?.nome ?? d.responsavel, foto: dele?.foto ?? null, papel: dele ? 'Responsável · Professor' : 'Responsável' }, ...outros]
+}
+
+function Titulo({ children }: { children: string }) {
+  return <h3 className="font-display mb-3 text-xl tracking-wide uppercase">{children}</h3>
+}
 
 export function GavetaSuporte({ aberta, onFechar }: { aberta: boolean; onFechar: () => void }) {
   const info = useQuery({ queryKey: ['info'], queryFn: api.info, enabled: aberta, staleTime: 5 * 60_000 })
   const d = info.data
+  const equipe = d ? montarEquipe(d) : []
   return (
-    <Gaveta aberta={aberta} onFechar={onFechar} titulo="Suporte" descricao="Informações oficiais da Rino Fight Team.">
+    <Gaveta aberta={aberta} onFechar={onFechar} titulo="Suporte">
       {!d ? (
         <p className="py-6 text-carvao-10">{info.error ? 'Não deu para carregar agora.' : 'Carregando…'}</p>
       ) : (
-        <div className="space-y-6 pb-2">
-          {d.responsavel && (
+        <div className="space-y-7 pb-2">
+          {equipe.length > 0 && (
             <section>
-              <Rotulo>Responsável</Rotulo>
-              <p className="font-display -skew-x-6 text-2xl uppercase">{d.responsavel}</p>
-            </section>
-          )}
-          {d.professores.length > 0 && (
-            <section>
-              <Rotulo>Professores</Rotulo>
-              <ul className="space-y-2">
-                {d.professores.map((p) => (
-                  <li key={p.id} className="flex items-center gap-3 rounded-[var(--radius)] bg-carvao-3 p-3">
-                    <Avatar nome={p.nome} tipo="professor" id={p.id} foto={p.foto} destaque className="size-10 text-sm" />
-                    <span className="font-semibold">{p.nome}</span>
+              <Titulo>Equipe</Titulo>
+              <ul className="divide-y divide-carvao-4 rounded-[var(--radius)] bg-carvao-3">
+                {equipe.map((p) => (
+                  <li key={`${p.id}-${p.nome}`} className="flex items-center gap-3 p-3">
+                    <Avatar nome={p.nome} tipo="professor" id={p.id} foto={p.foto} destaque className="size-12" />
+                    <div className="min-w-0">
+                      <p className="truncate text-[1.0625rem] font-semibold">{p.nome}</p>
+                      <p className="font-cond text-sm font-semibold tracking-wide text-ouro-11">{p.papel}</p>
+                    </div>
                   </li>
                 ))}
               </ul>
             </section>
           )}
-          <section className="space-y-2">
-            <Rotulo>Contato</Rotulo>
+
+          <section>
+            <Titulo>Contato</Titulo>
             {d.whatsapp ? (
               <a
                 href={`https://wa.me/${d.whatsapp}?text=${encodeURIComponent(MENSAGEM)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="paralelo font-display flex h-14 w-full items-center justify-center gap-2 bg-ouro-9 text-xl tracking-wider text-preto uppercase active:bg-ouro-10"
+                className="paralelo flex h-16 items-center justify-center gap-3 bg-[#25D366] text-preto active:brightness-95"
               >
-                <MessageCircle className="size-6" /> Conversar no WhatsApp
+                <IconeMarca icone={siWhatsapp} className="size-7" />
+                <span className="text-left leading-none">
+                  <span className="font-display block text-xl tracking-wide uppercase">Chamar no WhatsApp</span>
+                  <span className="font-cond mt-1 block text-sm font-bold tabular-nums">{telefoneLegivel(d.whatsapp)}</span>
+                </span>
               </a>
             ) : (
-              <p className="text-carvao-10">Contato ainda não cadastrado. Fale com o professor no treino.</p>
+              <p className="rounded-[var(--radius)] bg-carvao-3 p-4 text-carvao-10">Contato ainda não cadastrado. Fale com o professor no treino.</p>
             )}
             {d.instagram && (
-              <a href={`https://instagram.com/${d.instagram}`} target="_blank" rel="noopener noreferrer" className="flex h-12 items-center gap-3 rounded-[var(--radius)] bg-carvao-3 px-4 font-semibold">
-                <AtSign className="size-5 text-ouro-11" /> {d.instagram}
-              </a>
-            )}
-            {d.endereco && (
-              <a href={`https://maps.google.com/?q=${encodeURIComponent(d.endereco)}`} target="_blank" rel="noopener noreferrer" className="flex min-h-12 items-center gap-3 rounded-[var(--radius)] bg-carvao-3 px-4 py-3">
-                <MapPin className="size-5 shrink-0 text-ouro-11" /> <span>{d.endereco}</span>
+              <a href={`https://instagram.com/${d.instagram}`} target="_blank" rel="noopener noreferrer" className="mt-2 flex h-14 items-center gap-3 rounded-[var(--radius)] bg-carvao-3 px-4 active:bg-carvao-4">
+                <IconeMarca icone={siInstagram} className="size-6 text-ouro-9" />
+                <span className="min-w-0 flex-1 truncate font-semibold">@{d.instagram}</span>
+                <ExternalLink className="size-4 shrink-0 text-carvao-9" />
               </a>
             )}
           </section>
+
+          {d.endereco && (
+            <section>
+              <Titulo>Onde estamos</Titulo>
+              <MapaAcademia endereco={d.endereco} />
+            </section>
+          )}
         </div>
       )}
     </Gaveta>

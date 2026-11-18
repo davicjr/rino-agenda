@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useAcao } from '@/hooks/useAdmin'
 import type { InfoAcademia } from '@/lib/api'
 import { admin } from '@/lib/apiAdmin'
+import { telefoneLegivel } from '@/lib/telefone'
 import { Botao } from '@/ui/Botao'
 import { Entrada } from '@/ui/Campo'
 import { Rotulo } from '@/ui/Rotulo'
@@ -15,7 +16,7 @@ export function FormInfo() {
 }
 
 function Campos({ inicial }: { inicial: InfoAcademia }) {
-  const [i, setI] = useState({ ...inicial, whatsapp: formatar(inicial.whatsapp) })
+  const [i, setI] = useState({ ...inicial, whatsapp: telefoneLegivel(inicial.whatsapp) })
   const salvar = useAcao(admin.salvarInfo, [['info-admin'], ['info']], 'Contato salvo.')
   const campo = (k: keyof InfoAcademia, rotulo: string, extra: Partial<React.InputHTMLAttributes<HTMLInputElement>> = {}) => (
     <div>
@@ -32,10 +33,4 @@ function Campos({ inicial }: { inicial: InfoAcademia }) {
       <Botao disabled={salvar.isPending}>Salvar contato</Botao>
     </form>
   )
-}
-
-/** 5577912345678 → 77 91234-5678, para editar sem o DDI. */
-function formatar(w: string) {
-  const d = w.startsWith('55') ? w.slice(2) : w
-  return d.length >= 10 ? `${d.slice(0, 2)} ${d.slice(2, -4)}-${d.slice(-4)}` : d
 }
