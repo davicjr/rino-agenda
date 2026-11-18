@@ -2,7 +2,7 @@
 import { chamar, type InfoAcademia, type RegrasJanela } from './api'
 
 export type AlunoAdmin = { id: number; nome: string; apelido: string | null; plano: 'livre' | '3x' | '2x'; ativo: number; foto: number | null }
-export type GradeAdmin = { id: number; dia_semana: number; hora: string; vagas: number; ativo: number; professor_id: number | null }
+export type GradeAdmin = { id: number; dia_semana: number; hora: string; vagas: number; sem_limite: number; ativo: number; professor_id: number | null }
 export type ProfessorAdmin = { id: number; nome: string; ativo: number; foto: number | null }
 export type Bloqueio = { id: number; data: string; grade_id: number | null; hora: string | null; motivo: string | null; nota: string | null }
 
@@ -15,7 +15,7 @@ export const admin = {
   apagarAluno: (id: number) => chamar(`/admin/alunos?id=${id}`, { method: 'DELETE' }),
 
   grade: () => chamar<GradeAdmin[]>('/admin/grade'),
-  criarHorario: (g: { dia_semana: number; hora: string; vagas: number; professor_id: number | null }) => chamar('/admin/grade', corpo('POST', g)),
+  criarHorario: (g: { dia_semana: number; hora: string; vagas: number; sem_limite: number; professor_id: number | null }) => chamar('/admin/grade', corpo('POST', g)),
   salvarHorario: (g: GradeAdmin) => chamar('/admin/grade', corpo('PATCH', { ...g, ativo: g.ativo === 1 })),
   apagarHorario: (id: number) => chamar(`/admin/grade?id=${id}`, { method: 'DELETE' }),
 

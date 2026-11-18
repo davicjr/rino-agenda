@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { agoraBahia, aulaNoFuturo, limiteDaSemana, motivoRecusa, semanaDe, type PedidoAgendamento } from '../functions/_lib/regras'
+import { agoraBahia, aulaNoFuturo, limiteDaSemana, motivoRecusa, semanaDe, vagasValidas, type PedidoAgendamento } from '../functions/_lib/regras'
 
 // Terça, 2026-11-17, 10:00 em Salvador.
 const agora = { data: '2026-11-17', minutos: 10 * 60 }
@@ -14,6 +14,7 @@ describe('motivoRecusa', () => {
   it('recusa horário lotado', () => expect(motivoRecusa({ ...base, ocupados: 15 })).toBe('Horário lotado.'))
   it('recusa fora da janela com a mensagem dela', () =>
     expect(motivoRecusa({ ...base, foraDaJanela: 'O agendamento fecha 12h antes da aula.' })).toMatch(/12h/))
+  it('sem limite de vagas nunca lota', () => expect(motivoRecusa({ ...base, vagas: null, ocupados: 500 })).toBeNull())
   it('recusa bloqueio', () => expect(motivoRecusa({ ...base, bloqueado: true })).toBe('Não tem aula nesse horário.'))
   it('recusa duplicado', () => expect(motivoRecusa({ ...base, jaAgendado: true })).toBe('Você já está nesse horário.'))
   it('recusa segundo treino no mesmo dia', () =>
@@ -55,4 +56,11 @@ describe('limiteDaSemana', () => {
     expect(limiteDaSemana('2x', 5)).toBe(2)
   })
   it('semana com feriado reduz o teto', () => expect(limiteDaSemana('3x', 2)).toBe(2))
+})
+
+describe('vagasValidas', () => {
+  it('aceita de 1 a 999', () => { expect(vagasValidas(1)).toBe(1); expect(vagasValidas(999)).toBe(999) })
+  it('recusa zero, acima do teto, fração e texto', () => {
+    for (const v of [0, 1000, 2.5, '15', null]) expect(vagasValidas(v)).toBeNull()
+  })
 })

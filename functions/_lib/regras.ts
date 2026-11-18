@@ -56,7 +56,8 @@ export type PedidoAgendamento = {
   plano: Plano
   bloqueado: boolean
   ocupados: number
-  vagas: number
+  /** null = sem limite de vagas. */
+  vagas: number | null
   jaAgendado: boolean
   jaTemNoDia: boolean
   agendadosNaSemana: number
@@ -73,7 +74,7 @@ export function motivoRecusa(p: PedidoAgendamento): string | null {
   if (p.bloqueado) return 'Não tem aula nesse horário.'
   if (p.jaAgendado) return 'Você já está nesse horário.'
   if (p.jaTemNoDia) return 'Você já tem treino marcado nesse dia. É um por dia.'
-  if (p.ocupados >= p.vagas) return 'Horário lotado.'
+  if (p.vagas !== null && p.ocupados >= p.vagas) return 'Horário lotado.'
   const limite = LIMITE_SEMANAL[p.plano]
   if (p.agendadosNaSemana >= limite) return `Seu plano é ${p.plano} por semana e você já usou ${limite} nesta semana.`
   return null
@@ -82,4 +83,11 @@ export function motivoRecusa(p: PedidoAgendamento): string | null {
 /** Treinos que o plano permite numa semana com `diasComAula` dias de aula. */
 export function limiteDaSemana(plano: Plano, diasComAula: number): number {
   return Math.min(LIMITE_SEMANAL[plano], diasComAula)
+}
+
+export const VAGAS_MAX = 999
+
+/** Número de vagas aceito no cadastro (1 a 999), ou null se inválido. */
+export function vagasValidas(v: unknown): number | null {
+  return Number.isInteger(v) && (v as number) >= 1 && (v as number) <= VAGAS_MAX ? (v as number) : null
 }

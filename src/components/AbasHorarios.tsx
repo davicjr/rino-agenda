@@ -40,7 +40,7 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
       {horarios.map((h) => {
         const sel = h.id === selecionado
         const n = h.agendados.length
-        const status = h.bloqueio ? 'sem aula' : !h.aberto ? 'encerrado' : n >= h.vagas ? 'lotado' : `${n}/${h.vagas}`
+        const status = h.bloqueio ? 'sem aula' : !h.aberto ? 'encerrado' : h.vagas === null ? `${n}/∞` : n >= h.vagas ? 'lotado' : `${n}/${h.vagas}`
         const [hh, mm] = h.hora.split(':')
         return (
           <button

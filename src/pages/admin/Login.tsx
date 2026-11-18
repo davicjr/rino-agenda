@@ -7,6 +7,8 @@ import { useGSAP } from '@gsap/react'
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock } from 'lucide-react'
 import { Link } from 'react-router'
 import { sessao } from '@/lib/apiAdmin'
+import { cn } from '@/lib/cn'
+import { caixaCampo } from '@/ui/Campo'
 import { reduzirMovimento } from '@/lib/impacto'
 
 export function Login() {
@@ -49,7 +51,7 @@ export function Login() {
 
         <form className="formulario mt-7" onSubmit={(e) => { e.preventDefault(); entrar.mutate() }}>
           <label htmlFor="senha" className="entra font-cond mb-1.5 block text-xs font-bold tracking-[0.16em] text-carvao-10 uppercase">Senha</label>
-          <div className="entra flex h-14 items-center gap-3 rounded-[var(--radius)] bg-carvao-3 px-4 focus-within:ring-2 focus-within:ring-ouro-9">
+          <div className={cn('entra', caixaCampo)}>
             <Lock className="size-5 shrink-0 text-carvao-9" />
             <input
               id="senha"
@@ -57,7 +59,7 @@ export function Login() {
               autoComplete="current-password"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              className="h-full min-w-0 flex-1 bg-transparent text-lg tracking-wide outline-none focus-visible:outline-none"
+              className="h-full min-w-0 flex-1 bg-transparent outline-none focus-visible:outline-none"
             />
             <button type="button" onClick={() => setVer(!ver)} aria-label={ver ? 'Esconder senha' : 'Mostrar senha'} className="-mr-2 grid size-11 place-items-center text-carvao-9 active:text-carvao-12">
               {ver ? <EyeOff className="size-5" /> : <Eye className="size-5" />}

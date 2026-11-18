@@ -1,6 +1,5 @@
 // Suporte: equipe (responsável primeiro, sem repetir), contato oficial e localização com mapa.
 import { useQuery } from '@tanstack/react-query'
-import { ExternalLink } from 'lucide-react'
 import { siInstagram, siWhatsapp } from 'simple-icons'
 import { api, type Suporte } from '@/lib/api'
 import { telefoneLegivel } from '@/lib/telefone'
@@ -71,10 +70,17 @@ export function GavetaSuporte({ aberta, onFechar }: { aberta: boolean; onFechar:
               <p className="rounded-[var(--radius)] bg-carvao-3 p-4 text-carvao-10">Contato ainda não cadastrado. Fale com o professor no treino.</p>
             )}
             {d.instagram && (
-              <a href={`https://instagram.com/${d.instagram}`} target="_blank" rel="noopener noreferrer" className="mt-2 flex h-14 items-center gap-3 rounded-[var(--radius)] bg-carvao-3 px-4 active:bg-carvao-4">
-                <IconeMarca icone={siInstagram} className="size-6 text-ouro-9" />
-                <span className="min-w-0 flex-1 truncate font-semibold">@{d.instagram}</span>
-                <ExternalLink className="size-4 shrink-0 text-carvao-9" />
+              <a
+                href={`https://instagram.com/${d.instagram}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="paralelo mt-2 flex h-16 items-center justify-center gap-3 bg-gradient-to-r from-[#6d2fa0] via-[#b92b7a] to-[#d62f5f] text-branco active:brightness-95"
+              >
+                <IconeMarca icone={siInstagram} className="size-7" />
+                <span className="min-w-0 text-left leading-none">
+                  <span className="font-display block text-xl tracking-wide uppercase">Seguir no Instagram</span>
+                  <span className="font-cond mt-1 block truncate text-sm font-bold">@{d.instagram}</span>
+                </span>
               </a>
             )}
           </section>

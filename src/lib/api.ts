@@ -11,7 +11,8 @@ export type Janela = { estado: 'aberta' | 'passou' | 'fechou' } | { estado: 'ced
 export type Horario = {
   id: number
   hora: string
-  vagas: number
+  /** null = sem limite de vagas. */
+  vagas: number | null
   bloqueio: string | null
   bloqueioNota: string | null
   aberto: boolean

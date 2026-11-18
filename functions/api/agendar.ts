@@ -16,7 +16,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
   const semana = semanaDe(data)
   const [aluno, grade, bloq, ocup, ja, sem, noDia] = await db.batch([
     db.prepare('SELECT plano, ativo FROM alunos WHERE id = ?').bind(alunoId),
-    db.prepare('SELECT dia_semana, hora, vagas, ativo FROM grade WHERE id = ?').bind(gradeId),
+    db.prepare('SELECT dia_semana, hora, vagas, sem_limite, ativo FROM grade WHERE id = ?').bind(gradeId),
     db.prepare('SELECT 1 FROM bloqueios WHERE data = ? AND (grade_id IS NULL OR grade_id = ?) LIMIT 1').bind(data, gradeId),
     db.prepare('SELECT COUNT(*) AS n FROM agendamentos WHERE data = ? AND grade_id = ?').bind(data, gradeId),
     db.prepare('SELECT 1 FROM agendamentos WHERE aluno_id = ? AND data = ? AND grade_id = ?').bind(alunoId, data, gradeId),
@@ -24,7 +24,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
     db.prepare('SELECT 1 FROM agendamentos WHERE aluno_id = ? AND data = ? LIMIT 1').bind(alunoId, data),
   ])
   const a = aluno.results[0] as { plano: Plano; ativo: number } | undefined
-  const g = grade.results[0] as { dia_semana: number; hora: string; vagas: number; ativo: number } | undefined
+  const g = grade.results[0] as { dia_semana: number; hora: string; vagas: number; sem_limite: number; ativo: number } | undefined
   if (!g) return erro('Horário não encontrado.', 404)
 
   const plano: Plano = a?.plano ?? 'livre'
@@ -32,7 +32,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
   const recusa = motivoRecusa(
     {
       data, hora: g.hora, diaSemanaGrade: g.dia_semana, gradeAtiva: g.ativo === 1, alunoAtivo: a?.ativo === 1, plano,
-      bloqueado: bloq.results.length > 0, ocupados: (ocup.results[0] as { n: number }).n, vagas: g.vagas,
+      bloqueado: bloq.results.length > 0, ocupados: (ocup.results[0] as { n: number }).n, vagas: g.sem_limite ? null : g.vagas,
       jaAgendado: ja.results.length > 0, jaTemNoDia: noDia.results.length > 0, agendadosNaSemana: (sem.results[0] as { n: number }).n,
       foraDaJanela: mensagemJanela(janelaAgendar(data, g.hora, agoraBahia(), regras), regras),
     },
@@ -47,7 +47,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
       .prepare(
         `INSERT INTO agendamentos (aluno_id, grade_id, data)
          SELECT ?1, ?2, ?3
-         WHERE (SELECT COUNT(*) FROM agendamentos WHERE data = ?3 AND grade_id = ?2) < (SELECT vagas FROM grade WHERE id = ?2)
+         WHERE ((SELECT sem_limite FROM grade WHERE id = ?2) = 1
+                OR (SELECT COUNT(*) FROM agendamentos WHERE data = ?3 AND grade_id = ?2) < (SELECT vagas FROM grade WHERE id = ?2))
            AND (SELECT COUNT(*) FROM agendamentos WHERE aluno_id = ?1 AND data BETWEEN ?4 AND ?5) < ?6
            AND NOT EXISTS (SELECT 1 FROM agendamentos WHERE aluno_id = ?1 AND data = ?3)`,
       )

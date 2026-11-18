@@ -21,7 +21,7 @@ function Campos({ inicial }: { inicial: InfoAcademia }) {
   const campo = (k: keyof InfoAcademia, rotulo: string, extra: Partial<React.InputHTMLAttributes<HTMLInputElement>> = {}) => (
     <div>
       <Rotulo htmlFor={`info-${k}`}>{rotulo}</Rotulo>
-      <Entrada id={`info-${k}`} value={i[k]} onChange={(e) => setI({ ...i, [k]: e.target.value })} className="h-12 w-full" {...extra} />
+      <Entrada id={`info-${k}`} value={i[k]} onChange={(e) => setI({ ...i, [k]: e.target.value })} {...extra} />
     </div>
   )
   return (

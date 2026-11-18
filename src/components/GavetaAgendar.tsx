@@ -7,6 +7,7 @@ import { cn } from '@/lib/cn'
 import { horaCurta, nomeDia, nomeDiaCurto } from '@/lib/datas'
 import { Avatar } from '@/ui/Avatar'
 import { Botao } from '@/ui/Botao'
+import { caixaCampo } from '@/ui/Campo'
 import { Gaveta } from '@/ui/Gaveta'
 
 type Props = {
@@ -63,7 +64,7 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
               </span>
             </button>
           )}
-          <div className="flex h-12 items-center gap-2 rounded-[var(--radius)] bg-carvao-4 px-3 focus-within:ring-2 focus-within:ring-ouro-9">
+          <div className={caixaCampo}>
             <Search className="size-5 text-carvao-10" />
             <Command.Input placeholder="Digite seu nome" className="h-full flex-1 bg-transparent text-base outline-none placeholder:text-carvao-9 focus-visible:outline-none" />
           </div>

@@ -26,7 +26,7 @@ function Formulario({ alvo, enviando, onSalvar, onApagar }: { alvo: Alvo; envian
       {p.id && <EditorFoto tipo="professor" id={p.id} nome={p.nome} foto={p.foto ?? null} onMudou={(foto) => setP({ ...p, foto })} />}
       <div>
         <Rotulo htmlFor="nome-prof">Nome</Rotulo>
-        <Entrada id="nome-prof" autoFocus={!p.id} value={p.nome} onChange={(e) => setP({ ...p, nome: e.target.value })} className="h-12 w-full" />
+        <Entrada id="nome-prof" autoFocus={!p.id} value={p.nome} onChange={(e) => setP({ ...p, nome: e.target.value })} />
       </div>
       {p.id && (
         <Interruptor rotulo="Ativo" ligado={p.ativo === 1} onMudar={(v) => setP({ ...p, ativo: v ? 1 : 0 })} />

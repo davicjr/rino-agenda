@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { MOTIVO_MAX, NOTA_MAX } from '../../../../functions/_lib/texto'
 import { cn } from '@/lib/cn'
 import { Botao } from '@/ui/Botao'
-import { Entrada } from '@/ui/Campo'
+import { AreaTexto, Entrada } from '@/ui/Campo'
 import { Gaveta } from '@/ui/Gaveta'
 import { Rotulo } from '@/ui/Rotulo'
 
@@ -29,7 +29,7 @@ function Formulario({ enviando, onConfirmar }: { enviando: boolean; onConfirmar:
       </div>
       <div>
         <Rotulo htmlFor="nota">Observação (opcional)</Rotulo>
-        <textarea
+        <AreaTexto
           id="nota"
           rows={3}
           value={nota}
@@ -37,7 +37,6 @@ function Formulario({ enviando, onConfirmar }: { enviando: boolean; onConfirmar:
           maxLength={NOTA_MAX}
           aria-describedby="nota-limite"
           placeholder="Ex.: as aulas voltam na segunda, no horário normal."
-          className="block w-full resize-none rounded-[var(--radius)] bg-carvao-4 p-3 text-base leading-snug text-carvao-12 outline-none placeholder:text-carvao-9 focus:ring-2 focus:ring-ouro-9"
         />
         <Contador id="nota-limite" atual={nota.length} max={NOTA_MAX} />
       </div>

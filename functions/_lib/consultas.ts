@@ -15,7 +15,7 @@ export async function horariosDoDia(db: D1Database, data: string, diaSemana: num
   const [grade, agend, bloq, esc] = await db.batch([
     db
       .prepare(
-        `SELECT g.id, g.hora, g.vagas, g.professor_id, p.nome AS professor_nome, p.foto AS professor_foto
+        `SELECT g.id, g.hora, g.vagas, g.sem_limite, g.professor_id, p.nome AS professor_nome, p.foto AS professor_foto
          FROM grade g LEFT JOIN professores p ON p.id = g.professor_id AND p.ativo = 1
          WHERE g.ativo = 1 AND g.dia_semana = ? ORDER BY g.hora`,
       )
@@ -34,15 +34,16 @@ export async function horariosDoDia(db: D1Database, data: string, diaSemana: num
   const bloqueios = bloq.results as { grade_id: number | null; motivo: string | null; nota: string | null }[]
   const diaTodo = bloqueios.find((b) => b.grade_id === null)
   const agendados = agend.results as { id: number; grade_id: number; aluno_id: number; nome: string; foto: number | null }[]
-  type G = { id: number; hora: string; vagas: number; professor_id: number | null; professor_nome: string | null; professor_foto: number | null }
+  type G = { id: number; hora: string; vagas: number; sem_limite: number; professor_id: number | null; professor_nome: string | null; professor_foto: number | null }
   return {
     bloqueioDia: diaTodo ? diaTodo.motivo || 'Sem aula' : null,
     bloqueioDiaNota: diaTodo?.nota ?? null,
     professorDiaId: escala.find((e) => e.grade_id === 0)?.professor_id ?? null,
-    horarios: (grade.results as G[]).map(({ professor_id, professor_nome, professor_foto, ...g }) => {
+    horarios: (grade.results as G[]).map(({ professor_id, professor_nome, professor_foto, sem_limite, ...g }) => {
       const b = diaTodo ?? bloqueios.find((x) => x.grade_id === g.id)
       return {
         ...g,
+        vagas: sem_limite ? null : g.vagas,
         professor: professorDaAula(g.id, { id: professor_id, nome: professor_nome, foto: professor_foto }, escala),
         professorHorarioId: escala.find((e) => e.grade_id === g.id)?.professor_id ?? null,
         bloqueio: b ? b.motivo || 'Sem aula' : null,

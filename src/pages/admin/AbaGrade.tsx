@@ -31,7 +31,7 @@ export function AbaGrade() {
       <Chips rotulo="Dia da semana" opcoes={ORDEM.map((d) => ({ valor: d, rotulo: CURTOS[d], marca: grade.data?.some((g) => g.dia_semana === d) }))} valor={dia} onMudar={setDia} />
       <div className="flex items-center justify-between pt-1">
         <h2 className="font-display -skew-x-6 text-3xl uppercase">{DIAS[dia]}</h2>
-        <button onClick={() => setAlvo({ dia_semana: dia, hora: '18:00', vagas: 15, ativo: 1, professor_id: null })} className="paralelo font-display flex h-11 items-center gap-1.5 bg-ouro-9 px-4 tracking-wider text-preto uppercase active:bg-ouro-10">
+        <button onClick={() => setAlvo({ dia_semana: dia, hora: '18:00', vagas: 15, sem_limite: 0, ativo: 1, professor_id: null })} className="paralelo font-display flex h-11 items-center gap-1.5 bg-ouro-9 px-4 tracking-wider text-preto uppercase active:bg-ouro-10">
           <Plus className="size-5" /> Horário
         </button>
       </div>
@@ -40,7 +40,7 @@ export function AbaGrade() {
           <Linha
             key={g.id}
             titulo={<span className="font-display text-2xl tracking-wide">{g.hora}</span>}
-            detalhe={[`${g.vagas} vagas`, nomeProf(g.professor_id) && `Prof. ${nomeProf(g.professor_id)}`, !g.ativo && 'pausado'].filter(Boolean).join(' · ')}
+            detalhe={[g.sem_limite ? 'Sem limite de vagas' : `${g.vagas} ${g.vagas === 1 ? 'vaga' : 'vagas'}`, nomeProf(g.professor_id) && `Prof. ${nomeProf(g.professor_id)}`, !g.ativo && 'pausado'].filter(Boolean).join(' · ')}
             apagada={!g.ativo}
             onClick={() => setAlvo(g)}
           />

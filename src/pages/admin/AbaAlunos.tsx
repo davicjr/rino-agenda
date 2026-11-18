@@ -5,7 +5,9 @@ import { Plus, Search } from 'lucide-react'
 import { useAcao } from '@/hooks/useAdmin'
 import { admin, type AlunoAdmin } from '@/lib/apiAdmin'
 import { PLANOS } from '@/lib/planos'
+import { cn } from '@/lib/cn'
 import { Avatar } from '@/ui/Avatar'
+import { caixaCampo } from '@/ui/Campo'
 import { Chips } from '@/ui/Chips'
 import { Linha } from '@/ui/Linha'
 import { GavetaAluno } from './gavetas/GavetaAluno'
@@ -32,7 +34,7 @@ export function AbaAlunos() {
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
-        <label className="flex h-12 flex-1 items-center gap-2 rounded-[var(--radius)] bg-carvao-3 px-3 focus-within:ring-2 focus-within:ring-ouro-9">
+        <label className={cn(caixaCampo, 'min-w-0 flex-1')}>
           <Search className="size-5 text-carvao-9" />
           <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar aluno" className="h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-carvao-9 focus-visible:outline-none" />
         </label>

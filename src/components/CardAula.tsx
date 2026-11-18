@@ -17,7 +17,7 @@ type Props = { horario: Horario; regras?: RegrasJanela; pulso: number; onAgendar
 export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: Props) {
   const raiz = useRef<HTMLElement>(null)
   const n = h.agendados.length
-  const lotado = n >= h.vagas
+  const lotado = h.vagas !== null && n >= h.vagas
   const aberto = h.aberto && !h.bloqueio
 
   useGSAP(
