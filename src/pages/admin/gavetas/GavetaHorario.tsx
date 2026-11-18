@@ -41,20 +41,18 @@ function Formulario({ alvo, enviando, onSalvar, onApagar }: { alvo: Rascunho; en
         </div>
       </div>
       <Interruptor rotulo="Sem limite de vagas" ligado={g.sem_limite === 1} onMudar={(v) => setG({ ...g, sem_limite: v ? 1 : 0 })} />
+      {g.id && <Interruptor rotulo="Ativo (aparece na agenda)" ligado={g.ativo === 1} onMudar={(v) => setG({ ...g, ativo: v ? 1 : 0 })} />}
     </div>
   )
-  const detalhes = (
-    <div className="space-y-4">
-      <div>
-        <Rotulo htmlFor="prof-padrao" ajuda="Aparece em toda aula deste horário. Para trocar em uma data, use a aba Agenda.">Professor padrão</Rotulo>
-        <SeletorProfessor id="prof-padrao" valor={g.professor_id} nenhum="Nenhum" onMudar={(professor_id) => setG({ ...g, professor_id })} />
-      </div>
-      {g.id && <Interruptor rotulo="Ativo (aparece na agenda)" ligado={g.ativo === 1} onMudar={(v) => setG({ ...g, ativo: v ? 1 : 0 })} />}
+  const professor = (
+    <div>
+      <Rotulo htmlFor="prof-padrao" ajuda="Vale para toda semana neste horário. Para trocar em uma data, use a aba Agenda.">Professor da aula</Rotulo>
+      <SeletorProfessor id="prof-padrao" valor={g.professor_id} nenhum="Sem professor definido" onMudar={(professor_id) => setG({ ...g, professor_id })} />
     </div>
   )
   return (
     <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); onSalvar(g) }}>
-      <AbasGaveta rotulo="Seções do horário" abas={[{ id: 'horario', rotulo: 'Horário', conteudo: horario }, { id: 'detalhes', rotulo: 'Detalhes', conteudo: detalhes }]} />
+      <AbasGaveta rotulo="Seções do horário" abas={[{ id: 'horario', rotulo: 'Horário', conteudo: horario }, { id: 'professor', rotulo: 'Professor', conteudo: professor }]} />
       <AcoesForm desabilitado={enviando || !g.hora} onApagar={g.id ? () => onApagar(g.id!) : undefined} />
     </form>
   )
