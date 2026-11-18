@@ -6,10 +6,13 @@ import { Camera, Trash2 } from 'lucide-react'
 import { admin } from '@/lib/apiAdmin'
 import { avisar } from '@/lib/avisar'
 import { recortarFoto, type Area } from '@/lib/reduzirFoto'
+import { cn } from '@/lib/cn'
 import { Avatar } from '@/ui/Avatar'
 import { RecortarFoto } from './RecortarFoto'
 
 type Props = { tipo: 'aluno' | 'professor'; id: number; nome: string; foto: number | null; onMudou: (foto: number | null) => void }
+
+const acaoFoto = 'paralelo font-cond flex h-11 min-w-0 items-center justify-center gap-2 bg-carvao-4 text-sm font-bold tracking-wider whitespace-nowrap uppercase active:bg-carvao-5'
 
 export function EditorFoto({ tipo, id, nome, foto, onMudou }: Props) {
   const qc = useQueryClient()
@@ -52,16 +55,16 @@ export function EditorFoto({ tipo, id, nome, foto, onMudou }: Props) {
   }
   if (previa) return <RecortarFoto imagem={previa} enviando={enviando} onCancelar={cancelar} onUsar={usar} />
   return (
-    <div className="flex items-center gap-4">
-      <Avatar nome={nome || '?'} tipo={tipo} id={id} foto={foto} destaque={tipo === 'professor'} className={`size-16 shrink-0 text-2xl min-[360px]:size-20 ${enviando ? 'opacity-50' : ''}`} />
-      <div className="flex min-w-0 items-center gap-3">
-        <label className="font-cond flex h-11 cursor-pointer items-center gap-2 text-sm font-bold tracking-wider whitespace-nowrap text-ouro-11 uppercase">
-          <Camera className="size-5" /> {enviando ? 'Enviando…' : foto ? 'Trocar foto' : 'Escolher foto'}
+    <div className="flex flex-col items-center gap-4 [@media(max-height:620px)]:gap-2">
+      <Avatar nome={nome || '?'} tipo={tipo} id={id} foto={foto} destaque={tipo === 'professor'} className={cn('size-24 shrink-0 text-3xl [@media(max-height:620px)]:size-16 [@media(max-height:620px)]:text-xl', enviando && 'opacity-50')} />
+      <div className={cn('grid w-full gap-2', foto && 'grid-cols-2')}>
+        <label className={cn(acaoFoto, 'cursor-pointer text-ouro-11 has-[:focus-visible]:brightness-125')}>
+          <Camera className="size-5 shrink-0" /> {enviando ? 'Enviando…' : foto ? 'Trocar foto' : 'Escolher foto'}
           <input type="file" accept="image/*" className="sr-only" disabled={enviando} onChange={(e) => { escolher(e.target.files?.[0]); e.target.value = '' }} />
         </label>
         {foto && (
-          <button type="button" onClick={remover} className="font-cond flex h-11 items-center gap-2 text-sm font-bold tracking-wider whitespace-nowrap text-carvao-10 uppercase">
-            <Trash2 className="size-4" /> Remover
+          <button type="button" onClick={remover} className={cn(acaoFoto, 'text-carvao-11')}>
+            <Trash2 className="size-5 shrink-0" /> Remover
           </button>
         )}
       </div>
