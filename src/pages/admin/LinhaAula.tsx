@@ -4,6 +4,7 @@ import { ChevronDown, Lock, LockOpen, X } from 'lucide-react'
 import type { Horario } from '@/lib/api'
 import { cn } from '@/lib/cn'
 import { horaCurta } from '@/lib/datas'
+import { Avatar } from '@/ui/Avatar'
 import { Rotulo } from '@/ui/Rotulo'
 import { SeletorProfessor } from '@/ui/SeletorProfessor'
 
@@ -28,9 +29,12 @@ export function LinhaAula({ h, aberta, onAlternar, onRemover, onEscalar, onBloqu
         <span className="min-w-0 flex-1">
           <span className={cn('flex items-center gap-1.5 font-semibold', lotado && 'text-ouro-11', h.bloqueio && 'text-alerta-12')}>
             {h.bloqueio && <Lock className="size-4 shrink-0 text-alerta-11" />}
-            <span className="truncate">{h.bloqueio ? `Bloqueado · ${h.bloqueio}` : h.vagas === null ? `${h.agendados.length} agendados · sem limite` : `${h.agendados.length} de ${h.vagas}${lotado ? ' · lotado' : ''}`}</span>
+            <span className="truncate">{h.bloqueio ? `Bloqueado · ${h.bloqueio}` : h.vagas === null ? `${h.agendados.length} ${h.agendados.length === 1 ? 'agendado' : 'agendados'} · sem limite` : `${h.agendados.length} de ${h.vagas}${lotado ? ' · lotado' : ''}`}</span>
           </span>
-          <span className="block truncate text-sm text-carvao-10">{h.professor ? `Prof. ${h.professor.nome}` : 'Sem professor definido'}</span>
+          <span className="mt-1 flex items-center gap-2 text-sm text-carvao-10">
+            {h.professor && <Avatar nome={h.professor.nome} tipo="professor" id={h.professor.id} foto={h.professor.foto} destaque className="size-6 shrink-0 text-[0.625rem]" />}
+            <span className="truncate">{h.professor ? `Prof. ${h.professor.nome}` : 'Sem professor definido'}</span>
+          </span>
         </span>
         <ChevronDown className={cn('size-5 text-carvao-9 transition-transform duration-300', aberta && 'rotate-180')} />
       </button>
@@ -46,9 +50,9 @@ export function LinhaAula({ h, aberta, onAlternar, onRemover, onEscalar, onBloqu
               <Rotulo>Alunos ({h.agendados.length})</Rotulo>
               {h.agendados.length ? (
                 <ol className="divide-y divide-carvao-4">
-                  {h.agendados.map((a, i) => (
-                    <li key={a.id} className="flex h-12 items-center gap-3">
-                      <span className="font-cond w-5 text-sm text-carvao-9">{i + 1}</span>
+                  {h.agendados.map((a) => (
+                    <li key={a.id} className="flex h-14 items-center gap-3">
+                      <Avatar nome={a.nome} tipo="aluno" id={a.aluno_id} foto={a.foto} className="size-10 shrink-0 text-sm" />
                       <span className="flex-1 truncate">{a.nome}</span>
                       <button aria-label={`Remover ${a.nome}`} onClick={() => onRemover(a.id)} className="grid size-11 place-items-center text-carvao-10 active:text-ouro-11">
                         <X className="size-5" />
