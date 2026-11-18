@@ -4,7 +4,7 @@ import { chamar, type InfoAcademia, type RegrasJanela } from './api'
 export type AlunoAdmin = { id: number; nome: string; apelido: string | null; plano: 'livre' | '3x' | '2x'; ativo: number; foto: number | null }
 export type GradeAdmin = { id: number; dia_semana: number; hora: string; vagas: number; ativo: number; professor_id: number | null }
 export type ProfessorAdmin = { id: number; nome: string; ativo: number; foto: number | null }
-export type Bloqueio = { id: number; data: string; grade_id: number | null; hora: string | null; motivo: string | null }
+export type Bloqueio = { id: number; data: string; grade_id: number | null; hora: string | null; motivo: string | null; nota: string | null }
 
 const corpo = (metodo: string, dados: unknown) => ({ method: metodo, body: JSON.stringify(dados) })
 
@@ -20,7 +20,7 @@ export const admin = {
   apagarHorario: (id: number) => chamar(`/admin/grade?id=${id}`, { method: 'DELETE' }),
 
   bloqueios: () => chamar<Bloqueio[]>('/admin/bloqueios'),
-  bloquear: (data: string, gradeId: number | null, motivo: string) => chamar('/admin/bloqueios', corpo('POST', { data, gradeId, motivo })),
+  bloquear: (data: string, gradeId: number | null, motivo: string, nota: string) => chamar('/admin/bloqueios', corpo('POST', { data, gradeId, motivo, nota })),
   desbloquear: (id: number) => chamar(`/admin/bloqueios?id=${id}`, { method: 'DELETE' }),
 
   professores: () => chamar<ProfessorAdmin[]>('/admin/professores'),

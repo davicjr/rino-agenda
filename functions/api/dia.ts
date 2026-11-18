@@ -12,6 +12,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ env, request }) => {
   return json({
     data,
     bloqueioDia: dia.bloqueioDia,
+    bloqueioDiaNota: dia.bloqueioDiaNota,
     professorDiaId: dia.professorDiaId,
     horarios: dia.horarios.map((h) => ({
       ...h,

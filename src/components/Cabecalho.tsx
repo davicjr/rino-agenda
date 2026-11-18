@@ -22,8 +22,8 @@ export function Cabecalho({ titulo, subtitulo, acoes }: Props) {
     <header ref={ref} className="relative z-10 flex shrink-0 items-center gap-3 px-5 pt-[max(env(safe-area-inset-top),var(--folga-m))]">
       <img src="/escudo.webp" alt="" width={33} height={48} className="escudo h-12 w-auto shrink-0" />
       <div className="marca min-w-0 flex-1 leading-none">
-        <p className="font-display truncate text-[1.5rem] tracking-wide uppercase">{titulo}</p>
-        <p className="font-cond mt-1 truncate text-sm font-semibold tracking-[0.18em] text-carvao-11 uppercase">{subtitulo}</p>
+        <p className="font-display truncate text-[clamp(1.125rem,5.7vw,1.5rem)] tracking-wide uppercase">{titulo}</p>
+        <p className="font-cond mt-1 truncate text-[clamp(0.6875rem,3.3vw,0.875rem)] font-semibold tracking-[0.08em] text-carvao-11 uppercase min-[400px]:tracking-[0.18em]">{subtitulo}</p>
       </div>
       <div className="-mr-2.5 flex shrink-0 items-center">{acoes}</div>
     </header>

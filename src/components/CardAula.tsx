@@ -34,8 +34,9 @@ export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: 
   if (h.bloqueio) {
     return (
       <article className="corte bg-alerta-3 p-5" aria-label={`Treino das ${h.hora}`}>
-        <p className="font-display flex items-center gap-2 text-2xl text-alerta-12 uppercase"><Lock className="size-5 text-alerta-11" /> {h.bloqueio}</p>
+        <p className="font-display flex items-center gap-2 text-2xl text-alerta-12 uppercase [overflow-wrap:anywhere]"><Lock className="size-5 shrink-0 text-alerta-11" /> <span className="min-w-0">{h.bloqueio}</span></p>
         <p className="mt-1 text-alerta-11">Não tem treino neste horário.</p>
+        {h.bloqueioNota && <p className="mt-3 border-t border-alerta-4 pt-3 text-alerta-12 [overflow-wrap:anywhere]">{h.bloqueioNota}</p>}
       </article>
     )
   }

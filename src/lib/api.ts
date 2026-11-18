@@ -13,6 +13,7 @@ export type Horario = {
   hora: string
   vagas: number
   bloqueio: string | null
+  bloqueioNota: string | null
   aberto: boolean
   agendados: Agendado[]
   professor: Professor | null
@@ -20,7 +21,7 @@ export type Horario = {
   janela: Janela
   podeRetirar: boolean
 }
-export type Dia = { data: string; bloqueioDia: string | null; professorDiaId: number | null; horarios: Horario[] }
+export type Dia = { data: string; bloqueioDia: string | null; bloqueioDiaNota: string | null; professorDiaId: number | null; horarios: Horario[] }
 
 export type UsoSemana = { id: number; usados: number; limite: number; marcados: { data: string; hora: string }[] }
 export type Semana = { inicio: string; fim: string; alunos: UsoSemana[] }

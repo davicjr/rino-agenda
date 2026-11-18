@@ -26,7 +26,7 @@ export function AbaAgenda({ escolhido, setData }: { escolhido: string | null; se
   const K = [['dia', data ?? ''], ['bloqueios']]
   const remover = useAcao(admin.removerAgendamento, K, 'Agendamento removido.')
   const escalar = useAcao((v: { gradeId: number | null; professorId: number | null }) => admin.escalar(data!, v.gradeId, v.professorId), K, 'Professor definido.')
-  const bloquear = useAcao((v: { gradeId: number | null; motivo: string }) => admin.bloquear(data!, v.gradeId, v.motivo), K, 'Bloqueado.')
+  const bloquear = useAcao((v: { gradeId: number | null; motivo: string; nota: string }) => admin.bloquear(data!, v.gradeId, v.motivo, v.nota), K, 'Bloqueado.')
   const desbloquear = useAcao(admin.desbloquear, K, 'Desbloqueado.')
   const diasBloqueados = useMemo(() => new Set(bloqueios.data?.filter((b) => b.grade_id === null).map((b) => b.data)), [bloqueios.data])
   const bloqueioDe = (gradeId: number | null) => bloqueios.data?.find((b) => b.data === data && b.grade_id === gradeId)
@@ -60,9 +60,10 @@ export function AbaAgenda({ escolhido, setData }: { escolhido: string | null; se
 
       {dia.data && !dia.data.horarios.length && <p className="rounded-[var(--radius-lg)] bg-carvao-2 p-5 text-carvao-10">Sem aula na grade neste dia.</p>}
       {bDia && (
-        <p className="flex items-center gap-2 rounded-[var(--radius-lg)] bg-alerta-3 p-4 font-semibold text-alerta-12">
-          <Lock className="size-5 text-alerta-11" /> Dia bloqueado: {bDia.motivo || 'sem aula'}
-        </p>
+        <div className="rounded-[var(--radius-lg)] bg-alerta-3 p-4 text-alerta-12">
+          <p className="flex items-center gap-2 font-semibold [overflow-wrap:anywhere]"><Lock className="size-5 shrink-0 text-alerta-11" /> Dia bloqueado: {bDia.motivo || 'sem aula'}</p>
+          {bDia.nota && <p className="mt-2 text-sm text-alerta-11 [overflow-wrap:anywhere]">{bDia.nota}</p>}
+        </div>
       )}
 
       <ul className="space-y-2">
@@ -78,6 +79,7 @@ export function AbaAgenda({ escolhido, setData }: { escolhido: string | null; se
               onEscalar={(professorId) => escalar.mutate({ gradeId: h.id, professorId })}
               onBloquear={() => setBloquearEm({ gradeId: h.id, titulo: `${nomeDia(data)}, ${horaCurta(h.hora)}` })}
               onDesbloquear={b ? () => desbloquear.mutate(b.id) : null}
+              mostrarNota={!bDia}
             />
           )
         })}
@@ -87,7 +89,7 @@ export function AbaAgenda({ escolhido, setData }: { escolhido: string | null; se
         alvo={bloquearEm}
         enviando={bloquear.isPending}
         onFechar={() => setBloquearEm(null)}
-        onConfirmar={(motivo) => bloquearEm && bloquear.mutate({ gradeId: bloquearEm.gradeId, motivo }, { onSuccess: () => setBloquearEm(null) })}
+        onConfirmar={(motivo, nota) => bloquearEm && bloquear.mutate({ gradeId: bloquearEm.gradeId, motivo, nota }, { onSuccess: () => setBloquearEm(null) })}
       />
     </div>
   )
