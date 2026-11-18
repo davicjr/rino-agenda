@@ -60,6 +60,12 @@
 }
 
 :root {
+  /* Espaços e alturas que crescem com a tela: folgados no celular alto, sem rolar no baixo. */
+  --folga-p: clamp(0.375rem, 1.2dvh, 0.875rem);
+  --folga-m: clamp(0.625rem, 2.1dvh, 1.5rem);
+  --folga-g: clamp(0.75rem, 3.2dvh, 2.5rem);
+  --altura-dia: clamp(2.75rem, 6.2dvh, 3.75rem);
+  --altura-aba: clamp(3rem, 7dvh, 4.25rem);
   color-scheme: dark;
   background: var(--color-carvao-1);
   color: var(--color-carvao-12);

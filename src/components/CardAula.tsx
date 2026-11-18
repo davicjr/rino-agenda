@@ -43,35 +43,34 @@ export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: 
   return (
     <article ref={raiz} className="corte relative flex min-h-0 flex-1 flex-col overflow-hidden bg-carvao-2" aria-label={`Treino das ${h.hora}`}>
       <span className="flash pointer-events-none absolute inset-0 bg-ouro-9 opacity-0" />
-      <div className="relative shrink-0 p-4">
+      <div className="relative shrink-0 px-5 py-[var(--folga-m)]">
         {(lotado && aberto) || !aberto ? (
           <div className="mb-4">
             {lotado && aberto ? <Carimbo /> : <span className="paralelo font-cond inline-block bg-carvao-4 px-4 py-1.5 text-xs font-bold tracking-widest text-carvao-10 uppercase">Encerrado</span>}
           </div>
         ) : null}
         {h.professor && (
-          <p className="flex items-center gap-2.5">
-            <Avatar nome={h.professor.nome} tipo="professor" id={h.professor.id} foto={h.professor.foto} destaque className="size-8 text-xs" />
+          <p className="flex items-center gap-3">
+            <Avatar nome={h.professor.nome} tipo="professor" id={h.professor.id} foto={h.professor.foto} destaque className="size-10 text-sm" />
             <span className="font-cond text-sm font-bold tracking-wider text-carvao-9 uppercase">Prof.</span>
-            <span className="font-semibold">{h.professor.nome}</span>
+            <span className="truncate text-lg font-semibold">{h.professor.nome}</span>
           </p>
         )}
-        {aberto && <div className={h.professor ? 'mt-3' : ''}><MedidorVagas ocupadas={n} vagas={h.vagas} /></div>}
+        {aberto && <div className={h.professor ? 'mt-[var(--folga-m)]' : ''}><MedidorVagas ocupadas={n} vagas={h.vagas} /></div>}
       </div>
 
-      <div className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain border-t border-carvao-4 px-4 pt-3 pb-3 [mask-image:linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)]">
-        <p className="font-cond mb-1 text-xs font-bold tracking-[0.16em] text-carvao-9 uppercase">
-          {aberto ? `Confirmados · ${n}` : `Treinaram · ${n}`}
-        </p>
-        {n ? (
-          <ListaAlunos agendados={h.agendados} pulso={pulso} podeRetirar={h.podeRetirar} onTocar={(a) => onTocarNome(a, h)} />
-        ) : (
-          <p className="py-4 text-carvao-9">{aberto ? 'Ninguém agendado ainda.' : 'Ninguém treinou neste horário.'}</p>
-        )}
-      </div>
+      <ListaAlunos
+        key={h.id}
+        titulo={aberto ? 'Confirmados' : 'Treinaram'}
+        vazio={aberto ? 'Ninguém agendado ainda.' : 'Ninguém treinou neste horário.'}
+        agendados={h.agendados}
+        pulso={pulso}
+        podeRetirar={h.podeRetirar}
+        onTocar={(a) => onTocarNome(a, h)}
+      />
 
       {aberto && (
-        <div className="relative shrink-0 p-4 pt-3">
+        <div className="relative shrink-0 px-5 pt-[var(--folga-p)] pb-[var(--folga-m)]">
           <BotaoAgendar h={h} lotado={lotado} regras={regras} onAgendar={() => onAgendar(h)} />
         </div>
       )}

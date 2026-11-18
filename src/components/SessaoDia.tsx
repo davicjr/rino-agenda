@@ -42,7 +42,7 @@ export function SessaoDia({ horarios, regras, direcaoDia, pulsos, onAgendar, onT
 
   if (!atual) return null
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-3">
+    <div className="flex min-h-0 flex-1 flex-col gap-[var(--folga-m)]">
       <AbasHorarios horarios={horarios} selecionado={atual.id} onSelecionar={escolher} />
       <div ref={palco} className="flex min-h-0 flex-1 flex-col">
         <CardAula horario={atual} regras={regras} pulso={pulsos[atual.id] ?? 0} onAgendar={onAgendar} onTocarNome={onTocarNome} />

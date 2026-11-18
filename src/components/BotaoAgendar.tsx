@@ -23,7 +23,7 @@ export function BotaoAgendar({ h, lotado, regras, onAgendar }: Props) {
       onClick={onAgendar}
       disabled={!livre}
       className={cn(
-        'paralelo font-display h-13 w-full text-xl tracking-wider uppercase transition-transform duration-100 active:scale-[0.98]',
+        'paralelo font-display h-[clamp(3.25rem,7dvh,4rem)] w-full text-xl tracking-wider uppercase transition-transform duration-100 active:scale-[0.98]',
         livre ? 'bg-ouro-9 text-preto active:bg-ouro-10' : 'bg-carvao-4 text-carvao-10',
       )}
     >

@@ -1,6 +1,6 @@
 // Abas de texto com os horários do dia: o escolhido ganha um sublinhado amarelo que desliza.
 // Ocupação embaixo da hora; lotado, encerrado e sem aula mudam a cor do texto.
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import type { Horario } from '@/lib/api'
@@ -23,6 +23,18 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
     },
     { dependencies: [selecionado, horarios.length], scope: raiz },
   )
+  // Girar o celular muda a largura das abas: o sublinhado acompanha a aba escolhida.
+  useEffect(() => {
+    const el = raiz.current
+    if (!el) return
+    const observador = new ResizeObserver(() => {
+      const alvo = el.querySelector<HTMLElement>(`[data-h="${selecionado}"]`)
+      if (alvo) gsap.set(barra.current, { x: alvo.offsetLeft + 12, width: alvo.offsetWidth - 24 })
+    })
+    observador.observe(el)
+    return () => observador.disconnect()
+  }, [selecionado])
+
   return (
     <div ref={raiz} role="tablist" aria-label="Horários do dia" className="relative flex shrink-0 border-b border-carvao-4">
       {horarios.map((h) => {
@@ -38,15 +50,15 @@ export function AbasHorarios({ horarios, selecionado, onSelecionar }: Props) {
             aria-selected={sel}
             onClick={() => onSelecionar(h.id)}
             className={cn(
-              'flex h-12 flex-1 flex-col items-center justify-center transition-colors duration-200',
+              'flex h-[var(--altura-aba)] flex-1 flex-col items-center justify-center transition-colors duration-200',
               sel ? 'text-carvao-12' : h.bloqueio ? 'text-alerta-11' : !h.aberto ? 'text-carvao-8' : 'text-carvao-10',
             )}
           >
-            <span className="font-display text-xl leading-none">
+            <span className="font-display text-[clamp(1.25rem,3dvh,1.75rem)] leading-none">
               {hh}
               <span className="font-cond ml-0.5 text-sm font-bold">{mm === '00' ? 'h' : `:${mm}`}</span>
             </span>
-            <span className="font-cond mt-1 text-[11px] font-semibold tracking-wide">{status}</span>
+            <span className="font-cond mt-1 text-xs font-semibold tracking-wide">{status}</span>
           </button>
         )
       })}

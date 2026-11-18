@@ -19,7 +19,7 @@ export function Cabecalho({ titulo, subtitulo, acoes }: Props) {
     { scope: ref },
   )
   return (
-    <header ref={ref} className="relative z-10 flex shrink-0 items-center gap-3 px-5 pt-[max(env(safe-area-inset-top),0.75rem)]">
+    <header ref={ref} className="relative z-10 flex shrink-0 items-center gap-3 px-5 pt-[max(env(safe-area-inset-top),var(--folga-m))]">
       <img src="/escudo.webp" alt="" width={33} height={48} className="escudo h-12 w-auto shrink-0" />
       <div className="marca min-w-0 flex-1 leading-none">
         <p className="font-display truncate text-[1.5rem] tracking-wide uppercase">{titulo}</p>

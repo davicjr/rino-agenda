@@ -87,7 +87,7 @@ export function Agenda() {
       {inicio.data && data && (
         <>
           <TituloDia data={data} hoje={inicio.data.agora.data} direcao={direcao} />
-          <div className="mt-1 shrink-0">
+          <div className="mt-[var(--folga-p)] shrink-0">
             <SemanaDias
               hoje={inicio.data.agora.data}
               selecionado={data}
@@ -100,7 +100,7 @@ export function Agenda() {
           </div>
         </>
       )}
-      <section className={`relative z-10 mt-4 flex min-h-0 flex-1 flex-col px-5 pb-[max(env(safe-area-inset-bottom),1rem)] transition-opacity duration-200 ${dia.isPlaceholderData ? 'opacity-40' : ''}`}>
+      <section className={`relative z-10 mt-[var(--folga-p)] flex min-h-0 flex-1 flex-col px-5 pb-[max(env(safe-area-inset-bottom),var(--folga-m))] transition-opacity duration-200 ${dia.isPlaceholderData ? 'opacity-40' : ''}`}>
         <EstadoDia carregando={inicio.isPending || dia.isPending} erro={inicio.error ?? dia.error} dia={dia.data} />
         {dia.data && data && !dia.data.bloqueioDia && (
           <SessaoDia

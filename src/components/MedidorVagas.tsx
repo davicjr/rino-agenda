@@ -22,13 +22,16 @@ export function MedidorVagas({ ocupadas, vagas }: { ocupadas: number; vagas: num
   )
   return (
     <div ref={raiz}>
-      <p className="font-cond mb-1.5 flex items-baseline justify-between text-sm font-semibold tracking-wide">
-        <span className="text-carvao-12">{livres === 0 ? 'Sem vagas' : `${livres} ${livres === 1 ? 'vaga livre' : 'vagas livres'}`}</span>
-        <span className="text-carvao-9 tabular-nums">{ocupadas}/{vagas}</span>
+      <p className="font-cond mb-2 flex items-baseline justify-between">
+        <span className="flex items-baseline gap-2 text-base font-bold tracking-wide text-carvao-11 uppercase">
+          <span className="font-display text-[clamp(1.875rem,4.6dvh,2.75rem)] leading-none text-ouro-9 tabular-nums">{livres}</span>
+          {livres === 1 ? 'vaga livre' : 'vagas livres'}
+        </span>
+        <span className="text-base font-semibold text-carvao-10 tabular-nums">{ocupadas}/{vagas}</span>
       </p>
       <div className="flex gap-[3px]" role="meter" aria-valuemin={0} aria-valuemax={vagas} aria-valuenow={ocupadas} aria-label="Vagas ocupadas">
         {Array.from({ length: vagas }, (_, i) => (
-          <span key={i} className={cn('seg h-2 flex-1 -skew-x-[20deg] transition-colors duration-300', i < ocupadas ? 'bg-ouro-9' : 'bg-carvao-5')} />
+          <span key={i} className={cn('seg h-3 flex-1 -skew-x-[20deg] transition-colors duration-300', i < ocupadas ? 'bg-ouro-9' : 'bg-carvao-5')} />
         ))}
       </div>
     </div>
