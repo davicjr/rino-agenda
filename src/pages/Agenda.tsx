@@ -12,6 +12,7 @@ import { FundoMarca } from '@/components/FundoMarca'
 import { TituloDia } from '@/components/TituloDia'
 import { useAgendar, useDia, useInicio, useRetirar, useSemana } from '@/hooks/useAgenda'
 import { useMeuAluno } from '@/hooks/useMeuAluno'
+import { useTelaFixa } from '@/hooks/useTelaFixa'
 import type { Agendado, Aluno, Horario } from '@/lib/api'
 import { avisar } from '@/lib/avisar'
 import { horaCurta, somarDias } from '@/lib/datas'
@@ -21,6 +22,7 @@ import { EstadoDia } from '@/components/EstadoDia'
 import { SessaoDia } from '@/components/SessaoDia'
 
 export function Agenda() {
+  useTelaFixa()
   const inicio = useInicio()
   const [escolhido, setEscolhidoBruto] = useState<string | null>(null)
   const [direcao, setDirecao] = useState(1)
@@ -71,7 +73,7 @@ export function Agenda() {
   }
 
   return (
-    <main className="relative mx-auto flex h-dvh max-w-lg flex-col overflow-hidden">
+    <main className="fixed inset-0 mx-auto flex max-w-lg flex-col overflow-hidden">
       <FundoMarca />
       <Cabecalho
         titulo="Rino Fight Team"
