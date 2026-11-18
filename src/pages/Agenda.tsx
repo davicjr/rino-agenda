@@ -1,7 +1,6 @@
 // Tela pública: escolher o dia, ver quem vai e agendar ou retirar.
 import { useMemo, useState } from 'react'
 import { CalendarDays, Headset, Lock } from 'lucide-react'
-import { toast } from 'sonner'
 import { Cabecalho } from '@/components/Cabecalho'
 import { IconeTopo } from '@/ui/IconeTopo'
 import { GavetaCalendario } from '@/components/GavetaCalendario'
@@ -14,6 +13,7 @@ import { TituloDia } from '@/components/TituloDia'
 import { useAgendar, useDia, useInicio, useRetirar, useSemana } from '@/hooks/useAgenda'
 import { useMeuAluno } from '@/hooks/useMeuAluno'
 import type { Agendado, Aluno, Horario } from '@/lib/api'
+import { avisar } from '@/lib/avisar'
 import { horaCurta, somarDias } from '@/lib/datas'
 import { vibrar } from '@/lib/impacto'
 import { primeiroDia } from '@/lib/primeiroDia'
@@ -55,9 +55,9 @@ export function Agenda() {
           vibrar([18, 40, 30])
           setPulsos((p) => ({ ...p, [h.id]: (p[h.id] ?? 0) + 1 }))
           const u = uso.get(aluno.id)
-          toast.success(`Fechado, ${(aluno.apelido || aluno.nome).split(' ')[0]}! Te vejo às ${horaCurta(h.hora)}.${u ? ` ${u.usados + 1} de ${u.limite} nesta semana.` : ''}`)
+          avisar.sucesso(`Fechado, ${(aluno.apelido || aluno.nome).split(' ')[0]}!`, `Te vejo às ${horaCurta(h.hora)}${u ? ` · ${u.usados + 1} de ${u.limite} nesta semana` : ''}`)
         },
-        onError: (e) => toast.error(e.message),
+        onError: (e) => avisar.erro(e.message),
       },
     )
   }
@@ -65,8 +65,8 @@ export function Agenda() {
   const confirmarRetirada = () => {
     if (!retirar) return
     tirar.mutate(retirar.agendado.id, {
-      onSuccess: () => { setRetirar(null); toast('Vaga liberada.') },
-      onError: (e) => { setRetirar(null); toast.error(e.message) },
+      onSuccess: () => { setRetirar(null); avisar.info('Vaga liberada', 'O horário ficou disponível para outro aluno.') },
+      onError: (e) => { setRetirar(null); avisar.erro(e.message) },
     })
   }
 

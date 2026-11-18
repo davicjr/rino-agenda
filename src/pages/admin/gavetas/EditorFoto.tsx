@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Camera, Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
 import { admin } from '@/lib/apiAdmin'
+import { avisar } from '@/lib/avisar'
 import { recortarFoto, type Area } from '@/lib/reduzirFoto'
 import { Avatar } from '@/ui/Avatar'
 import { RecortarFoto } from './RecortarFoto'
@@ -37,10 +37,10 @@ export function EditorFoto({ tipo, id, nome, foto, onMudou }: Props) {
     setEnviando(true)
     try {
       atualizar(await admin.enviarFoto(tipo, id, await recortarFoto(arquivo, area)))
-      toast.success('Foto atualizada.')
+      avisar.sucesso('Foto atualizada')
       cancelar()
     } catch (e) {
-      toast.error((e as Error).message)
+      avisar.erro((e as Error).message)
     } finally {
       setEnviando(false)
     }
