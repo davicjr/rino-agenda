@@ -1,16 +1,19 @@
 // Bloqueios de data (feriado, evento): o dia inteiro ou um horário só.
 import { erro, inteiro, json, lerCorpo, type Env } from '../../_lib/http'
-import { agoraBahia, ehDataValida } from '../../_lib/regras'
+import { agoraBahia, ehDataValida, somarDias } from '../../_lib/regras'
 import { limitarTexto, MOTIVO_MAX, NOTA_MAX } from '../../_lib/texto'
 
 type Corpo = { data?: unknown; gradeId?: unknown; motivo?: unknown; nota?: unknown }
+
+/** Quanto tempo para trás a agenda do admin deixa navegar (igual ao calendário); dias passados também podem ser liberados. */
+const DIAS_PARA_TRAS = 365
 
 export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
   const r = await env.DB.prepare(
     `SELECT b.id, b.data, b.grade_id, g.hora, b.motivo, b.nota FROM bloqueios b LEFT JOIN grade g ON g.id = b.grade_id
      WHERE b.data >= ? ORDER BY b.data, g.hora`,
   )
-    .bind(agoraBahia().data)
+    .bind(somarDias(agoraBahia().data, -DIAS_PARA_TRAS))
     .all()
   return json(r.results)
 }
