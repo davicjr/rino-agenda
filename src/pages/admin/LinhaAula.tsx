@@ -57,14 +57,14 @@ export function LinhaAula({ h, data, aberta, onAlternar, onRemover, onEscalar, o
       </button>
       <div className={cn('grid transition-[grid-template-rows] duration-300 ease-[var(--ease-saida)]', aberta ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]')}>
         <div className="min-h-0">
-          <div className={cn('space-y-4 border-t px-4 pt-4 pb-4', h.bloqueio ? 'border-alerta-4' : 'border-carvao-4')}>
-            {mostrarNota && h.bloqueioNota && <p className="text-sm text-alerta-12 [overflow-wrap:anywhere]">{h.bloqueioNota}</p>}
-            <AbasGaveta rotulo="Seções do horário" abas={abas} />
+          <div className={cn('space-y-3 border-t px-4 pt-1 pb-4', h.bloqueio ? 'border-alerta-4' : 'border-carvao-4')}>
             {onDesbloquear ? (
               <button onClick={onDesbloquear} className="flex h-11 items-center gap-2 text-sm font-semibold text-alerta-12"><LockOpen className="size-4" /> Desbloquear horário</button>
             ) : !h.bloqueio && (
               <button onClick={onBloquear} className="flex h-11 items-center gap-2 text-sm font-semibold text-carvao-11"><Lock className="size-4" /> Bloquear horário</button>
             )}
+            {mostrarNota && h.bloqueioNota && <p className="text-sm text-alerta-12 [overflow-wrap:anywhere]">{h.bloqueioNota}</p>}
+            <AbasGaveta rotulo="Seções do horário" abas={abas} />
           </div>
         </div>
       </div>
