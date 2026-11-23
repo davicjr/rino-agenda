@@ -14,6 +14,7 @@ Agenda de treinos da **Rino Fight Team** (muay thai). O aluno abre o app, escolh
 - Diária e experimental: na gaveta de agendar, a diária vale para um aluno da lista ou um nome digitado; a experimental é só nome digitado. Não têm limite semanal, não gastam o plano e continuam sendo um treino por dia. Ocupam vaga e aparecem com etiqueta.
 - Não se agenda no passado, além de 30 dias, em horário bloqueado ou lotado.
 - O aluno só retira o agendamento antes do horário da aula.
+- Foto do treino: o admin envia uma foto por horário depois que o treino termina; ela aparece no card daquele horário na agenda dos alunos. O aparelho reduz a imagem para até 1280 px (uns 100 a 200 KB) e ela fica no D1.
 - O fuso é `America/Bahia`.
 
 As regras ficam em `functions/_lib/regras.ts` e os testes em `tests/regras.test.ts`.

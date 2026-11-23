@@ -7,10 +7,12 @@ import { horaCurta } from '@/lib/datas'
 import { Avatar } from '@/ui/Avatar'
 import { EtiquetaTipo } from '@/ui/EtiquetaTipo'
 import { Rotulo } from '@/ui/Rotulo'
+import { FotoTreino } from './FotoTreino'
 import { SeletorProfessor } from '@/ui/SeletorProfessor'
 
 type Props = {
   h: Horario
+  data: string
   aberta: boolean
   onAlternar: () => void
   onRemover: (agendamentoId: number) => void
@@ -21,7 +23,7 @@ type Props = {
   mostrarNota: boolean
 }
 
-export function LinhaAula({ h, aberta, onAlternar, onRemover, onEscalar, onBloquear, onDesbloquear, mostrarNota }: Props) {
+export function LinhaAula({ h, data, aberta, onAlternar, onRemover, onEscalar, onBloquear, onDesbloquear, mostrarNota }: Props) {
   const lotado = h.vagas !== null && h.agendados.length >= h.vagas
   return (
     <li className={cn('overflow-hidden paralelo', h.bloqueio ? 'bg-alerta-3' : 'bg-carvao-2')}>
@@ -66,6 +68,7 @@ export function LinhaAula({ h, aberta, onAlternar, onRemover, onEscalar, onBloqu
                 <p className="text-sm text-carvao-9">Ninguém agendado.</p>
               )}
             </div>
+            {!h.bloqueio && <FotoTreino gradeId={h.id} data={data} fase={h.fase} versao={h.fotoTreino} />}
             {onDesbloquear ? (
               <button onClick={onDesbloquear} className="flex h-11 items-center gap-2 text-sm font-semibold text-alerta-12"><LockOpen className="size-4" /> Desbloquear horário</button>
             ) : !h.bloqueio && (

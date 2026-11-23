@@ -12,7 +12,7 @@ export const alunosAtivos = (db: D1Database) =>
   db.prepare('SELECT id, nome, apelido, foto FROM alunos WHERE ativo = 1 ORDER BY nome COLLATE NOCASE').all<LinhaAluno>()
 
 export async function horariosDoDia(db: D1Database, data: string, diaSemana: number) {
-  const [grade, agend, bloq, esc] = await db.batch([
+  const [grade, agend, bloq, esc, fotos] = await db.batch([
     db
       .prepare(
         `SELECT g.id, g.hora, g.vagas, g.sem_limite, g.professor_id, p.nome AS professor_nome, p.foto AS professor_foto
@@ -29,7 +29,9 @@ export async function horariosDoDia(db: D1Database, data: string, diaSemana: num
       .bind(data),
     db.prepare('SELECT grade_id, motivo, nota FROM bloqueios WHERE data = ?').bind(data),
     db.prepare('SELECT e.grade_id, e.professor_id, p.nome, p.foto FROM escala e JOIN professores p ON p.id = e.professor_id WHERE e.data = ?').bind(data),
+    db.prepare('SELECT grade_id, versao FROM fotos_aula WHERE data = ?').bind(data),
   ])
+  const fotoTreino = new Map((fotos.results as { grade_id: number; versao: number }[]).map((f) => [f.grade_id, f.versao]))
   const escala = esc.results as Escala[]
   const bloqueios = bloq.results as { grade_id: number | null; motivo: string | null; nota: string | null }[]
   const diaTodo = bloqueios.find((b) => b.grade_id === null)
@@ -44,6 +46,7 @@ export async function horariosDoDia(db: D1Database, data: string, diaSemana: num
         ...g,
         vagas: sem_limite ? null : g.vagas,
         professor: professorDaAula(g.id, { id: professor_id, nome: professor_nome, foto: professor_foto }, escala),
+        fotoTreino: fotoTreino.get(g.id) ?? null,
         professorHorarioId: escala.find((e) => e.grade_id === g.id)?.professor_id ?? null,
         bloqueio: b ? b.motivo || 'Sem aula' : null,
         bloqueioNota: b?.nota ?? null,

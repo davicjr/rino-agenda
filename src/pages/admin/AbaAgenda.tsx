@@ -68,6 +68,7 @@ export function AbaAgenda({ escolhido, setData }: { escolhido: string | null; se
             <LinhaAula
               key={h.id}
               h={h}
+              data={data}
               aberta={aberta === h.id}
               onAlternar={() => setAberta(aberta === h.id ? null : h.id)}
               onRemover={(id) => remover.mutate(id)}

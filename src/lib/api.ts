@@ -23,6 +23,8 @@ export type Horario = {
   agendados: Agendado[]
   professor: Professor | null
   professorHorarioId: number | null
+  /** Versão da foto do treino (muda o endereço da imagem), ou null se não tem. */
+  fotoTreino: number | null
   janela: Janela
   podeRetirar: boolean
 }

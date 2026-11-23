@@ -10,13 +10,14 @@ import { Avatar } from '@/ui/Avatar'
 import { reduzirMovimento } from '@/lib/impacto'
 import { AvisoSemTreino } from './AvisoSemTreino'
 import { Carimbo } from './Carimbo'
+import { FotoDoTreino } from './FotoDoTreino'
 import { ListaAlunos } from './ListaAlunos'
 import { BotaoAgendar } from './BotaoAgendar'
 import { BarraVagas, ResumoVagas } from './MedidorVagas'
 
-type Props = { horario: Horario; regras?: RegrasJanela; pulso: number; onAgendar: (h: Horario) => void; onTocarNome: (a: Agendado, h: Horario) => void }
+type Props = { data: string; horario: Horario; regras?: RegrasJanela; pulso: number; onAgendar: (h: Horario) => void; onTocarNome: (a: Agendado, h: Horario) => void }
 
-export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: Props) {
+export function CardAula({ data, horario: h, regras, pulso, onAgendar, onTocarNome }: Props) {
   const raiz = useRef<HTMLElement>(null)
   const n = h.agendados.length
   const lotado = h.vagas !== null && n >= h.vagas
@@ -61,6 +62,7 @@ export function CardAula({ horario: h, regras, pulso, onAgendar, onTocarNome }: 
                 : lotado ? <Carimbo /> : <ResumoVagas ocupadas={n} vagas={h.vagas} />}
             </div>
             {aberto && h.vagas !== null && <BarraVagas ocupadas={n} vagas={h.vagas} />}
+            {h.fotoTreino && <FotoDoTreino gradeId={h.id} data={data} hora={h.hora} versao={h.fotoTreino} />}
           </div>
 
           <ListaAlunos

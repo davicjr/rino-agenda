@@ -9,6 +9,13 @@ export type PessoaForm = Omit<ProfessorAdmin, 'id' | 'foto'> & { id?: number; fo
 const corpoPessoa = (p: PessoaForm) => ({ ...p, ativo: p.ativo === 1, da_aula: p.da_aula === 1 })
 export type Bloqueio = { id: number; data: string; grade_id: number | null; hora: string | null; motivo: string | null; nota: string | null }
 
+async function enviarImagem(url: string, imagem: Blob) {
+  const r = await fetch(url, { method: 'PUT', headers: { 'content-type': imagem.type }, body: imagem })
+  const corpo = (await r.json().catch(() => ({}))) as { erro?: string; foto?: number }
+  if (!r.ok) throw new Error(corpo.erro ?? 'Não deu para enviar a foto.')
+  return corpo.foto ?? null
+}
+
 const corpo = (metodo: string, dados: unknown) => ({ method: metodo, body: JSON.stringify(dados) })
 
 export const admin = {
@@ -32,12 +39,9 @@ export const admin = {
   apagarProfessor: (id: number) => chamar(`/admin/professores?id=${id}`, { method: 'DELETE' }),
   escalar: (data: string, gradeId: number, professorId: number | null) => chamar('/admin/escala', corpo('PUT', { data, gradeId, professorId })),
 
-  enviarFoto: async (tipo: 'aluno' | 'professor', id: number, imagem: Blob) => {
-    const r = await fetch(`/api/admin/foto?tipo=${tipo}&id=${id}`, { method: 'PUT', headers: { 'content-type': imagem.type }, body: imagem })
-    const corpo = (await r.json().catch(() => ({}))) as { erro?: string; foto?: number }
-    if (!r.ok) throw new Error(corpo.erro ?? 'Não deu para enviar a foto.')
-    return corpo.foto ?? null
-  },
+  enviarFoto: (tipo: 'aluno' | 'professor', id: number, imagem: Blob) => enviarImagem(`/api/admin/foto?tipo=${tipo}&id=${id}`, imagem),
+  enviarFotoTreino: (gradeId: number, data: string, imagem: Blob) => enviarImagem(`/api/admin/foto-aula?gradeId=${gradeId}&data=${data}`, imagem),
+  removerFotoTreino: (gradeId: number, data: string) => chamar(`/admin/foto-aula?gradeId=${gradeId}&data=${data}`, { method: 'DELETE' }),
   removerFoto: (tipo: 'aluno' | 'professor', id: number) => chamar(`/admin/foto?tipo=${tipo}&id=${id}`, { method: 'DELETE' }),
 
   regras: () => chamar<RegrasJanela>('/admin/config'),

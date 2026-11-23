@@ -9,6 +9,7 @@ import { AbasHorarios } from './AbasHorarios'
 import { CardAula } from './CardAula'
 
 type Props = {
+  data: string
   horarios: Horario[]
   regras?: RegrasJanela
   direcaoDia: number
@@ -19,7 +20,7 @@ type Props = {
 
 const inicial = (hs: Horario[]) => (hs.find((h) => h.aberto && !h.bloqueio) ?? hs[0])?.id
 
-export function SessaoDia({ horarios, regras, direcaoDia, pulsos, onAgendar, onTocarNome }: Props) {
+export function SessaoDia({ data, horarios, regras, direcaoDia, pulsos, onAgendar, onTocarNome }: Props) {
   const [sel, setSel] = useState(() => inicial(horarios))
   const [direcao, setDirecao] = useState(direcaoDia)
   const palco = useRef<HTMLDivElement>(null)
@@ -45,7 +46,7 @@ export function SessaoDia({ horarios, regras, direcaoDia, pulsos, onAgendar, onT
     <div className="flex min-h-0 flex-1 flex-col gap-[var(--folga-m)]">
       <AbasHorarios horarios={horarios} selecionado={atual.id} onSelecionar={escolher} />
       <div ref={palco} className="flex min-h-0 flex-1 flex-col">
-        <CardAula horario={atual} regras={regras} pulso={pulsos[atual.id] ?? 0} onAgendar={onAgendar} onTocarNome={onTocarNome} />
+        <CardAula data={data} horario={atual} regras={regras} pulso={pulsos[atual.id] ?? 0} onAgendar={onAgendar} onTocarNome={onTocarNome} />
       </div>
     </div>
   )

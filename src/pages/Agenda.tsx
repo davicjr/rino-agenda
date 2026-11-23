@@ -108,6 +108,7 @@ export function Agenda() {
         {dia.data && data && !dia.data.bloqueioDia && (
           <SessaoDia
             key={dia.data.data}
+            data={dia.data.data}
             horarios={dia.data.horarios}
             regras={inicio.data?.regras}
             direcaoDia={direcao}
