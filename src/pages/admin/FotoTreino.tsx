@@ -1,5 +1,5 @@
-// Foto do treino, no horário aberto da agenda do admin: só dá para enviar depois que o treino terminou.
-// A foto fica disponível no card desse horário, na agenda pública.
+// Foto do treino, no horário aberto da agenda do admin. É opcional: o campo só aparece depois que o treino
+// terminou (ou se já tem foto). A foto fica disponível no card desse horário, na agenda pública.
 import { Camera, Trash2 } from 'lucide-react'
 import { useAcao } from '@/hooks/useAdmin'
 import type { Horario } from '@/lib/api'
@@ -17,16 +17,15 @@ export function FotoTreino({ gradeId, data, fase, versao }: Props) {
   const enviar = useAcao((f: File) => reduzirFotoTreino(f).then((b) => admin.enviarFotoTreino(gradeId, data, b)), chaves, 'Foto do treino salva.')
   const remover = useAcao(() => admin.removerFotoTreino(gradeId, data), chaves, 'Foto removida.')
   const ocupado = enviar.isPending || remover.isPending
+  if (fase !== 'encerrada' && !versao) return null
   return (
     <div>
-      <Rotulo ajuda="Depois que o treino termina, envie a foto da turma. Ela aparece no card deste horário, na agenda dos alunos.">Foto do treino</Rotulo>
-      {versao && (
-        <img src={`/api/foto-aula/${gradeId}/${data}?v=${versao}`} alt="Foto do treino" loading="lazy" className={cn('mb-2 max-h-56 w-full object-cover', ocupado && 'opacity-50')} />
-      )}
-      {fase === 'encerrada' ? (
-        <div className={cn('grid gap-2', versao && 'grid-cols-2')}>
+      <Rotulo ajuda="Opcional. Depois que o treino termina, envie a foto da turma. Ela aparece no card deste horário, na agenda dos alunos.">Foto do treino</Rotulo>
+      <div className="flex items-center gap-3">
+        {versao && <img src={`/api/foto-aula/${gradeId}/${data}?v=${versao}`} alt="Foto do treino" loading="lazy" className={cn('paralelo h-12 w-[4.5rem] shrink-0 object-cover', ocupado && 'opacity-50')} />}
+        <div className={cn('grid min-w-0 flex-1 gap-2', versao && 'grid-cols-2')}>
           <label className={cn(acao, 'cursor-pointer text-ouro-11 has-[:focus-visible]:brightness-125', ocupado && 'opacity-50')}>
-            <Camera className="size-5 shrink-0" /> {enviar.isPending ? 'Enviando…' : versao ? 'Trocar foto' : 'Enviar foto'}
+            <Camera className="size-5 shrink-0" /> {enviar.isPending ? 'Enviando…' : versao ? 'Trocar' : 'Enviar foto'}
             <input type="file" accept="image/*" className="sr-only" disabled={ocupado} onChange={(e) => { const f = e.target.files?.[0]; if (f) enviar.mutate(f); e.target.value = '' }} />
           </label>
           {versao && (
@@ -35,9 +34,7 @@ export function FotoTreino({ gradeId, data, fase, versao }: Props) {
             </button>
           )}
         </div>
-      ) : (
-        <p className="text-sm text-carvao-9">Dá para enviar depois que o treino terminar.</p>
-      )}
+      </div>
     </div>
   )
 }
