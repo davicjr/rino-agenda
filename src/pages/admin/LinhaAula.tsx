@@ -1,14 +1,15 @@
-// Um horário na agenda do professor: fechado mostra o resumo; aberto mostra a lista,
-// o professor da aula e o bloqueio. A altura anima por grid-template-rows.
-import { ChevronDown, Lock, LockOpen, X } from 'lucide-react'
+// Um horário na agenda do professor: fechado mostra o resumo; aberto mostra abas (alunos, professor
+// e a foto do treino) e o bloqueio. A altura anima por grid-template-rows.
+import { ChevronDown, Lock, LockOpen } from 'lucide-react'
 import type { Horario } from '@/lib/api'
 import { cn } from '@/lib/cn'
 import { horaCurta } from '@/lib/datas'
+import { AbasGaveta } from '@/ui/AbasGaveta'
 import { Avatar } from '@/ui/Avatar'
-import { EtiquetaTipo } from '@/ui/EtiquetaTipo'
 import { Rotulo } from '@/ui/Rotulo'
-import { FotoTreino } from './FotoTreino'
 import { SeletorProfessor } from '@/ui/SeletorProfessor'
+import { AlunosDoHorario } from './AlunosDoHorario'
+import { FotoTreino } from './FotoTreino'
 
 type Props = {
   h: Horario
@@ -25,6 +26,19 @@ type Props = {
 
 export function LinhaAula({ h, data, aberta, onAlternar, onRemover, onEscalar, onBloquear, onDesbloquear, mostrarNota }: Props) {
   const lotado = h.vagas !== null && h.agendados.length >= h.vagas
+  const professor = (
+    <div>
+      <Rotulo htmlFor={`prof-${h.id}`} ajuda="Troque só se esta data for diferente. Em Padrão da grade, entra o professor definido na aba Grade.">Professor nesta data</Rotulo>
+      <SeletorProfessor id={`prof-${h.id}`} valor={h.professorHorarioId} nenhum="Padrão da grade" onMudar={onEscalar} className="w-full" />
+    </div>
+  )
+  // A foto é opcional: a aba só existe depois que o treino terminou (ou se já tem foto).
+  const comFoto = !h.bloqueio && (h.fase === 'encerrada' || !!h.fotoTreino)
+  const abas = [
+    { id: 'alunos', rotulo: `Alunos · ${h.agendados.length}`, conteudo: <AlunosDoHorario agendados={h.agendados} onRemover={onRemover} /> },
+    { id: 'professor', rotulo: 'Professor', conteudo: professor },
+    ...(comFoto ? [{ id: 'foto', rotulo: 'Foto', conteudo: <FotoTreino gradeId={h.id} data={data} fase={h.fase} versao={h.fotoTreino} /> }] : []),
+  ]
   return (
     <li className={cn('overflow-hidden paralelo', h.bloqueio ? 'bg-alerta-3' : 'bg-carvao-2')}>
       <button onClick={onAlternar} aria-expanded={aberta} className={cn('flex min-h-18 w-full items-center gap-4 px-4 py-3 text-left', h.bloqueio ? 'active:bg-alerta-4' : 'active:bg-carvao-3')}>
@@ -45,30 +59,7 @@ export function LinhaAula({ h, data, aberta, onAlternar, onRemover, onEscalar, o
         <div className="min-h-0">
           <div className={cn('space-y-4 border-t px-4 pt-4 pb-4', h.bloqueio ? 'border-alerta-4' : 'border-carvao-4')}>
             {mostrarNota && h.bloqueioNota && <p className="text-sm text-alerta-12 [overflow-wrap:anywhere]">{h.bloqueioNota}</p>}
-            <div>
-              <Rotulo htmlFor={`prof-${h.id}`} ajuda="Troque só se esta data for diferente. Em Padrão da grade, entra o professor definido na aba Grade.">Professor nesta data</Rotulo>
-              <SeletorProfessor id={`prof-${h.id}`} valor={h.professorHorarioId} nenhum="Padrão da grade" onMudar={onEscalar} className="w-full" />
-            </div>
-            <div>
-              <Rotulo>Alunos ({h.agendados.length})</Rotulo>
-              {h.agendados.length ? (
-                <ol className="divide-y divide-carvao-4">
-                  {h.agendados.map((a) => (
-                    <li key={a.id} className="flex h-14 items-center gap-3">
-                      <Avatar nome={a.nome} tipo="aluno" id={a.aluno_id ?? 0} foto={a.foto} className="size-10 shrink-0 text-sm" />
-                      <span className="min-w-0 flex-1 truncate">{a.nome}</span>
-                      <EtiquetaTipo tipo={a.tipo} />
-                      <button aria-label={`Remover ${a.nome}`} onClick={() => onRemover(a.id)} className="grid size-11 place-items-center text-carvao-10 active:text-ouro-11">
-                        <X className="size-5" />
-                      </button>
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <p className="text-sm text-carvao-9">Ninguém agendado.</p>
-              )}
-            </div>
-            {!h.bloqueio && <FotoTreino gradeId={h.id} data={data} fase={h.fase} versao={h.fotoTreino} />}
+            <AbasGaveta rotulo="Seções do horário" abas={abas} />
             {onDesbloquear ? (
               <button onClick={onDesbloquear} className="flex h-11 items-center gap-2 text-sm font-semibold text-alerta-12"><LockOpen className="size-4" /> Desbloquear horário</button>
             ) : !h.bloqueio && (

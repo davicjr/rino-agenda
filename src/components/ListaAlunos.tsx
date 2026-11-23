@@ -3,20 +3,19 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import type { Agendado } from '@/lib/api'
 import { cn } from '@/lib/cn'
 import { reduzirMovimento } from '@/lib/impacto'
 import { paginar } from '@/lib/paginar'
 import { Avatar } from '@/ui/Avatar'
+import { Paginacao } from '@/ui/Paginacao'
 import { EtiquetaTipo } from '@/ui/EtiquetaTipo'
 
 type Props = { titulo: string; vazio: string; agendados: Agendado[]; limite: number | null; pulso: number; podeRetirar: boolean; onTocar: (a: Agendado) => void }
 
 // Linha confortável ao toque; em tela alta sobra mais respiro por aluno.
 const alturaDaLinha = (alturaTela: number) => (alturaTela >= 800 ? 60 : 52)
-
-const botaoPagina = 'paralelo grid size-11 place-items-center bg-carvao-4 text-carvao-12 active:bg-carvao-5 disabled:text-carvao-7'
 
 export function ListaAlunos({ titulo, vazio, agendados, limite, pulso, podeRetirar, onTocar }: Props) {
   const area = useRef<HTMLDivElement>(null)
@@ -71,13 +70,7 @@ export function ListaAlunos({ titulo, vazio, agendados, limite, pulso, podeRetir
         <h2 className="font-cond flex items-baseline gap-2 text-sm font-bold tracking-wider text-carvao-11 uppercase">
           {titulo} <span className="text-ouro-9 tabular-nums">{limite === null ? n : `${n}/${limite}`}</span>
         </h2>
-        {paginas > 1 && (
-          <nav aria-label="Páginas de alunos" className="flex items-center gap-1">
-            <button onClick={() => irPara(pagina - 1)} disabled={pagina === 1} aria-label="Página anterior" className={botaoPagina}><ChevronLeft className="size-5" /></button>
-            <span aria-live="polite" className="font-cond min-w-12 text-center text-sm font-bold tracking-wider text-carvao-11 tabular-nums">{pagina} de {paginas}</span>
-            <button onClick={() => irPara(pagina + 1)} disabled={pagina === paginas} aria-label="Próxima página" className={botaoPagina}><ChevronRight className="size-5" /></button>
-          </nav>
-        )}
+        <Paginacao pagina={pagina} paginas={paginas} onIr={irPara} />
       </div>
       <div ref={area} style={n ? { height: alturaLinha * Math.min(n, porPagina) } : undefined} className="shrink-0 overflow-hidden">
         {n ? (
