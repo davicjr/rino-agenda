@@ -1,6 +1,6 @@
 // Cadastrar vários alunos de uma vez: um nome por linha, mesmo plano para todos.
 import { useState } from 'react'
-import { PLANOS, type Plano } from '@/lib/planos'
+import { AJUDA_PLANO, PLANOS, type Plano } from '@/lib/planos'
 import { Botao } from '@/ui/Botao'
 import { AreaTexto } from '@/ui/Campo'
 import { Chips } from '@/ui/Chips'
@@ -11,7 +11,7 @@ type Props = { aberta: boolean; enviando: boolean; onFechar: () => void; onConfi
 
 export function GavetaNovosAlunos({ aberta, enviando, onFechar, onConfirmar }: Props) {
   const [texto, setTexto] = useState('')
-  const [plano, setPlano] = useState<Plano>('livre')
+  const [plano, setPlano] = useState<Plano>('5x')
   const nomes = texto.split('\n').map((n) => n.trim()).filter((n) => n.length >= 2)
   return (
     <Gaveta aberta={aberta} onFechar={onFechar} titulo="Novos alunos">
@@ -27,8 +27,8 @@ export function GavetaNovosAlunos({ aberta, enviando, onFechar, onConfirmar }: P
           />
         </div>
         <div>
-          <Rotulo ajuda="Define quantos dias o aluno pode treinar por semana, de domingo a sábado. Sempre um treino por dia.">Plano</Rotulo>
-          <Chips rotulo="Plano" opcoes={PLANOS.map((p) => ({ valor: p.valor, rotulo: p.rotulo }))} valor={plano} onMudar={setPlano} />
+          <Rotulo ajuda={AJUDA_PLANO}>Plano</Rotulo>
+          <Chips rotulo="Plano" opcoes={PLANOS.map((p) => ({ valor: p.valor, rotulo: p.curto }))} valor={plano} onMudar={setPlano} />
         </div>
         <Botao disabled={!nomes.length || enviando}>{nomes.length > 1 ? `Cadastrar ${nomes.length} alunos` : 'Cadastrar'}</Botao>
       </form>

@@ -1,6 +1,6 @@
 // Consultas e mutações da agenda pública. Atualiza a cada 15 s e quando o app volta para a tela.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { api } from '@/lib/api'
+import { api, type Reserva } from '@/lib/api'
 import { diaSemana, somarDias } from '@/lib/datas'
 
 export const useInicio = () => useQuery({ queryKey: ['inicio'], queryFn: api.inicio, staleTime: 60_000 })
@@ -26,7 +26,7 @@ export const useSemana = (data: string | null) =>
 export function useAgendar(data: string) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (v: { alunoId: number; gradeId: number }) => api.agendar(v.alunoId, v.gradeId, data),
+    mutationFn: (v: { reserva: Reserva; gradeId: number }) => api.agendar(v.reserva, v.gradeId, data),
     onSettled: () => Promise.all([qc.invalidateQueries({ queryKey: ['dia', data] }), qc.invalidateQueries({ queryKey: ['semana'] })]),
   })
 }

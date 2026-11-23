@@ -1,7 +1,7 @@
 // Editar um aluno em abas: dados e plano numa, foto na outra.
 import { useState } from 'react'
 import type { AlunoAdmin } from '@/lib/apiAdmin'
-import { PLANOS } from '@/lib/planos'
+import { AJUDA_PLANO, PLANOS } from '@/lib/planos'
 import { AbasGaveta } from '@/ui/AbasGaveta'
 import { AcoesForm } from '@/ui/AcoesForm'
 import { Entrada } from '@/ui/Campo'
@@ -34,8 +34,8 @@ function Formulario({ aluno, onSalvar, onApagar }: { aluno: AlunoAdmin; onSalvar
         <Entrada id="apelido" value={a.apelido ?? ''} placeholder="Opcional" onChange={(e) => setA({ ...a, apelido: e.target.value })} />
       </div>
       <div>
-        <Rotulo ajuda="Define quantos dias o aluno pode treinar por semana, de domingo a sábado. Sempre um treino por dia.">Plano</Rotulo>
-        <Chips rotulo="Plano" opcoes={PLANOS.map((p) => ({ valor: p.valor, rotulo: p.rotulo }))} valor={a.plano} onMudar={(plano) => setA({ ...a, plano })} />
+        <Rotulo ajuda={AJUDA_PLANO}>Plano</Rotulo>
+        <Chips rotulo="Plano" opcoes={PLANOS.map((p) => ({ valor: p.valor, rotulo: p.curto }))} valor={a.plano} onMudar={(plano) => setA({ ...a, plano })} />
       </div>
       <Interruptor rotulo="Ativo (aparece para agendar)" ligado={a.ativo === 1} onMudar={(v) => setA({ ...a, ativo: v ? 1 : 0 })} />
     </div>

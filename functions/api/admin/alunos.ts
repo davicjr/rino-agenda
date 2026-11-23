@@ -1,10 +1,11 @@
 // CRUD de alunos. POST aceita {nome, apelido?, plano?} ou {nomes: string[], plano?} para colar uma lista.
 import { erro, inteiro, json, lerCorpo, type Env } from '../../_lib/http'
+import { PLANOS_VALIDOS } from '../../_lib/regras'
 
-const PLANOS = ['livre', '3x', '2x']
+const PLANOS: string[] = PLANOS_VALIDOS
 type Corpo = { id?: unknown; nome?: unknown; nomes?: unknown; apelido?: unknown; plano?: unknown; ativo?: unknown }
 const texto = (v: unknown) => (typeof v === 'string' ? v.trim().replace(/\s+/g, ' ') : '')
-const plano = (v: unknown) => (typeof v === 'string' && PLANOS.includes(v) ? v : 'livre')
+const plano = (v: unknown) => (typeof v === 'string' && PLANOS.includes(v) ? v : '5x')
 
 export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
   const r = await env.DB.prepare(

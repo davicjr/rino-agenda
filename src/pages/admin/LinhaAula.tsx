@@ -5,6 +5,7 @@ import type { Horario } from '@/lib/api'
 import { cn } from '@/lib/cn'
 import { horaCurta } from '@/lib/datas'
 import { Avatar } from '@/ui/Avatar'
+import { EtiquetaTipo } from '@/ui/EtiquetaTipo'
 import { Rotulo } from '@/ui/Rotulo'
 import { SeletorProfessor } from '@/ui/SeletorProfessor'
 
@@ -52,8 +53,9 @@ export function LinhaAula({ h, aberta, onAlternar, onRemover, onEscalar, onBloqu
                 <ol className="divide-y divide-carvao-4">
                   {h.agendados.map((a) => (
                     <li key={a.id} className="flex h-14 items-center gap-3">
-                      <Avatar nome={a.nome} tipo="aluno" id={a.aluno_id} foto={a.foto} className="size-10 shrink-0 text-sm" />
-                      <span className="flex-1 truncate">{a.nome}</span>
+                      <Avatar nome={a.nome} tipo="aluno" id={a.aluno_id ?? 0} foto={a.foto} className="size-10 shrink-0 text-sm" />
+                      <span className="min-w-0 flex-1 truncate">{a.nome}</span>
+                      <EtiquetaTipo tipo={a.tipo} />
                       <button aria-label={`Remover ${a.nome}`} onClick={() => onRemover(a.id)} className="grid size-11 place-items-center text-carvao-10 active:text-ouro-11">
                         <X className="size-5" />
                       </button>

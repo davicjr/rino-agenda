@@ -9,7 +9,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ env, request }) => {
   const db = env.DB
   const [alunos, usados, grade, bloq] = await db.batch([
     db.prepare('SELECT id, plano FROM alunos WHERE ativo = 1'),
-    db.prepare('SELECT a.aluno_id, a.data, g.hora FROM agendamentos a JOIN grade g ON g.id = a.grade_id WHERE a.data BETWEEN ? AND ? ORDER BY a.data').bind(inicio, fim),
+    db.prepare(`SELECT a.aluno_id, a.data, g.hora FROM agendamentos a JOIN grade g ON g.id = a.grade_id WHERE a.tipo = 'plano' AND a.data BETWEEN ? AND ? ORDER BY a.data`).bind(inicio, fim),
     db.prepare('SELECT DISTINCT dia_semana FROM grade WHERE ativo = 1'),
     db.prepare('SELECT data FROM bloqueios WHERE grade_id IS NULL AND data BETWEEN ? AND ?').bind(inicio, fim),
   ])

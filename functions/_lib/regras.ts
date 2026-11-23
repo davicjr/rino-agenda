@@ -1,8 +1,18 @@
 // Regras de negócio puras (sem banco), testadas em tests/regras.test.ts.
 
-export type Plano = 'livre' | '3x' | '2x'
+export type Plano = '5x' | '4x' | '3x' | '2x' | '1x'
+export type TipoAgendamento = 'plano' | 'diaria' | 'experimental'
 
-export const LIMITE_SEMANAL: Record<Plano, number> = { livre: Infinity, '3x': 3, '2x': 2 }
+const LIMITE_DO_PLANO: Record<Plano, number> = { '5x': 5, '4x': 4, '3x': 3, '2x': 2, '1x': 1 }
+export const PLANOS_VALIDOS = Object.keys(LIMITE_DO_PLANO) as Plano[]
+/** 'avulso' (diária e experimental) não tem limite semanal. */
+export const LIMITE_SEMANAL: Record<Plano | 'avulso', number> = { ...LIMITE_DO_PLANO, avulso: Infinity }
+
+/** Nome digitado de visitante: espaços arrumados, 2 a 60 letras. Null se não serve. */
+export function nomeVisitante(v: unknown): string | null {
+  const n = typeof v === 'string' ? v.trim().replace(/\s+/g, ' ') : ''
+  return n.length >= 2 && n.length <= 60 ? n : null
+}
 const OFFSET_BAHIA_MIN = -3 * 60 // America/Bahia: UTC-3, sem horário de verão
 
 export type Agora = { data: string; minutos: number }
@@ -53,7 +63,7 @@ export type PedidoAgendamento = {
   diaSemanaGrade: number
   gradeAtiva: boolean
   alunoAtivo: boolean
-  plano: Plano
+  plano: Plano | 'avulso'
   bloqueado: boolean
   ocupados: number
   /** null = sem limite de vagas. */

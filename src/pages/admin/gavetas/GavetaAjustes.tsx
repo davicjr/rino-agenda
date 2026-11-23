@@ -1,5 +1,5 @@
 // Ajustes do admin: regras de agendamento (quando abre, fecha e até quando retirar)
-// e as informações oficiais que aparecem no Suporte da agenda.
+// as informações oficiais que aparecem no Suporte da agenda e a troca da senha do painel.
 import { useState } from 'react'
 import type { RegrasJanela } from '@/lib/api'
 import { AbasGaveta } from '@/ui/AbasGaveta'
@@ -8,6 +8,7 @@ import { Chips } from '@/ui/Chips'
 import { Gaveta } from '@/ui/Gaveta'
 import { Rotulo } from '@/ui/Rotulo'
 import { FormInfo } from './FormInfo'
+import { FormSenha } from './FormSenha'
 
 const ABRE = [{ valor: -1, rotulo: 'Livre' }, ...[1, 2, 7, 15, 30].map((n) => ({ valor: n, rotulo: `${n}d` }))]
 const HORAS = [{ valor: 0, rotulo: 'Na hora' }, ...[1, 2, 6, 12, 24].map((n) => ({ valor: n, rotulo: `${n}h` }))]
@@ -24,7 +25,7 @@ export function GavetaAjustes({ aberta, regras, enviando, onFechar, onSalvar }: 
 
 function Abas({ regras, enviando, onSalvar }: Pick<Props, 'regras' | 'enviando' | 'onSalvar'>) {
   const formRegras = regras && <Formulario key={JSON.stringify(regras)} inicial={regras} enviando={enviando} onSalvar={onSalvar} />
-  return <AbasGaveta rotulo="Seções dos ajustes" abas={[{ id: 'regras', rotulo: 'Regras', conteudo: formRegras }, { id: 'contato', rotulo: 'Contato', conteudo: <FormInfo /> }]} />
+  return <AbasGaveta rotulo="Seções dos ajustes" abas={[{ id: 'regras', rotulo: 'Regras', conteudo: formRegras }, { id: 'contato', rotulo: 'Contato', conteudo: <FormInfo /> }, { id: 'senha', rotulo: 'Senha', conteudo: <FormSenha /> }]} />
 }
 
 function Formulario({ inicial, enviando, onSalvar }: { inicial: RegrasJanela; enviando: boolean; onSalvar: (r: RegrasJanela) => void }) {

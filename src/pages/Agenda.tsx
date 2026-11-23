@@ -6,14 +6,14 @@ import { IconeTopo } from '@/ui/IconeTopo'
 import { GavetaCalendario } from '@/components/GavetaCalendario'
 import { GavetaSuporte } from '@/components/GavetaSuporte'
 import { SemanaDias } from '@/components/SemanaDias'
-import { GavetaAgendar } from '@/components/GavetaAgendar'
+import { GavetaAgendar, type Escolha } from '@/components/GavetaAgendar'
 import { GavetaRetirar } from '@/components/GavetaRetirar'
 import { FundoMarca } from '@/components/FundoMarca'
 import { TituloDia } from '@/components/TituloDia'
 import { useAgendar, useDia, useInicio, useRetirar, useSemana } from '@/hooks/useAgenda'
 import { useMeuAluno } from '@/hooks/useMeuAluno'
 import { useTelaFixa } from '@/hooks/useTelaFixa'
-import type { Agendado, Aluno, Horario } from '@/lib/api'
+import type { Agendado, Horario, Reserva } from '@/lib/api'
 import { avisar } from '@/lib/avisar'
 import { horaCurta, somarDias } from '@/lib/datas'
 import { vibrar } from '@/lib/impacto'
@@ -45,19 +45,20 @@ export function Agenda() {
   const diasComAula = useMemo(() => new Set(inicio.data?.grade.map((g) => g.dia_semana)), [inicio.data])
   const bloqueados = useMemo(() => new Set(inicio.data?.bloqueiosDia.map((b) => b.data)), [inicio.data])
 
-  const confirmar = (aluno: Aluno) => {
+  const confirmar = ({ tipo, aluno, nome }: Escolha) => {
     if (!agendarEm) return
     const h = agendarEm
+    const reserva: Reserva = aluno ? { tipo: tipo === 'diaria' ? 'diaria' : 'plano', alunoId: aluno.id } : { tipo: tipo === 'experimental' ? 'experimental' : 'diaria', nome }
     agendar.mutate(
-      { alunoId: aluno.id, gradeId: h.id },
+      { reserva, gradeId: h.id },
       {
         onSuccess: () => {
-          lembrar(aluno.id)
+          if (aluno) lembrar(aluno.id)
           setAgendarEm(null)
           vibrar([18, 40, 30])
           setPulsos((p) => ({ ...p, [h.id]: (p[h.id] ?? 0) + 1 }))
-          const u = uso.get(aluno.id)
-          avisar.sucesso(`Fechado, ${(aluno.apelido || aluno.nome).split(' ')[0]}!`, `Te vejo às ${horaCurta(h.hora)}${u ? ` · ${u.usados + 1} de ${u.limite} nesta semana` : ''}`)
+          const u = tipo === 'plano' && aluno ? uso.get(aluno.id) : undefined
+          avisar.sucesso(`Fechado, ${nome.split(' ')[0]}!`, `Te vejo às ${horaCurta(h.hora)}${u ? ` · ${u.usados + 1} de ${u.limite} nesta semana` : ''}`)
         },
         onError: (e) => avisar.erro(e.message),
       },

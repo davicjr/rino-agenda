@@ -4,7 +4,10 @@ export type GradeItem = { id: number; dia_semana: number; hora: string; vagas: n
 export type Agora = { data: string; minutos: number }
 export type BloqueioDia = { data: string; motivo: string | null }
 export type Inicio = { agora: Agora; janelaDias: number; grade: GradeItem[]; alunos: Aluno[]; bloqueiosDia: BloqueioDia[]; regras: RegrasJanela }
-export type Agendado = { id: number; aluno_id: number; nome: string; foto: number | null }
+export type TipoAgendamento = 'plano' | 'diaria' | 'experimental'
+/** aluno_id é null quando a pessoa foi digitada na hora (diária ou experimental). */
+export type Agendado = { id: number; aluno_id: number | null; tipo: TipoAgendamento; nome: string; foto: number | null }
+export type Reserva = { tipo: 'plano' | 'diaria'; alunoId: number } | { tipo: 'diaria' | 'experimental'; nome: string }
 export type Professor = { id: number; nome: string; foto: number | null }
 export type RegrasJanela = { abreDiasAntes: number | null; fechaHorasAntes: number; retirarHorasAntes: number }
 export type Janela = { estado: 'aberta' | 'passou' | 'fechou' } | { estado: 'cedo'; abreEm: { data: string; hora: string } }
@@ -47,7 +50,7 @@ export const api = {
   dia: (data: string) => chamar<Dia>(`/dia?data=${data}`),
   info: () => chamar<Suporte>('/info'),
   semana: (data: string) => chamar<Semana>(`/semana?data=${data}`),
-  agendar: (alunoId: number, gradeId: number, data: string) =>
-    chamar<{ id: number }>('/agendar', { method: 'POST', body: JSON.stringify({ alunoId, gradeId, data }) }),
+  agendar: (reserva: Reserva, gradeId: number, data: string) =>
+    chamar<{ id: number }>('/agendar', { method: 'POST', body: JSON.stringify({ ...reserva, gradeId, data }) }),
   retirar: (id: number) => chamar<{ ok: true }>(`/agendamento/${id}`, { method: 'DELETE' }),
 }

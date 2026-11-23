@@ -1,14 +1,19 @@
-// Escolher o próprio nome e confirmar. O último nome usado neste aparelho aparece primeiro.
+// Escolher quem vai treinar e confirmar: Plano (alunos cadastrados), Diária (lista ou nome digitado)
+// e Experimental (só nome digitado). O último aluno usado neste celular aparece primeiro.
 import { useState } from 'react'
-import { Command } from 'cmdk'
-import { Search } from 'lucide-react'
-import type { Aluno, Horario, UsoSemana } from '@/lib/api'
+import type { Aluno, Horario, TipoAgendamento, UsoSemana } from '@/lib/api'
 import { cn } from '@/lib/cn'
 import { horaCurta, nomeDia, nomeDiaCurto } from '@/lib/datas'
+import { nomeExibido } from '@/lib/nomes'
 import { Avatar } from '@/ui/Avatar'
 import { Botao } from '@/ui/Botao'
-import { caixaCampo } from '@/ui/Campo'
+import { Chips } from '@/ui/Chips'
 import { Gaveta } from '@/ui/Gaveta'
+import { NomeVisitante } from './NomeVisitante'
+import { SeletorAluno } from './SeletorAluno'
+
+/** Quem foi escolhido: um aluno da lista ou, na diária e na experimental, um nome digitado. */
+export type Escolha = { tipo: TipoAgendamento; aluno: Aluno | null; nome: string }
 
 type Props = {
   horario: Horario | null
@@ -19,27 +24,35 @@ type Props = {
   uso: Map<number, UsoSemana>
   enviando: boolean
   onFechar: () => void
-  onConfirmar: (aluno: Aluno) => void
+  onConfirmar: (e: Escolha) => void
 }
 
-const exibir = (a: Aluno) => a.apelido || a.nome
+const TIPOS = [
+  { valor: 'plano', rotulo: 'Plano' },
+  { valor: 'diaria', rotulo: 'Diária' },
+  { valor: 'experimental', rotulo: 'Experimental' },
+] as const
+const CONFIRMAR = { plano: 'Confirmar treino', diaria: 'Confirmar diária', experimental: 'Confirmar experimental' } as const
+const ROTULO_TIPO = { plano: '', diaria: 'Diária', experimental: 'Aula experimental' } as const
 
 export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, enviando, onFechar, onConfirmar }: Props) {
-  const [escolhido, setEscolhido] = useState<Aluno | null>(null)
-  // Toda abertura começa na escolha do nome: quem agendou antes neste celular não fica selecionado.
+  const [tipo, setTipo] = useState<TipoAgendamento>('plano')
+  const [escolhido, setEscolhido] = useState<Escolha | null>(null)
+  // Toda abertura começa no plano, na escolha do nome: quem agendou antes neste celular não fica selecionado.
   const aberta = !!horario
   const [estavaAberta, setEstavaAberta] = useState(aberta)
   if (aberta !== estavaAberta) {
     setEstavaAberta(aberta)
-    if (aberta) setEscolhido(null)
+    if (aberta) { setEscolhido(null); setTipo('plano') }
   }
   // Um treino por dia: quem já está em outro horário do dia aparece, mas desabilitado.
-  const horaNoDia = new Map(doDia.flatMap((h) => h.agendados.map((a) => [a.aluno_id, h.hora] as const)))
+  const horaNoDia = new Map(doDia.flatMap((h) => h.agendados.flatMap((a) => (a.aluno_id ? [[a.aluno_id, h.hora] as const] : []))))
   const livres = alunos.filter((a) => !horario?.agendados.some((x) => x.aluno_id === a.id))
-  // Plano: quem já usou todos os treinos da semana também aparece desabilitado.
-  const completa = (id: number) => { const u = uso.get(id); return !!u && u.usados >= u.limite }
-  const eu = livres.find((a) => a.id === meuId && !horaNoDia.has(a.id) && !completa(a.id))
+  const eu = tipo === 'plano' ? livres.find((a) => a.id === meuId && !horaNoDia.has(a.id) && !(uso.get(a.id) && uso.get(a.id)!.usados >= uso.get(a.id)!.limite)) : undefined
   const fechar = () => { setEscolhido(null); onFechar() }
+  const mudarTipo = (t: TipoAgendamento) => { setTipo(t); setEscolhido(null) }
+  const doAluno = (aluno: Aluno) => setEscolhido({ tipo, aluno, nome: nomeExibido(aluno) })
+  const digitado = (nome: string) => setEscolhido({ tipo, aluno: null, nome })
 
   return (
     <Gaveta
@@ -51,56 +64,38 @@ export function GavetaAgendar({ horario, data, doDia, alunos, meuId, uso, envian
       {escolhido ? (
         <div className="animate-surge">
           <div className="paralelo flex items-center gap-3 bg-carvao-3 p-4">
-            <Avatar nome={exibir(escolhido)} tipo="aluno" id={escolhido.id} foto={escolhido.foto} destaque className="size-12 text-lg" />
-            <p className="text-xl font-semibold">{exibir(escolhido)}</p>
+            <Avatar nome={escolhido.nome} tipo="aluno" id={escolhido.aluno?.id ?? 0} foto={escolhido.aluno?.foto} destaque className="size-12 text-lg" />
+            <div className="min-w-0">
+              <p className="truncate text-xl font-semibold">{escolhido.nome}</p>
+              {escolhido.tipo !== 'plano' && <p className="font-cond text-sm font-bold tracking-widest text-ouro-11 uppercase">{ROTULO_TIPO[escolhido.tipo]}</p>}
+            </div>
           </div>
-          {uso.get(escolhido.id) && <ProximoTreino {...uso.get(escolhido.id)!} />}
+          {escolhido.tipo === 'plano' && escolhido.aluno && uso.get(escolhido.aluno.id) && <ProximoTreino {...uso.get(escolhido.aluno.id)!} />}
           <Botao className="mt-5" disabled={enviando} onClick={() => onConfirmar(escolhido)}>
-            {enviando ? 'Agendando…' : 'Confirmar treino'}
+            {enviando ? 'Agendando…' : CONFIRMAR[escolhido.tipo]}
           </Botao>
-          <Botao variante="neutro" className="mt-2" onClick={() => setEscolhido(null)}>Não sou eu</Botao>
+          <Botao variante="neutro" className="mt-2" onClick={() => setEscolhido(null)}>{escolhido.aluno ? 'Não sou eu' : 'Voltar'}</Botao>
         </div>
       ) : (
-        <Command label="Buscar aluno" className="flex min-h-0 flex-1 flex-col">
-          {eu && (
-            <button onClick={() => setEscolhido(eu)} className="paralelo mb-3 flex shrink-0 items-center gap-3 bg-ouro-3 p-3 text-left active:bg-ouro-4">
-              <Avatar nome={exibir(eu)} tipo="aluno" id={eu.id} foto={eu.foto} destaque className="size-10" />
-              <span>
-                <span className="block text-xs font-semibold tracking-widest text-ouro-11 uppercase">Usado por último neste celular</span>
-                <span className="text-lg font-semibold">{exibir(eu)}</span>
-              </span>
-            </button>
+        <div className="flex min-h-0 flex-1 flex-col gap-3">
+          <Chips rotulo="Tipo de treino" opcoes={TIPOS.map((t) => ({ valor: t.valor, rotulo: t.rotulo }))} valor={tipo} onMudar={mudarTipo} />
+          {tipo === 'experimental' ? (
+            <NomeVisitante onContinuar={digitado} />
+          ) : (
+            <SeletorAluno
+              key={tipo}
+              alunos={livres}
+              horaNoDia={horaNoDia}
+              uso={uso}
+              usaPlano={tipo === 'plano'}
+              eu={eu}
+              aceitaNome={tipo === 'diaria'}
+              vazio={tipo === 'diaria' ? 'Nome não está na lista? Toque em agendar acima, digitando o nome completo.' : 'Nome não encontrado. Fala com o professor.'}
+              onEscolher={doAluno}
+              onNome={digitado}
+            />
           )}
-          <div className={caixaCampo}>
-            <Search className="size-5 text-carvao-10" />
-            <Command.Input placeholder="Digite seu nome" className="h-full flex-1 bg-transparent text-base outline-none placeholder:text-carvao-9 focus-visible:outline-none" />
-          </div>
-          <Command.List className="sem-barra mt-2 min-h-40 flex-1 overflow-y-auto">
-            <Command.Empty className="py-6 text-center text-carvao-10">
-              {alunos.length ? 'Nome não encontrado. Fala com o professor.' : 'Ainda não tem aluno cadastrado. Fala com o professor.'}
-            </Command.Empty>
-            {livres.map((a) => {
-              const outra = horaNoDia.get(a.id)
-              const u = uso.get(a.id)
-              const cheia = completa(a.id)
-              return (
-                <Command.Item
-                  key={a.id}
-                  value={`${a.nome} ${a.apelido ?? ''}`}
-                  disabled={!!outra || cheia}
-                  onSelect={() => setEscolhido(a)}
-                  className="paralelo flex h-13 cursor-pointer items-center gap-3 px-3 data-[disabled=true]:cursor-default data-[disabled=true]:opacity-45 data-[selected=true]:bg-carvao-4"
-                >
-                  <Avatar nome={exibir(a)} tipo="aluno" id={a.id} foto={a.foto} className="size-9 text-sm" />
-                  <span className="flex-1 truncate text-base">{exibir(a)}</span>
-                  <span className="font-cond text-sm text-carvao-10 tabular-nums">
-                    {outra ? `já treina às ${horaCurta(outra)}` : cheia ? 'semana completa' : u ? `${u.usados} de ${u.limite}` : ''}
-                  </span>
-                </Command.Item>
-              )
-            })}
-          </Command.List>
-        </Command>
+        </div>
       )}
     </Gaveta>
   )

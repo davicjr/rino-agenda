@@ -9,6 +9,7 @@ import { cn } from '@/lib/cn'
 import { reduzirMovimento } from '@/lib/impacto'
 import { paginar } from '@/lib/paginar'
 import { Avatar } from '@/ui/Avatar'
+import { EtiquetaTipo } from '@/ui/EtiquetaTipo'
 
 type Props = { titulo: string; vazio: string; agendados: Agendado[]; limite: number | null; pulso: number; podeRetirar: boolean; onTocar: (a: Agendado) => void }
 
@@ -84,8 +85,9 @@ export function ListaAlunos({ titulo, vazio, agendados, limite, pulso, podeRetir
             {agendados.slice(inicio, fim).map((a) => (
               <li key={a.id} style={{ height: alturaLinha }} className={cn('border-b border-carvao-3 last:border-b-0', pulso && a.id === ultimo && 'nome-novo')}>
                 <button disabled={!podeRetirar} onClick={() => onTocar(a)} aria-label={podeRetirar ? `Retirar ${a.nome}` : undefined} className="flex h-full w-full items-center gap-3 text-left active:bg-carvao-3">
-                  <Avatar nome={a.nome} tipo="aluno" id={a.aluno_id} foto={a.foto} className="size-10 text-sm" />
+                  <Avatar nome={a.nome} tipo="aluno" id={a.aluno_id ?? 0} foto={a.foto} className="size-10 text-sm" />
                   <span className="min-w-0 flex-1 truncate text-base font-medium">{a.nome}</span>
+                  <EtiquetaTipo tipo={a.tipo} />
                   {podeRetirar && <X aria-hidden className="size-5 shrink-0 text-carvao-9" />}
                 </button>
               </li>
